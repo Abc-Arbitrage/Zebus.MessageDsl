@@ -5,6 +5,7 @@ local-*
 .idea/
 bin/
 obj/
+/output/
 
 *.user
 *.suo

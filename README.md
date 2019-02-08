@@ -1,6 +1,6 @@
 # Zebus Message DSL
 
-This is a DSL which simplifies writing of ProtoBuf contracts for [Zebus](https://github.com/Abc-Arbitrage/Zebus).
+This is a DSL which simplifies the writing of ProtoBuf contracts for [Zebus](https://github.com/Abc-Arbitrage/Zebus).
 
 It is currently being ported from a single-file generator to a MSBuild task.
 
