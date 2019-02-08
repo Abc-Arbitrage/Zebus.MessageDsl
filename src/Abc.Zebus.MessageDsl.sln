@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.329
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abc.Zebus.MessageDsl", "Abc.Zebus.MessageDsl\Abc.Zebus.MessageDsl.csproj", "{C563220E-380F-472B-BB4B-C023FDEF9CB1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abc.Zebus.MessageDsl.Tests", "Abc.Zebus.MessageDsl.Tests\Abc.Zebus.MessageDsl.Tests.csproj", "{E764D460-FFB3-47BF-AB44-BAE543EDE4A1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{A0123301-DE7B-4B5B-92B6-EB8AB7762E7C}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
+		..\README.md = ..\README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C563220E-380F-472B-BB4B-C023FDEF9CB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C563220E-380F-472B-BB4B-C023FDEF9CB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C563220E-380F-472B-BB4B-C023FDEF9CB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C563220E-380F-472B-BB4B-C023FDEF9CB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E764D460-FFB3-47BF-AB44-BAE543EDE4A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E764D460-FFB3-47BF-AB44-BAE543EDE4A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E764D460-FFB3-47BF-AB44-BAE543EDE4A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E764D460-FFB3-47BF-AB44-BAE543EDE4A1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0373CC03-AD01-4AC4-9117-30ED1E5CB6ED}
+	EndGlobalSection
+EndGlobal

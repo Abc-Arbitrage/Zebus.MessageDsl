@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net471</TargetFramework>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>Abc.Zebus.MessageDsl.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Antlr4" Version="4.6.5" PrivateAssets="all" />
+    <PackageReference Include="Antlr4.CodeGenerator" Version="4.6.5" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>

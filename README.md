@@ -4,19 +4,18 @@ This is a DSL which simplifies writing of ProtoBuf contracts for [Zebus](https:/
 
 It is currently being ported from a single-file generator to a MSBuild task.
 
-# Example
+## Example
 
 Input file:
 
-```
+```C#
 SomeMessage(int foo, string bar)
 ```
 
-Generated code:
+Generated code (simplified):
 
 ```C#
 [ProtoContract]
-[DebuggerNonUserCode]
 public sealed partial class SomeMessage : IEvent
 {
     [ProtoMember(1, IsRequired = true)] public readonly int Foo;
