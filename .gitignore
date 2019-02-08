@@ -1,0 +1,17 @@
+
+local-*
+
+.vs/
+.idea/
+bin/
+obj/
+
+*.user
+*.suo
+*.orig
+*.log
+*.binlog
+
+Thumbs.db
+_NCrunch_*
+launchSettings.json
