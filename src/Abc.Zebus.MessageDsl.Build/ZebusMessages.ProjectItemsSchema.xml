@@ -1,6 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<ProjectSchemaDefinitions xmlns="http://schemas.microsoft.com/build/2009/properties">
-  <ContentType Name="ZebusMessages" DisplayName="Zebus Messages" ItemType="ZebusMessages" />
-  <ItemType Name="ZebusMessages" DisplayName="Zebus Messages" />
-  <FileExtension Name=".msg" ContentType="ZebusMessages" />
-</ProjectSchemaDefinitions>

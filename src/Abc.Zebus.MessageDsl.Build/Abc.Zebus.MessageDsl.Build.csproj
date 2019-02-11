@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="*.props;*.targets" Pack="true" PackagePath="build" />
+    <Content Include="*.props;*.targets;*.xml" Pack="true" PackagePath="build" />
   </ItemGroup>
 
   <!-- MessageDsl -->
