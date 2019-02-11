@@ -4,7 +4,7 @@
     <ZebusMessagesEnabled Condition="'$(BuildingInsideVisualStudio)' == 'true'">false</ZebusMessagesEnabled>
   </PropertyGroup>
 
-  <Import Project="..\Abc.Zebus.MessageDsl.Build\Abc.Zebus.MessageDsl.Build.props" />
+  <Import Project="..\Abc.Zebus.MessageDsl.Build\Zebus.MessageDsl.Build.props" />
 
   <ItemGroup>
     <ProjectReference Include="..\Abc.Zebus.MessageDsl.Build\Abc.Zebus.MessageDsl.Build.csproj" />
@@ -20,6 +20,6 @@
     <ZebusMessagesBuildTaskPath Condition="'$(MSBuildRuntimeType)' == 'Core'">..\Abc.Zebus.MessageDsl.Build\bin\$(Configuration)\netstandard2.0</ZebusMessagesBuildTaskPath>
   </PropertyGroup>
 
-  <Import Project="..\Abc.Zebus.MessageDsl.Build\Abc.Zebus.MessageDsl.Build.targets" />
+  <Import Project="..\Abc.Zebus.MessageDsl.Build\Zebus.MessageDsl.Build.targets" />
 
 </Project>

@@ -5,6 +5,7 @@
     <AssemblyOriginatorKeyFile>..\Abc.Zebus.MessageDsl\Abc.Zebus.MessageDsl.snk</AssemblyOriginatorKeyFile>
     <RootNamespace>Abc.Zebus.MessageDsl</RootNamespace>
     <IsPackable>true</IsPackable>
+    <PackageId>Zebus.MessageDsl.Build</PackageId>
     <DevelopmentDependency>true</DevelopmentDependency>
     <BuildOutputTargetFolder>tools</BuildOutputTargetFolder>
   </PropertyGroup>

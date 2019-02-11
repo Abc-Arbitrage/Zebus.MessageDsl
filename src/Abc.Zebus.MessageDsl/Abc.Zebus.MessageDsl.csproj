@@ -4,6 +4,7 @@
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>Abc.Zebus.MessageDsl.snk</AssemblyOriginatorKeyFile>
     <IsPackable>true</IsPackable>
+    <PackageId>Zebus.MessageDsl</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
