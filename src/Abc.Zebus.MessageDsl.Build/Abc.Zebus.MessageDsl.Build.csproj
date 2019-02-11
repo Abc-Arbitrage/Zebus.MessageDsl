@@ -3,8 +3,10 @@
     <TargetFrameworks>netstandard2.0;net46</TargetFrameworks>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\Abc.Zebus.MessageDsl\Abc.Zebus.MessageDsl.snk</AssemblyOriginatorKeyFile>
-    <GeneratePackageOnBuild Condition="'$(Configuration)' == 'Release'">true</GeneratePackageOnBuild>
     <RootNamespace>Abc.Zebus.MessageDsl</RootNamespace>
+    <IsPackable>true</IsPackable>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <BuildOutputTargetFolder>tools</BuildOutputTargetFolder>
   </PropertyGroup>
 
   <ItemGroup>

@@ -8,6 +8,7 @@
     <Prefer32Bit>false</Prefer32Bit>
     <DefaultItemExcludes>$(DefaultItemExcludes);*.DotSettings;*.ncrunchproject;*.binlog</DefaultItemExcludes>
     <DebugType>embedded</DebugType>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <PropertyGroup>
