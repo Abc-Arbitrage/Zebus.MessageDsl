@@ -1,0 +1,17 @@
+<Project>
+
+  <ItemDefinitionGroup>
+    <ZebusMessages>
+      <Generator>MSBuild:Compile</Generator>
+    </ZebusMessages>
+  </ItemDefinitionGroup>
+
+  <ItemGroup Condition="'$(BuildingInsideVisualStudio)' == 'true'">
+    <AvailableItemName Include="ZebusMessages" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(EnableDefaultItems)' == 'true'">
+    <ZebusMessages Include="**\*.msg" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+  </ItemGroup>
+
+</Project>
