@@ -14,7 +14,6 @@
     <ZebusMessages Update="@(ZebusMessages)" DefaultCustomToolNamespace="$([MSBuild]::ValueOrDefault('$(RootNamespace).%(RelativeDir)', '').Replace('\', '.').Replace('/', '.').Trim('.'))" />
     <ZebusMessages Update="@(ZebusMessages)" CustomToolNamespace="$([MSBuild]::ValueOrDefault('%(CustomToolNamespace)', '%(DefaultCustomToolNamespace)'))" />
     <ZebusMessages Update="@(ZebusMessages)" GeneratorTargetPath="$(IntermediateOutputPath)ZebusMessages\%(RecursiveDir)%(FileName).cs" />
-    <None Remove="@(ZebusMessages)" />
   </ItemGroup>
 
   <UsingTask TaskName="Abc.Zebus.MessageDsl.Build.GenerateZebusMessagesTask" AssemblyFile="$(ZebusMessagesBuildTaskPath)\Abc.Zebus.MessageDsl.Build.dll" />

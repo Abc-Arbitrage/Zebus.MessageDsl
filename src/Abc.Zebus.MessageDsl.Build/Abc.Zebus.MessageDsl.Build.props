@@ -13,6 +13,7 @@
 
   <ItemGroup Condition="'$(EnableDefaultItems)' == 'true'">
     <ZebusMessages Include="**\*.msg" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+    <None Remove="**\*.msg" />
   </ItemGroup>
 
 </Project>
