@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <ZebusMessagesEnabled Condition="'$(BuildingInsideVisualStudio)' == 'true'">false</ZebusMessagesEnabled>
+  </PropertyGroup>
+
+  <Import Project="..\Abc.Zebus.MessageDsl.Build\Abc.Zebus.MessageDsl.Build.props" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\Abc.Zebus.MessageDsl.Build\Abc.Zebus.MessageDsl.Build.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="protobuf-net" Version="2.4.0" />
+    <PackageReference Include="Zebus.Contracts" Version="3.0.0" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <ZebusMessagesBuildTaskPath Condition="'$(MSBuildRuntimeType)' != 'Core'">..\Abc.Zebus.MessageDsl.Build\bin\$(Configuration)\net46</ZebusMessagesBuildTaskPath>
+    <ZebusMessagesBuildTaskPath Condition="'$(MSBuildRuntimeType)' == 'Core'">..\Abc.Zebus.MessageDsl.Build\bin\$(Configuration)\netstandard2.0</ZebusMessagesBuildTaskPath>
+  </PropertyGroup>
+
+  <Import Project="..\Abc.Zebus.MessageDsl.Build\Abc.Zebus.MessageDsl.Build.targets" />
+
+</Project>

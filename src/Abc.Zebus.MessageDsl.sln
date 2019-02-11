@@ -16,6 +16,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{A0123301
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abc.Zebus.MessageDsl.Build", "Abc.Zebus.MessageDsl.Build\Abc.Zebus.MessageDsl.Build.csproj", "{D7C3B2A7-F5EA-4BD1-95FF-0736EF745160}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abc.Zebus.MessageDsl.Build.Integration", "Abc.Zebus.MessageDsl.Build.Integration\Abc.Zebus.MessageDsl.Build.Integration.csproj", "{F44D989C-2259-4AA9-BBBA-6A85A4151630}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,6 +36,10 @@ Global
 		{D7C3B2A7-F5EA-4BD1-95FF-0736EF745160}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D7C3B2A7-F5EA-4BD1-95FF-0736EF745160}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D7C3B2A7-F5EA-4BD1-95FF-0736EF745160}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F44D989C-2259-4AA9-BBBA-6A85A4151630}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F44D989C-2259-4AA9-BBBA-6A85A4151630}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F44D989C-2259-4AA9-BBBA-6A85A4151630}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F44D989C-2259-4AA9-BBBA-6A85A4151630}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

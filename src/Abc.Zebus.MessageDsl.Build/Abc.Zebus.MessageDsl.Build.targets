@@ -1,28 +1,34 @@
 <Project>
 
   <PropertyGroup>
+    <LoadTimeSensitiveTargets>$(LoadTimeSensitiveTargets);ZebusMessagesCompile</LoadTimeSensitiveTargets>
+    <ZebusMessagesEnabled Condition="'$(ZebusMessagesEnabled)' == ''">true</ZebusMessagesEnabled>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(ZebusMessagesBuildTaskPath)' == ''">
     <ZebusMessagesBuildTaskPath Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)..\tools\net46</ZebusMessagesBuildTaskPath>
     <ZebusMessagesBuildTaskPath Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)..\tools\netstandard2.0</ZebusMessagesBuildTaskPath>
-
-    <LoadTimeSensitiveTargets>$(LoadTimeSensitiveTargets);ZebusMessagesCompile</LoadTimeSensitiveTargets>
   </PropertyGroup>
 
   <ItemGroup>
     <ZebusMessages Update="@(ZebusMessages)" DefaultCustomToolNamespace="$([MSBuild]::ValueOrDefault('$(RootNamespace).%(RelativeDir)', '').Replace('\', '.').Replace('/', '.').Trim('.'))" />
     <ZebusMessages Update="@(ZebusMessages)" CustomToolNamespace="$([MSBuild]::ValueOrDefault('%(CustomToolNamespace)', '%(DefaultCustomToolNamespace)'))" />
     <ZebusMessages Update="@(ZebusMessages)" GeneratorTargetPath="$(IntermediateOutputPath)ZebusMessages\%(RecursiveDir)%(FileName).cs" />
+    <None Remove="@(ZebusMessages)" />
   </ItemGroup>
 
   <UsingTask TaskName="Abc.Zebus.MessageDsl.Build.GenerateZebusMessagesTask" AssemblyFile="$(ZebusMessagesBuildTaskPath)\Abc.Zebus.MessageDsl.Build.dll" />
 
   <Target Name="ZebusMessagesCompile"
-          Condition="'@(ZebusMessages)' != ''"
+          BeforeTargets="CoreCompile"
+          Condition="'@(ZebusMessages)' != '' and '$(ZebusMessagesEnabled)' == 'true'"
           Inputs="@(ZebusMessages)"
           Outputs="@(ZebusMessages->'%(GeneratorTargetPath)')">
 
     <GenerateZebusMessagesTask InputFiles="@(ZebusMessages)" />
 
     <ItemGroup>
+      <Compile Include="@(ZebusMessages->'%(GeneratorTargetPath)')" Visible="false" />
       <FileWrites Include="@(ZebusMessages->'%(GeneratorTargetPath)')" />
     </ItemGroup>
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using Abc.Zebus.MessageDsl.Ast;
 using Abc.Zebus.MessageDsl.Generator;
@@ -13,7 +12,7 @@ namespace Abc.Zebus.MessageDsl.Build
         private bool _hasErrors;
 
         [Required]
-        public ICollection<ITaskItem> InputFiles { get; set; }
+        public ITaskItem[] InputFiles { get; set; }
 
         public override bool Execute()
         {
@@ -30,8 +29,6 @@ namespace Abc.Zebus.MessageDsl.Build
                 var fileContents = File.ReadAllText(inputFile.ItemSpec);
                 var contracts = ParsedContracts.Parse(fileContents, inputFile.GetMetadata("CustomToolNamespace") ?? string.Empty);
 
-                var targetPath = inputFile.GetMetadata("GeneratorTargetPath") ?? throw new InvalidOperationException("No target path specified");
-
                 if (!contracts.IsValid)
                 {
                     foreach (var error in contracts.Errors)
@@ -39,6 +36,9 @@ namespace Abc.Zebus.MessageDsl.Build
 
                     return;
                 }
+
+                var targetPath = inputFile.GetMetadata("GeneratorTargetPath") ?? throw new InvalidOperationException("No target path specified");
+                Directory.CreateDirectory(Path.GetDirectoryName(targetPath) ?? throw new InvalidOperationException("Invalid target directory"));
 
                 var output = CSharpGenerator.Generate(contracts);
                 File.WriteAllText(targetPath, output);

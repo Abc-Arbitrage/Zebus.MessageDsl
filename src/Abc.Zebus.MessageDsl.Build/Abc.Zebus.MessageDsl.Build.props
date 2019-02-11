@@ -3,11 +3,14 @@
   <ItemDefinitionGroup>
     <ZebusMessages>
       <Generator>MSBuild:Compile</Generator>
+      <Visible>true</Visible>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </ZebusMessages>
   </ItemDefinitionGroup>
 
-  <ItemGroup Condition="'$(BuildingInsideVisualStudio)' == 'true'">
+  <ItemGroup>
     <AvailableItemName Include="ZebusMessages" />
+    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)ZebusMessages.ProjectItemsSchema.xml" Context="Project" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(EnableDefaultItems)' == 'true'">
