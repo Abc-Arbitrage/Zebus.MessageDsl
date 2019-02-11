@@ -1,0 +1,3 @@
+[submodule "lib/antlr4cs"]
+	path = lib/antlr4cs
+	url = https://github.com/tunnelvisionlabs/antlr4cs.git
