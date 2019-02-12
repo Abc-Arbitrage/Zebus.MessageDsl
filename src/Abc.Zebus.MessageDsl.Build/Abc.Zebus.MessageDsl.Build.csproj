@@ -32,18 +32,17 @@
     <NoWarn>$(NoWarn);0219;0162</NoWarn>
     <DefineConstants Condition="'$(TargetFramework)' == 'net46'">$(DefineConstants);NET45;NET45PLUS;NET40PLUS;NET35PLUS;NET30PLUS;NET20PLUS</DefineConstants>
     <DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.0'">$(DefineConstants);PORTABLE;NETSTANDARD;NET45PLUS;NET40PLUS;NET35PLUS;NET30PLUS;NET20PLUS</DefineConstants>
+    <Antlr4RuntimeDir>..\..\lib\antlr4cs\runtime\CSharp\Antlr4.Runtime</Antlr4RuntimeDir>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\lib\antlr4cs\runtime\CSharp\Antlr4.Runtime\**\*.cs" Exclude="..\..\lib\antlr4cs\runtime\CSharp\Antlr4.Runtime\obj\**\*.cs" Link="Antlr4.Runtime\%(RecursiveDir)%(FileName)%(Extension)" />
-
-    <Compile Remove="..\..\lib\antlr4cs\runtime\CSharp\Antlr4.Runtime\Properties\AssemblyInfo.cs" />
-    <Compile Remove="..\..\lib\antlr4cs\runtime\CSharp\Antlr4.Runtime\Misc\Array2DHashSet`1.cs" />
-    <Compile Remove="..\..\lib\antlr4cs\runtime\CSharp\Antlr4.Runtime\Misc\DoubleKeyMap`3.cs" />
-    <Compile Remove="..\..\lib\antlr4cs\runtime\CSharp\Antlr4.Runtime\Misc\RuleDependencyProcessor.cs" />
-    <Compile Remove="..\..\lib\antlr4cs\runtime\CSharp\Antlr4.Runtime\Misc\TestRig.cs" />
-    <Compile Remove="..\..\lib\antlr4cs\runtime\CSharp\Antlr4.Runtime\Sharpen\Compat\*" />
-
-    <Antlr4 Include="..\..\lib\antlr4cs\runtime\CSharp\Antlr4.Runtime\Tree\Xpath\XPathLexer.g4" Link="Antlr4.Runtime\Tree\Xpath\%(FileName)%(Extension)" CustomToolNamespace="Antlr4.Runtime.Tree.Xpath" />
+    <Compile Include="$(Antlr4RuntimeDir)\**\*.cs" Exclude="$(Antlr4RuntimeDir)\obj\**\*.cs" Link="Antlr4.Runtime\%(RecursiveDir)%(FileName)%(Extension)" />
+    <Compile Remove="$(Antlr4RuntimeDir)\Properties\AssemblyInfo.cs" />
+    <Compile Remove="$(Antlr4RuntimeDir)\Misc\Array2DHashSet`1.cs" />
+    <Compile Remove="$(Antlr4RuntimeDir)\Misc\DoubleKeyMap`3.cs" />
+    <Compile Remove="$(Antlr4RuntimeDir)\Misc\RuleDependencyProcessor.cs" />
+    <Compile Remove="$(Antlr4RuntimeDir)\Misc\TestRig.cs" />
+    <Compile Remove="$(Antlr4RuntimeDir)\Sharpen\Compat\*" />
+    <Antlr4 Include="$(Antlr4RuntimeDir)\Tree\Xpath\XPathLexer.g4" Link="Antlr4.Runtime\Tree\Xpath\%(FileName)%(Extension)" CustomToolNamespace="Antlr4.Runtime.Tree.Xpath" />
   </ItemGroup>
 
 </Project>
