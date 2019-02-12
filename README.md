@@ -1,6 +1,8 @@
 # Zebus Message DSL
 
 [![Build status](https://abc-arbitrage.visualstudio.com/Zebus/_apis/build/status/Zebus.MessageDsl?branchName=master)](https://abc-arbitrage.visualstudio.com/Zebus/_build/latest?definitionId=3&branchName=master)
+[![Zebus.MessageDsl NuGet](https://img.shields.io/nuget/v/Zebus.MessageDsl.svg?label=Zebus.MessageDsl)](https://www.nuget.org/packages/Zebus.MessageDsl)
+[![Zebus.MessageDsl.Build NuGet](https://img.shields.io/nuget/v/Zebus.MessageDsl.Build.svg?label=Zebus.MessageDsl.Build)](https://www.nuget.org/packages/Zebus.MessageDsl.Build)
 
 This is a DSL which simplifies the writing of ProtoBuf contracts for [Zebus](https://github.com/Abc-Arbitrage/Zebus).
 
