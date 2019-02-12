@@ -8,6 +8,7 @@
     <PackageId>Zebus.MessageDsl.Build</PackageId>
     <DevelopmentDependency>true</DevelopmentDependency>
     <BuildOutputTargetFolder>tools</BuildOutputTargetFolder>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
   </PropertyGroup>
 
   <ItemGroup>
