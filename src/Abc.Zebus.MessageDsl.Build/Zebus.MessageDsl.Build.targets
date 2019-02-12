@@ -34,4 +34,10 @@
 
   </Target>
 
+  <Target Name="CleanZebusMessages"
+          BeforeTargets="CoreClean"
+          Condition="Exists('$(IntermediateOutputPath)ZebusMessages')">
+    <RemoveDir Directories="$(IntermediateOutputPath)ZebusMessages" />
+  </Target>
+
 </Project>
