@@ -1,7 +1,6 @@
 <Project>
 
   <PropertyGroup>
-    <LoadTimeSensitiveTargets>$(LoadTimeSensitiveTargets);ZebusMessagesCompile</LoadTimeSensitiveTargets>
     <ZebusMessagesEnabled Condition="'$(ZebusMessagesEnabled)' == ''">true</ZebusMessagesEnabled>
   </PropertyGroup>
 
@@ -13,16 +12,18 @@
   <ItemGroup>
     <ZebusMessages Update="@(ZebusMessages)" DefaultCustomToolNamespace="$([MSBuild]::ValueOrDefault('$(RootNamespace).%(RelativeDir)', '').Replace('\', '.').Replace('/', '.').Trim('.'))" />
     <ZebusMessages Update="@(ZebusMessages)" CustomToolNamespace="$([MSBuild]::ValueOrDefault('%(CustomToolNamespace)', '%(DefaultCustomToolNamespace)'))" />
-    <ZebusMessages Update="@(ZebusMessages)" GeneratorTargetPath="$(IntermediateOutputPath)ZebusMessages\%(RecursiveDir)%(FileName).cs" />
+    <ZebusMessages Update="@(ZebusMessages)" GeneratorTargetPath="$(IntermediateOutputPath)ZebusMessages\%(RecursiveDir)%(FileName)%(Extension).cs" />
   </ItemGroup>
 
   <UsingTask TaskName="Abc.Zebus.MessageDsl.Build.GenerateZebusMessagesTask" AssemblyFile="$(ZebusMessagesBuildTaskPath)\Abc.Zebus.MessageDsl.Build.dll" />
 
-  <Target Name="ZebusMessagesCompile"
+  <Target Name="GenerateZebusMessages"
           BeforeTargets="CoreCompile"
           Condition="'@(ZebusMessages)' != '' and '$(ZebusMessagesEnabled)' == 'true'"
           Inputs="@(ZebusMessages)"
           Outputs="@(ZebusMessages->'%(GeneratorTargetPath)')">
+
+    <Error Condition="'$(Language)' != 'C#'" Text="Zebus.MessageDsl only supports C# projects" />
 
     <GenerateZebusMessagesTask InputFiles="@(ZebusMessages)" />
 
