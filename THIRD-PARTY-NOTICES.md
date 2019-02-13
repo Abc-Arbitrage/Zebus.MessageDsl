@@ -1,5 +1,5 @@
 
-# Third-party licenses
+# Third-party notices
 
 ## ANTLR 4
 
