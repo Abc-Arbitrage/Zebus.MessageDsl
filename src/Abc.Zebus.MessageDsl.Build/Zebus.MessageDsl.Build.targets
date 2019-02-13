@@ -15,6 +15,11 @@
     <ZebusMessages Update="@(ZebusMessages)" GeneratorTargetPath="$(IntermediateOutputPath)ZebusMessages\%(RecursiveDir)%(FileName)%(Extension).cs" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(NCrunch)' == '1'">
+    <None Include="$(ZebusMessagesBuildTaskPath)\*" />
+    <None Include="@(ZebusMessages)" />
+  </ItemGroup>
+
   <UsingTask TaskName="Abc.Zebus.MessageDsl.Build.GenerateZebusMessagesTask" AssemblyFile="$(ZebusMessagesBuildTaskPath)\Abc.Zebus.MessageDsl.Build.dll" />
 
   <Target Name="GenerateZebusMessages"
