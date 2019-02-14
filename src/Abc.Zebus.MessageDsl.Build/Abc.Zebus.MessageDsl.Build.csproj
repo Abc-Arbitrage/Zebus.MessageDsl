@@ -45,4 +45,8 @@
     <Antlr4 Include="$(Antlr4RuntimeDir)\Tree\Xpath\XPathLexer.g4" Link="Antlr4.Runtime\Tree\Xpath\%(FileName)%(Extension)" CustomToolNamespace="Antlr4.Runtime.Tree.Xpath" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(NCrunch)' == '1'">
+    <None Include="@(Antlr4)" />
+  </ItemGroup>
+
 </Project>
