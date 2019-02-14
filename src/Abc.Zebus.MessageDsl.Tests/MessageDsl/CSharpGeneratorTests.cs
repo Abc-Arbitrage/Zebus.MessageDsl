@@ -55,10 +55,10 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
                 }
             });
 
-            code.ShouldContain("[ProtoMember(1, IsRequired = false, IsPacked = true)] public readonly int[] Foo;");
-            code.ShouldContain("[ProtoMember(2, IsRequired = false)] public readonly LolType[] Bar;");
-            code.ShouldContain("[ProtoMember(3, IsRequired = false, IsPacked = true)] public readonly List<int> FooList;");
-            code.ShouldContain("[ProtoMember(4, IsRequired = false)] public readonly List<LolType> BarList;");
+            code.ShouldContainIgnoreIndent("[ProtoMember(1, IsRequired = false, IsPacked = true)]\npublic readonly int[] Foo;");
+            code.ShouldContainIgnoreIndent("[ProtoMember(2, IsRequired = false)]\npublic readonly LolType[] Bar;");
+            code.ShouldContainIgnoreIndent("[ProtoMember(3, IsRequired = false, IsPacked = true)]\npublic readonly List<int> FooList;");
+            code.ShouldContainIgnoreIndent("[ProtoMember(4, IsRequired = false)]\npublic readonly List<LolType> BarList;");
             code.ShouldContain("Foo = Array.Empty<int>();");
             code.ShouldContain("Bar = Array.Empty<LolType>();");
             code.ShouldContain("FooList = new List<int>();");

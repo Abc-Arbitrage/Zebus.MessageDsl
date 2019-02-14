@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
 
 namespace Abc.Zebus.MessageDsl.Tests.TestTools
@@ -21,6 +22,9 @@ namespace Abc.Zebus.MessageDsl.Tests.TestTools
 
         public static void ShouldContain<T>(this IEnumerable<T> actual, T expected)
             => Assert.That(actual, Contains.Item(expected));
+
+        public static void ShouldContainIgnoreIndent(this string actual, string expected)
+            => Assert.That(Regex.Replace(actual, @"^[ ]+|\r", string.Empty, RegexOptions.CultureInvariant | RegexOptions.Multiline), Contains.Substring(expected));
 
         public static void ShouldNotContain(this string actual, string unexpected)
             => Assert.That(actual, Does.Not.Contain(unexpected));

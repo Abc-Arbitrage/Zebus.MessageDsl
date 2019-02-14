@@ -170,6 +170,7 @@ namespace Abc.Zebus.MessageDsl.Generator
                     Writer.Write(Identifier(templateParameter));
                     firstTemplateParam = false;
                 }
+
                 Writer.Write(">");
             }
 
@@ -251,10 +252,6 @@ namespace Abc.Zebus.MessageDsl.Generator
 
         private void WriteParameterMember(MessageDefinition message, ParameterDefinition param)
         {
-            Writer.Write("[");
-
-            var firstAttribute = true;
-
             if (!param.Attributes.HasAttribute(_protoMemberType))
             {
                 var protoMemberParams = new StringBuilder();
@@ -265,20 +262,13 @@ namespace Abc.Zebus.MessageDsl.Generator
                 if (param.IsPacked)
                     protoMemberParams.Append(", IsPacked = true");
 
-                WriteAttribute(new AttributeDefinition(_protoMemberType, protoMemberParams.ToString()));
-                firstAttribute = false;
+                WriteAttributeLine(new AttributeDefinition(_protoMemberType, protoMemberParams.ToString()));
             }
 
             foreach (var attribute in param.Attributes)
-            {
-                if (!firstAttribute)
-                    Writer.Write(", ");
+                WriteAttributeLine(attribute);
 
-                WriteAttribute(attribute);
-                firstAttribute = false;
-            }
-
-            Writer.Write("] public ");
+            Writer.Write("public ");
 
             var isWritable = param.IsWritableProperty || message.Options.Mutable;
             var isProperty = isWritable || message.Options.Prop;
@@ -293,6 +283,8 @@ namespace Abc.Zebus.MessageDsl.Generator
                                      ? " { get; set; }"
                                      : " { get; private set; }"
                                  : ";");
+
+            Writer.WriteLine();
         }
 
         private static bool HasConstructorParameters(MessageDefinition message)
@@ -300,7 +292,6 @@ namespace Abc.Zebus.MessageDsl.Generator
 
         private void WriteDefaultConstructor(MessageDefinition message)
         {
-            Writer.WriteLine();
             Writer.Write("{0} {1}()", message.Options.Mutable ? "public" : "private", Identifier(message.Name));
 
             var repeatedParams = message.Parameters
