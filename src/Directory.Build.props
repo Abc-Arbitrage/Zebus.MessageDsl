@@ -12,7 +12,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>0.3.1</Version>
+    <ZebusDslVersion>0.3.0</ZebusDslVersion>
+    <ZebusDslBuildVersion>0.3.1</ZebusDslBuildVersion>
   </PropertyGroup>
 
   <PropertyGroup>

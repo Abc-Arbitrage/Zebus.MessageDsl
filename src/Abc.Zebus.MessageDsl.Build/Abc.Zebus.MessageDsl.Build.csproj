@@ -6,6 +6,8 @@
     <RootNamespace>Abc.Zebus.MessageDsl</RootNamespace>
     <IsPackable>true</IsPackable>
     <PackageId>Zebus.MessageDsl.Build</PackageId>
+    <Version>$(ZebusDslBuildVersion)</Version>
+    <Description>A message DSL for Zebus (build task for .msg files)</Description>
     <DevelopmentDependency>true</DevelopmentDependency>
     <BuildOutputTargetFolder>tools</BuildOutputTargetFolder>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>

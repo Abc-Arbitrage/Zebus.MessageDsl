@@ -5,6 +5,7 @@
     <AssemblyOriginatorKeyFile>Abc.Zebus.MessageDsl.snk</AssemblyOriginatorKeyFile>
     <IsPackable>true</IsPackable>
     <PackageId>Zebus.MessageDsl</PackageId>
+    <Version>$(ZebusDslVersion)</Version>
   </PropertyGroup>
 
   <ItemGroup>
