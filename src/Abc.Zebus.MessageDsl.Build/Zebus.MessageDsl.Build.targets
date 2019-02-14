@@ -1,9 +1,5 @@
 <Project>
 
-  <PropertyGroup>
-    <ZebusMessagesEnabled Condition="'$(ZebusMessagesEnabled)' == ''">true</ZebusMessagesEnabled>
-  </PropertyGroup>
-
   <PropertyGroup Condition="'$(ZebusMessagesBuildTaskPath)' == ''">
     <ZebusMessagesBuildTaskPath Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)..\tools\net46</ZebusMessagesBuildTaskPath>
     <ZebusMessagesBuildTaskPath Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)..\tools\netstandard2.0</ZebusMessagesBuildTaskPath>

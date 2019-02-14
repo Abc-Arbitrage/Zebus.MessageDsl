@@ -1,5 +1,9 @@
 <Project>
 
+  <PropertyGroup>
+    <ZebusMessagesEnabled Condition="'$(ZebusMessagesEnabled)' == ''">true</ZebusMessagesEnabled>
+  </PropertyGroup>
+
   <ItemDefinitionGroup>
     <ZebusMessages>
       <Generator>MSBuild:Compile</Generator>
