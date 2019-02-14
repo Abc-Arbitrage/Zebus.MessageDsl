@@ -267,23 +267,11 @@ namespace Abc.Zebus.MessageDsl.Generator
 
             foreach (var attribute in param.Attributes)
                 WriteAttributeLine(attribute);
-
-            Writer.Write("public ");
-
+            
             var isWritable = param.IsWritableProperty || message.Options.Mutable;
-            var isProperty = isWritable || message.Options.Prop;
 
-            if (!isProperty)
-                Writer.Write("readonly ");
-
-            Writer.Write("{0} {1}", param.Type.NetType, Identifier(MemberCase(param.Name)));
-
-            Writer.WriteLine(isProperty
-                                 ? isWritable
-                                     ? " { get; set; }"
-                                     : " { get; private set; }"
-                                 : ";");
-
+            Writer.Write("public {0} {1}", param.Type.NetType, Identifier(MemberCase(param.Name)));
+            Writer.WriteLine(isWritable ? " { get; set; }" : " { get; private set; }");
             Writer.WriteLine();
         }
 

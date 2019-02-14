@@ -55,10 +55,10 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
                 }
             });
 
-            code.ShouldContainIgnoreIndent("[ProtoMember(1, IsRequired = false, IsPacked = true)]\npublic readonly int[] Foo;");
-            code.ShouldContainIgnoreIndent("[ProtoMember(2, IsRequired = false)]\npublic readonly LolType[] Bar;");
-            code.ShouldContainIgnoreIndent("[ProtoMember(3, IsRequired = false, IsPacked = true)]\npublic readonly List<int> FooList;");
-            code.ShouldContainIgnoreIndent("[ProtoMember(4, IsRequired = false)]\npublic readonly List<LolType> BarList;");
+            code.ShouldContainIgnoreIndent("[ProtoMember(1, IsRequired = false, IsPacked = true)]\npublic int[] Foo { get; private set; }");
+            code.ShouldContainIgnoreIndent("[ProtoMember(2, IsRequired = false)]\npublic LolType[] Bar { get; private set; }");
+            code.ShouldContainIgnoreIndent("[ProtoMember(3, IsRequired = false, IsPacked = true)]\npublic List<int> FooList { get; private set; }");
+            code.ShouldContainIgnoreIndent("[ProtoMember(4, IsRequired = false)]\npublic List<LolType> BarList { get; private set; }");
             code.ShouldContain("Foo = Array.Empty<int>();");
             code.ShouldContain("Bar = Array.Empty<LolType>();");
             code.ShouldContain("FooList = new List<int>();");
@@ -120,7 +120,6 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
             contract.Messages.Add(new MessageDefinition
             {
                 Name = "FooExecuted",
-                Options = { Prop = true },
                 Parameters =
                 {
                     new ParameterDefinition("System.Int32", "foo"),
