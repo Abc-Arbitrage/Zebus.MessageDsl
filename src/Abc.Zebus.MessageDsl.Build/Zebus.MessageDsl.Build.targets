@@ -13,6 +13,7 @@
     <ZebusMessages Update="@(ZebusMessages)" DefaultCustomToolNamespace="$([MSBuild]::ValueOrDefault('$(RootNamespace).%(RelativeDir)', '').Replace('\', '.').Replace('/', '.').Trim('.'))" />
     <ZebusMessages Update="@(ZebusMessages)" CustomToolNamespace="$([MSBuild]::ValueOrDefault('%(CustomToolNamespace)', '%(DefaultCustomToolNamespace)'))" />
     <ZebusMessages Update="@(ZebusMessages)" GeneratorTargetPath="$(IntermediateOutputPath)ZebusMessages\%(RecursiveDir)%(FileName)%(Extension).cs" />
+    <None Remove="**\*.msg" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(NCrunch)' == '1'">
