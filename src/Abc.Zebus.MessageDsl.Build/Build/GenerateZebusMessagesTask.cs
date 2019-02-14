@@ -26,7 +26,7 @@ namespace Abc.Zebus.MessageDsl.Build
                 }
                 catch (Exception ex)
                 {
-                    LogError(inputFile, $"Error translating file: {ex.Message}");
+                    LogError(inputFile, $"Error translating file: {ex}");
                 }
             }
 
