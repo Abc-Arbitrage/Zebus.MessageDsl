@@ -8,6 +8,8 @@ namespace Abc.Zebus.MessageDsl.Generator
     public sealed class CSharpGenerator : GeneratorBase
     {
         private static readonly AttributeDefinition _attrProtoContract = new AttributeDefinition("ProtoContract");
+        private static readonly AttributeDefinition _attrNonUserCode = new AttributeDefinition("System.Diagnostics.DebuggerNonUserCode");
+        private static readonly AttributeDefinition _attrGeneratedCode = new AttributeDefinition("System.CodeDom.Compiler.GeneratedCode", $@"""{GeneratorName}"", ""{GeneratorVersion}""");
         private static readonly TypeName _protoMemberType = new TypeName("ProtoMember");
         private static readonly TypeName _attrObsoleteType = new TypeName("Obsolete");
 
@@ -106,6 +108,8 @@ namespace Abc.Zebus.MessageDsl.Generator
             if (!enumDef.Attributes.HasAttribute(_attrProtoContract.TypeName))
                 WriteAttributeLine(_attrProtoContract);
 
+            WriteAttributeLine(_attrGeneratedCode);
+
             foreach (var attribute in enumDef.Attributes)
                 WriteAttributeLine(attribute);
 
@@ -148,6 +152,9 @@ namespace Abc.Zebus.MessageDsl.Generator
         {
             if (!message.Attributes.HasAttribute(_attrProtoContract.TypeName))
                 WriteAttributeLine(_attrProtoContract);
+
+            WriteAttributeLine(_attrNonUserCode);
+            WriteAttributeLine(_attrGeneratedCode);
 
             foreach (var attribute in message.Attributes)
                 WriteAttributeLine(attribute);
