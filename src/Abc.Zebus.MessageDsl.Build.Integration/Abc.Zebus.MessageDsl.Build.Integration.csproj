@@ -1,7 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <ZebusMessagesEnabled Condition="'$(BuildingInsideVisualStudio)' == 'true'">false</ZebusMessagesEnabled>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IntegrationTestEnabled>true</IntegrationTestEnabled>
+    <IntegrationTestEnabled Condition="'$(BuildingInsideVisualStudio)' == 'true'">false</IntegrationTestEnabled>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(IntegrationTestEnabled)' == 'true'">
+    <DefineConstants>$(DefineConstants);INTEGRATION_TEST</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(IntegrationTestEnabled)' != 'true'">
+    <ZebusMessagesEnabled>false</ZebusMessagesEnabled>
   </PropertyGroup>
 
   <Import Project="..\Abc.Zebus.MessageDsl.Build\Zebus.MessageDsl.Build.props" />
@@ -21,5 +33,10 @@
   </PropertyGroup>
 
   <Import Project="..\Abc.Zebus.MessageDsl.Build\Zebus.MessageDsl.Build.targets" />
+
+  <Target Name="IntegrationTestInfo" BeforeTargets="CoreCompile">
+    <Message Importance="High" Text="Integration test: enabled" Condition="'$(IntegrationTestEnabled)' == 'true'" />
+    <Message Importance="High" Text="Integration test: disabled" Condition="'$(IntegrationTestEnabled)' != 'true'" />
+  </Target>
 
 </Project>
