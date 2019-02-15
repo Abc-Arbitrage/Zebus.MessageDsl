@@ -20,7 +20,7 @@
   <UsingTask TaskName="Abc.Zebus.MessageDsl.Build.GenerateZebusMessagesTask" AssemblyFile="$(ZebusMessagesBuildTaskPath)\Abc.Zebus.MessageDsl.Build.dll" />
 
   <Target Name="GenerateZebusMessages"
-          AfterTargets="PrepareForBuild"
+          BeforeTargets="CoreCompile"
           Condition="'@(ZebusMessages)' != '' and '$(ZebusMessagesEnabled)' == 'true'"
           Inputs="@(ZebusMessages)"
           Outputs="@(ZebusMessages->'%(GeneratorTargetPath)')">
@@ -41,5 +41,10 @@
           Condition="Exists('$(IntermediateOutputPath)ZebusMessages')">
     <RemoveDir Directories="$(IntermediateOutputPath)ZebusMessages" />
   </Target>
+
+  <Target Name="GenerateZebusMessagesRiderDesignTime"
+          Condition="'$(BuildingByReSharper)' == 'true'"
+          AfterTargets="PrepareForBuild"
+          DependsOnTargets="GenerateZebusMessages" />
 
 </Project>
