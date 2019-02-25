@@ -1,0 +1,2 @@
+﻿
+HasCustomNamespace!(int id)

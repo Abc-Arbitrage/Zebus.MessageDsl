@@ -10,6 +10,7 @@ namespace Abc.Zebus.MessageDsl.Build.Integration
         {
             GC.KeepAlive(typeof(SomeMessage));
             GC.KeepAlive(typeof(InnerNamespace.InnerMessage));
+            GC.KeepAlive(typeof(Abc.Zebus.CustomNamespace.HasCustomNamespace));
         }
     }
 }
