@@ -37,6 +37,8 @@ The following namespaces are imported by default:
  - `ProtoBuf`
  - `Abc.Zebus`
  - `Abc.Zebus.Routing` if a routable message is defined
+ - `System.Collections.Generic` if `List<T>` is used
+ - `System.ComponentModel` if the `[Description]` attribute is used
 
 ## Message types
 
