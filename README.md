@@ -11,6 +11,10 @@ This is a DSL which simplifies the writing of ProtoBuf contracts for [Zebus](htt
  - [`Zebus.MessageDsl`](https://www.nuget.org/packages/Zebus.MessageDsl) provides the DSL parser, C# and proto generators
  - [`Zebus.MessageDsl.Build`](https://www.nuget.org/packages/Zebus.MessageDsl.Build) provides a code generator which will translate `.msg` files in your project
 
+## Documentation
+
+ - [DSL Syntax](docs/Syntax.md)
+
 ## Example
 
 Input file:
