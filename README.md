@@ -14,6 +14,7 @@ This is a DSL which simplifies the writing of ProtoBuf contracts for [Zebus](htt
 ## Documentation
 
  - [DSL Syntax](docs/Syntax.md)
+ - [Build-Time Code Generator](docs/BuildTimeCodeGen.md) (`.msg` files)
 
 ## Example
 
