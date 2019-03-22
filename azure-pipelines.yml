@@ -1,0 +1,62 @@
+
+variables:
+  BuildConfiguration: Release
+
+jobs:
+  - job: Windows
+    pool:
+      vmImage: vs2017-win2016
+    steps:
+      - task: DotNetCoreCLI@2
+        displayName: Build
+        inputs:
+          command: build
+          projects: src/Abc.Zebus.MessageDsl.sln
+          arguments: --configuration $(BuildConfiguration)
+
+      - task: DotNetCoreCLI@2
+        displayName: Test
+        inputs:
+          command: test
+          projects: src/**/*.Tests.csproj
+          arguments: --configuration $(BuildConfiguration)
+
+      - task: DotNetCoreCLI@2
+        displayName: Pack
+        inputs:
+          command: pack
+          packagesToPack: src/**/*.csproj
+          configuration: $(BuildConfiguration)
+          packDirectory: $(Build.ArtifactStagingDirectory)
+          nobuild: true
+          verbosityPack: Minimal
+
+      - task: PublishBuildArtifacts@1
+        displayName: Publish Artifacts
+        inputs:
+          ArtifactName: NuGet
+
+  - job: Linux
+    pool:
+      vmImage: ubuntu-16.04
+    steps:
+      - task: DotNetCoreCLI@2
+        displayName: Build tests
+        inputs:
+          command: build
+          projects: src/Abc.Zebus.MessageDsl.Tests/Abc.Zebus.MessageDsl.Tests.csproj
+          arguments: --configuration $(BuildConfiguration) --framework netcoreapp2.1
+
+      - task: DotNetCoreCLI@2
+        displayName: Build Integration
+        inputs:
+          command: build
+          projects: src/Abc.Zebus.MessageDsl.Build.Integration/Abc.Zebus.MessageDsl.Build.Integration.csproj
+          arguments: --configuration $(BuildConfiguration)
+
+      - task: DotNetCoreCLI@2
+        displayName: Test
+        inputs:
+          command: test
+          projects: src/Abc.Zebus.MessageDsl.Tests/Abc.Zebus.MessageDsl.Tests.csproj
+          arguments: --configuration $(BuildConfiguration) --framework netcoreapp2.1
