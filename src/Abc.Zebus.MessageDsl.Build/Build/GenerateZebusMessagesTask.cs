@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using Abc.Zebus.MessageDsl.Ast;
 using Abc.Zebus.MessageDsl.Generator;
 using JetBrains.Annotations;
@@ -47,22 +46,38 @@ namespace Abc.Zebus.MessageDsl.Build
                 return;
             }
 
-            var targetPath = inputFile.GetMetadata("GeneratorTargetPath") ?? throw new InvalidOperationException("No target path specified");
-            Directory.CreateDirectory(Path.GetDirectoryName(targetPath) ?? throw new InvalidOperationException("Invalid target directory"));
+            GenerateCSharpOutput(inputFile, contracts);
+            GenerateProtoOutput(inputFile, contracts);
+        }
+
+        private void GenerateCSharpOutput(ITaskItem inputFile, ParsedContracts contracts)
+        {
+            var targetPath = GetValidTargetFilePath(inputFile);
 
             var output = CSharpGenerator.Generate(contracts);
             File.WriteAllText(targetPath, output);
 
             LogDebug($"{inputFile.ItemSpec}: Translated {contracts.Messages.Count} message{(contracts.Messages.Count > 1 ? "s" : "")}");
+        }
 
-            if (ProtoGenerator.HasProtoOutput(contracts))
-            {
-                var protoFileName = Path.ChangeExtension(targetPath, "proto");
-                var protoText = ProtoGenerator.Generate(contracts);
-                File.WriteAllText(protoFileName, protoText);
+        private void GenerateProtoOutput(ITaskItem inputFile, ParsedContracts contracts)
+        {
+            if (!ProtoGenerator.HasProtoOutput(contracts))
+                return;
 
-                LogDebug($"{inputFile.ItemSpec}: Generated proto file");
-            }
+            var targetPath = Path.ChangeExtension(GetValidTargetFilePath(inputFile), "proto") ?? throw new InvalidOperationException("Invalid target path");
+
+            var output = ProtoGenerator.Generate(contracts);
+            File.WriteAllText(targetPath, output);
+
+            LogDebug($"{inputFile.ItemSpec}: Generated proto file");
+        }
+
+        private static string GetValidTargetFilePath(ITaskItem inputFile)
+        {
+            var targetPath = inputFile.GetMetadata("GeneratorTargetPath") ?? throw new InvalidOperationException("No target path specified");
+            Directory.CreateDirectory(Path.GetDirectoryName(targetPath) ?? throw new InvalidOperationException("Invalid target directory"));
+            return targetPath;
         }
 
         private void LogDebug(string message)
