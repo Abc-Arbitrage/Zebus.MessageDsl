@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using Abc.Zebus.MessageDsl.Ast;
 using Abc.Zebus.MessageDsl.Generator;
 using JetBrains.Annotations;
@@ -53,6 +54,15 @@ namespace Abc.Zebus.MessageDsl.Build
             File.WriteAllText(targetPath, output);
 
             LogDebug($"{inputFile.ItemSpec}: Translated {contracts.Messages.Count} message{(contracts.Messages.Count > 1 ? "s" : "")}");
+
+            if (ProtoGenerator.HasProtoOutput(contracts))
+            {
+                var protoFileName = Path.ChangeExtension(targetPath, "proto");
+                var protoText = ProtoGenerator.Generate(contracts);
+                File.WriteAllText(protoFileName, protoText);
+
+                LogDebug($"{inputFile.ItemSpec}: Generated proto file");
+            }
         }
 
         private void LogDebug(string message)

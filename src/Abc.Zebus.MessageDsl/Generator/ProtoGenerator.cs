@@ -12,6 +12,12 @@ namespace Abc.Zebus.MessageDsl.Generator
             Contracts = contracts;
         }
 
+        public static bool HasProtoOutput(ParsedContracts contracts)
+        {
+            return contracts.Messages.Any(i => i.Options.Proto)
+                   || contracts.Enums.Any(i => i.Options.Proto);
+        }
+
         public static string Generate(ParsedContracts contracts)
         {
             using (var generator = new ProtoGenerator(contracts))
