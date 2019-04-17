@@ -12,8 +12,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <ZebusDslVersion>0.3.0</ZebusDslVersion>
-    <ZebusDslBuildVersion>0.3.3</ZebusDslBuildVersion>
+    <ZebusDslVersion>0.4.0</ZebusDslVersion>
+    <ZebusDslBuildVersion>0.4.0</ZebusDslBuildVersion>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -40,7 +40,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="2018.3.0" PrivateAssets="all" />
+    <PackageReference Include="JetBrains.Annotations" Version="2019.1.1" PrivateAssets="all" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-18618-05" PrivateAssets="all" />
   </ItemGroup>
 
