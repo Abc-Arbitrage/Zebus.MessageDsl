@@ -493,6 +493,24 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
             ParseInvalid("Foo([ProtoMember('a')] int bar)");
         }
 
+        [Test]
+        public void should_return_source_text()
+        {
+            var contracts = ParseValid(@"  [Attr(42)] Foo ( int bar );  ");
+
+            var foo = contracts.Messages.ExpectedSingle();
+            foo.GetSourceText().ShouldEqual("[Attr(42)] Foo ( int bar )");
+            foo.GetSourceTextInterval().ShouldEqual(new TextInterval(2, 28));
+
+            var bar = foo.Parameters.ExpectedSingle();
+            bar.GetSourceText().ShouldEqual("int bar");
+            bar.GetSourceTextInterval().ShouldEqual(new TextInterval(19, 26));
+
+            var attr = foo.Attributes.ExpectedSingle();
+            attr.GetSourceText().ShouldEqual("Attr(42)");
+            attr.GetSourceTextInterval().ShouldEqual(new TextInterval(3, 11));
+        }
+
         private static ParsedContracts ParseValid(string definitionText)
         {
             var contracts = Parse(definitionText);
