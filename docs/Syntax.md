@@ -10,7 +10,19 @@ CreateStuffCommand(string name);
 StuffCreated(string name);
 ```
 
-Semicolons are optional. The ProtoBuf members and their tags will be deduced from the constructor (see below for details). Member names will be PascalCased.
+Whitespace characters are mostly not significant, so you can write a single message definition on several lines:
+
+```C#
+Foo(
+    int a,
+    int b,
+    int c
+);
+```
+
+Semicolons are optional at the end of a line.
+
+The ProtoBuf members and their tags will be deduced from the constructor (see below for details). Member names will be PascalCased.
 
 As a rule of thumb, when in doubt about how to write something, try the C# syntax.
 
@@ -42,7 +54,7 @@ The following namespaces are imported by default:
 
 ## Message types
 
-If the message name ends with `Command`, it will implement `ICommand`, otherwise it will implement `IEvent`. This can we overridden with the following syntax:
+If the message name ends with `Command`, it will implement `ICommand`, otherwise it will implement `IEvent`. This can be overridden with the following syntax:
 
 ```C#
 DoStuff(int id) : ICommand;
