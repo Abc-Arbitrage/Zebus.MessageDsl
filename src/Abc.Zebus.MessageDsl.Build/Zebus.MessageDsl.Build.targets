@@ -42,9 +42,4 @@
     <RemoveDir Directories="$(IntermediateOutputPath)ZebusMessages" />
   </Target>
 
-  <Target Name="GenerateZebusMessagesRiderDesignTime"
-          Condition="'$(BuildingByReSharper)' == 'true'"
-          AfterTargets="PrepareForBuild"
-          DependsOnTargets="GenerateZebusMessages" />
-
 </Project>
