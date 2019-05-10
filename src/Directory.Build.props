@@ -9,6 +9,8 @@
     <DefaultItemExcludes>$(DefaultItemExcludes);*.DotSettings;*.ncrunchproject;*.binlog</DefaultItemExcludes>
     <DebugType>embedded</DebugType>
     <IsPackable>false</IsPackable>
+    <Deterministic>true</Deterministic>
+    <DeterministicSourcePaths>true</DeterministicSourcePaths>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -24,14 +26,6 @@
     <Copyright>Copyright © ABC arbitrage 2019</Copyright>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <PackageOutputPath>$(MSBuildThisFileDirectory)..\output</PackageOutputPath>
-    <ContinuousIntegrationBuild Condition="'$(ContinuousIntegrationBuild)' == ''">false</ContinuousIntegrationBuild>
-    <ContinuousIntegrationBuild Condition="'$(TEAMCITY_VERSION)' != ''">true</ContinuousIntegrationBuild>
-    <ContinuousIntegrationBuild Condition="'$(TF_BUILD)' != ''">true</ContinuousIntegrationBuild>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="$(ContinuousIntegrationBuild)">
-    <Deterministic>true</Deterministic>
-    <DeterministicSourcePaths>true</DeterministicSourcePaths>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(NCrunch)' == '1'">
