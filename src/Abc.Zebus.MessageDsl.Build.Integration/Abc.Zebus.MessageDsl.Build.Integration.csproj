@@ -33,6 +33,12 @@
     </ZebusMessages>
   </ItemGroup>
 
+  <ItemGroup>
+    <ZebusMessages Remove="ExplicitItems\**\*.msg" />
+    <ZebusMessages Include="ExplicitItems\A\Explicit.msg" />
+    <ZebusMessages Include="ExplicitItems\B\Explicit.msg" />
+  </ItemGroup>
+
   <PropertyGroup>
     <ZebusMessagesBuildTaskPath Condition="'$(MSBuildRuntimeType)' != 'Core'">..\Abc.Zebus.MessageDsl.Build\bin\$(Configuration)\net46</ZebusMessagesBuildTaskPath>
     <ZebusMessagesBuildTaskPath Condition="'$(MSBuildRuntimeType)' == 'Core'">..\Abc.Zebus.MessageDsl.Build\bin\$(Configuration)\netstandard2.0</ZebusMessagesBuildTaskPath>
