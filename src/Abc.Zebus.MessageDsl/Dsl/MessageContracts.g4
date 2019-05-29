@@ -9,7 +9,7 @@ compileUnit
 definition
 	:	optionDefinition
 	|	usingDefinition
-	|	typeDefinition
+	|	messageDefinition
 	|	enumDefinition
 	|	SEP
 	;
@@ -44,11 +44,11 @@ enumMember
 enumValue
 	:	enumValueAtom ( enumValueBinaryOp enumValue )*
 	|	'~' enumValue
-	|   '(' enumValue ')'
+	|	'(' enumValue ')'
 	;
 
 enumValueBinaryOp
-	:   '|' | '&' | '^' | binaryShiftOp
+	:	'|' | '&' | '^' | binaryShiftOp
 	;
 
 binaryShiftOp
@@ -56,12 +56,12 @@ binaryShiftOp
 	;
 
 enumValueAtom
-	:   id
-	|   NUMBER
+	:	id
+	|	NUMBER
 	;
 
-typeDefinition
-	:	attributes messageName customModifier='!'?               parameterList interfaceList typeParamConstraintList  # messageDefinition
+messageDefinition
+	:	attributes messageName customModifier='!'? parameterList interfaceList typeParamConstraintList
 	;
 
 messageName
@@ -73,11 +73,11 @@ interfaceList
 	;
 
 parameterList
-	:	'(' (parameter (',' parameter)*)? ')'
+	:	'(' (parameterDefinition (',' parameterDefinition)*)? ')'
 	;
 	
-parameter
-	:	attributes typeName paramName=id optionalModifier='?'? ('=' defaultValue=literalValue)?   # parameterDefinition
+parameterDefinition
+	:	attributes typeName paramName=id optionalModifier='?'? ('=' defaultValue=literalValue)?
 	;
 
 typeParamConstraintList

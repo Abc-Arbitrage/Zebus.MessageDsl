@@ -133,7 +133,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
 
         public override AstNode VisitParameterList(ParameterListContext context)
         {
-            foreach (var param in context.parameter().Select(Visit).OfType<ParameterDefinition>())
+            foreach (var param in context.parameterDefinition().Select(Visit).OfType<ParameterDefinition>())
                 _currentMessage.Parameters.Add(param);
 
             return null;
@@ -277,7 +277,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
             return constraint;
         }
 
-        private void ProcessMessage(MessageDefinition message, TypeDefinitionContext context)
+        private void ProcessMessage(MessageDefinition message, MessageDefinitionContext context)
         {
             try
             {
