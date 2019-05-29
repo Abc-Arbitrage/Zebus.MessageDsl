@@ -79,19 +79,6 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
         }
 
         [Test]
-        public void should_handle_aliases()
-        {
-            var contracts = ParseValid(@"let alias = int id; FooCommand(alias, bool test);");
-
-            var msg = contracts.Messages.ExpectedSingle();
-            msg.Parameters.Count.ShouldEqual(2);
-            msg.Parameters[0].Name.ShouldEqual("id");
-            msg.Parameters[0].Type.ShouldEqual(new TypeName("int"));
-            msg.Parameters[1].Name.ShouldEqual("test");
-            msg.Parameters[1].Type.ShouldEqual(new TypeName("bool"));
-        }
-
-        [Test]
         public void should_handle_attributes()
         {
             var contracts = ParseValid(@"[Transient, System.ObsoleteAttribute(""No good"")] FooExecuted([LolAttribute] int id);");

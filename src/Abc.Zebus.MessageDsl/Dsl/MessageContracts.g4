@@ -9,7 +9,6 @@ compileUnit
 definition
 	:	optionDefinition
 	|	usingDefinition
-	|	aliasDefinition
 	|	typeDefinition
 	|	enumDefinition
 	|	SEP
@@ -32,10 +31,6 @@ pragmaValueToken
 
 usingDefinition
 	:	'using' namespace
-	;
-
-aliasDefinition
-	:	letKw='let' alias=id '=' parameter
 	;
 
 enumDefinition
@@ -83,7 +78,6 @@ parameterList
 	
 parameter
 	:	attributes typeName paramName=id optionalModifier='?'? ('=' defaultValue=literalValue)?   # parameterDefinition
-	|	attributes alias=id                                                                       # parameterAliasReference
 	;
 
 typeParamConstraintList
@@ -163,7 +157,7 @@ endOfLine
 
 id
 	:	escape='@'? name=ID { IsValidIdEscape($ctx.escape, $ctx.name) }?
-	|	escape='@'? name=('where' | 'let') { IsValidIdEscape($ctx.escape, $ctx.name) }?                            // Contextual keywords
+	|	escape='@'? name='where' { IsValidIdEscape($ctx.escape, $ctx.name) }?                                      // Contextual keywords
 	|	escape='@'  name=('true' | 'false' | 'null' | 'typeof' | 'class' | 'struct' | 'new' | 'using' | 'public')  // Keywords
 		{ IsValidIdEscape($ctx.escape, $ctx.name) }?     
 	;

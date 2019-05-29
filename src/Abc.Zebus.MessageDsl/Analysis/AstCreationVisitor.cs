@@ -11,7 +11,6 @@ namespace Abc.Zebus.MessageDsl.Analysis
     internal class AstCreationVisitor : MessageContractsBaseVisitor<AstNode>
     {
         private readonly ParsedContracts _contracts;
-        private readonly Dictionary<string, ParameterDefinition> _aliases = new Dictionary<string, ParameterDefinition>();
         private readonly HashSet<string> _definedContractOptions = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         private bool _hasMessages;
@@ -89,27 +88,6 @@ namespace Abc.Zebus.MessageDsl.Analysis
             return null;
         }
 
-        public override AstNode VisitAliasDefinition(AliasDefinitionContext context)
-        {
-            var aliasName = GetId(context.alias);
-
-            if (aliasName == null)
-            {
-                _contracts.AddError(context.alias, "Missing alias name");
-                return null;
-            }
-
-            if (_aliases.ContainsKey(aliasName))
-            {
-                _contracts.AddError(context.alias, "Duplicate alias: '{0}'", aliasName);
-                return null;
-            }
-
-            _aliases.Add(aliasName, Visit(context.parameter()) as ParameterDefinition);
-
-            return null;
-        }
-
         public override AstNode VisitEnumDefinition(EnumDefinitionContext context)
         {
             var enumDef = new EnumDefinition
@@ -173,32 +151,6 @@ namespace Abc.Zebus.MessageDsl.Analysis
                     DefaultValue = context.defaultValue?.GetText(),
                     ParseContext = context
                 };
-
-                ProcessAttributes(_currentParameter.Attributes, context.attributes());
-
-                return _currentParameter;
-            }
-            finally
-            {
-                _currentParameter = null;
-            }
-        }
-
-        public override AstNode VisitParameterAliasReference(ParameterAliasReferenceContext context)
-        {
-            try
-            {
-                var aliasName = GetId(context.alias);
-
-                _currentParameter = _aliases.GetValueOrDefault(aliasName);
-                if (_currentParameter == null)
-                {
-                    _contracts.AddError(context.alias, "Unknown alias: '{0}'", aliasName);
-                    return null;
-                }
-
-                _currentParameter = _currentParameter.Clone();
-                _currentParameter.Tag = 0;
 
                 ProcessAttributes(_currentParameter.Attributes, context.attributes());
 
