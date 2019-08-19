@@ -498,6 +498,26 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
             attr.GetSourceTextInterval().ShouldEqual(new TextInterval(3, 11));
         }
 
+        [Test]
+        public void should_return_two_messages()
+        {
+            // Arrange
+            var name = "Command";
+            var genericParam = "IEnumerable";
+            var definitionText = "using System.Collections;" + Environment.NewLine +
+                                 $"{name}()" + Environment.NewLine +
+                                 $"{name}<{genericParam}>()";
+
+            // Act
+            var contracts = ParseValid(definitionText);
+
+            // Assert
+            contracts.Messages.Count.ShouldEqual(2);
+            contracts.Messages[0].Name.ShouldEqual(name);
+            contracts.Messages[1].Name.ShouldEqual(name);
+            contracts.Messages[1].GenericParameters.ExpectedSingle().ShouldEqual(genericParam);
+        }
+
         private static ParsedContracts ParseValid(string definitionText)
         {
             var contracts = Parse(definitionText);
