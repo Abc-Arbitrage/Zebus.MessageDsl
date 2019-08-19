@@ -99,29 +99,29 @@ namespace Abc.Zebus.MessageDsl.Analysis
 
             foreach (var typeNode in types)
             {
-                var id = Id(typeNode);
+                var nameWithGenericArity = GetNameWithGenericArity(typeNode);
 
-                if (!seenTypes.Add(id))
-                    duplicates.Add(id);
+                if (!seenTypes.Add(nameWithGenericArity))
+                    duplicates.Add(nameWithGenericArity);
             }
 
             foreach (var typeNode in types)
             {
-                var id = Id(typeNode);
+                var nameWithGenericArity = GetNameWithGenericArity(typeNode);
 
-                if (duplicates.Contains(id))
-                    _contracts.AddError(typeNode.ParseContext, "Duplicate type id: {0}", id);
+                if (duplicates.Contains(nameWithGenericArity))
+                    _contracts.AddError(typeNode.ParseContext, "Duplicate type name: {0}", nameWithGenericArity);
             }
-        }
 
-        private string Id(AstNode node)
-        {
-            var name = ((INamedNode)node).Name;
-            if (node is MessageDefinition messageDef && messageDef.GenericParameters.Count > 0)
+            string GetNameWithGenericArity(AstNode node)
             {
-                name = $"{name}-{messageDef.GenericParameters.Count}";
+                var name = ((INamedNode)node).Name;
+                if (node is MessageDefinition messageDef && messageDef.GenericParameters.Count > 0)
+                {
+                    name = $"{name}`{messageDef.GenericParameters.Count}";
+                }
+                return name;
             }
-            return name;
         }
 
         public static bool IsValidTag(int tag)

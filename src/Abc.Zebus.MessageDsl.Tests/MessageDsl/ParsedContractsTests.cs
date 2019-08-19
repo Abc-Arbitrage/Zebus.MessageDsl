@@ -499,13 +499,12 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
         }
 
         [Test]
-        public void should_return_two_messages()
+        public void should_return_two_messages_with_same_name_but_different_arity()
         {
             // Arrange
-            var name = "Command";
-            var genericParam = "IEnumerable";
-            var definitionText = "using System.Collections;" + Environment.NewLine +
-                                 $"{name}()" + Environment.NewLine +
+            var name = "Foo";
+            var genericParam = "T";
+            var definitionText = $"{name}()" + Environment.NewLine +
                                  $"{name}<{genericParam}>()";
 
             // Act

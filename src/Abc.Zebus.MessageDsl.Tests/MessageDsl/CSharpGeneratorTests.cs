@@ -453,30 +453,25 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
         }
 
         [Test]
-        public void should_generate_two_class()
+        public void should_generate_two_classes_with_same_name_and_different_arity()
         {
             // Arrange
             var msg1 = new MessageDefinition();
             msg1.Name = "GenericCommand";
             var msg2 = new MessageDefinition();
             msg2.Name = msg1.Name;
-            msg2.GenericParameters.Add("IEnumerable");
+            msg2.GenericParameters.Add("T");
             var contracts = new ParsedContracts();
             contracts.Messages.Add(msg1);
             contracts.Messages.Add(msg2);
-            contracts.ImportedNamespaces.Add("System.Collections");
 
             // Act
             var result = GenerateRaw(contracts);
 
             // Assert
-            Console.WriteLine("----- START -----");
-            Console.WriteLine(result);
-            Console.WriteLine("-----  END  -----");
-
             contracts.Errors.ShouldBeEmpty();
             result.ShouldContain("public sealed partial class GenericCommand");
-            result.ShouldContain("public sealed partial class GenericCommand<IEnumerable>");
+            result.ShouldContain("public sealed partial class GenericCommand<T>");
         }
 
         protected override string GenerateRaw(ParsedContracts contracts) => CSharpGenerator.Generate(contracts);
