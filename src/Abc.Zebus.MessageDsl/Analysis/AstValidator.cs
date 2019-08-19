@@ -99,18 +99,28 @@ namespace Abc.Zebus.MessageDsl.Analysis
 
             foreach (var typeNode in types)
             {
-                var name = ((INamedNode)typeNode).Name;
+                var nameWithGenericArity = GetNameWithGenericArity(typeNode);
 
-                if (!seenTypes.Add(name))
-                    duplicates.Add(name);
+                if (!seenTypes.Add(nameWithGenericArity))
+                    duplicates.Add(nameWithGenericArity);
             }
 
             foreach (var typeNode in types)
             {
-                var name = ((INamedNode)typeNode).Name;
+                var nameWithGenericArity = GetNameWithGenericArity(typeNode);
 
-                if (duplicates.Contains(name))
-                    _contracts.AddError(typeNode.ParseContext, "Duplicate type name: {0}", name);
+                if (duplicates.Contains(nameWithGenericArity))
+                    _contracts.AddError(typeNode.ParseContext, "Duplicate type name: {0}", nameWithGenericArity);
+            }
+
+            string GetNameWithGenericArity(AstNode node)
+            {
+                var name = ((INamedNode)node).Name;
+                if (node is MessageDefinition messageDef && messageDef.GenericParameters.Count > 0)
+                {
+                    name = $"{name}`{messageDef.GenericParameters.Count}";
+                }
+                return name;
             }
         }
 
