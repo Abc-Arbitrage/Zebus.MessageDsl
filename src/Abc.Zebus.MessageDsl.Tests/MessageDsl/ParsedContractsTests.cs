@@ -501,20 +501,12 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
         [Test]
         public void should_return_two_messages_with_same_name_but_different_arity()
         {
-            // Arrange
-            var name = "Foo";
-            var genericParam = "T";
-            var definitionText = $"{name}()" + Environment.NewLine +
-                                 $"{name}<{genericParam}>()";
+            var contracts = ParseValid("Foo(); Foo<T>();");
 
-            // Act
-            var contracts = ParseValid(definitionText);
-
-            // Assert
             contracts.Messages.Count.ShouldEqual(2);
-            contracts.Messages[0].Name.ShouldEqual(name);
-            contracts.Messages[1].Name.ShouldEqual(name);
-            contracts.Messages[1].GenericParameters.ExpectedSingle().ShouldEqual(genericParam);
+            contracts.Messages[0].Name.ShouldEqual("Foo");
+            contracts.Messages[1].Name.ShouldEqual("Foo");
+            contracts.Messages[1].GenericParameters.ExpectedSingle().ShouldEqual("T");
         }
 
         private static ParsedContracts ParseValid(string definitionText)

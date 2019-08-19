@@ -117,9 +117,8 @@ namespace Abc.Zebus.MessageDsl.Analysis
             {
                 var name = ((INamedNode)node).Name;
                 if (node is MessageDefinition messageDef && messageDef.GenericParameters.Count > 0)
-                {
                     name = $"{name}`{messageDef.GenericParameters.Count}";
-                }
+                
                 return name;
             }
         }

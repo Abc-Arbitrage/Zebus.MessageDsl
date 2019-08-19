@@ -1,5 +1,4 @@
-﻿using System;
-using Abc.Zebus.MessageDsl.Ast;
+﻿using Abc.Zebus.MessageDsl.Ast;
 using Abc.Zebus.MessageDsl.Generator;
 using Abc.Zebus.MessageDsl.Tests.TestTools;
 using NUnit.Framework;
@@ -455,23 +454,17 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
         [Test]
         public void should_generate_two_classes_with_same_name_and_different_arity()
         {
-            // Arrange
-            var msg1 = new MessageDefinition();
-            msg1.Name = "GenericCommand";
-            var msg2 = new MessageDefinition();
-            msg2.Name = msg1.Name;
-            msg2.GenericParameters.Add("T");
-            var contracts = new ParsedContracts();
-            contracts.Messages.Add(msg1);
-            contracts.Messages.Add(msg2);
+            var code = GenerateRaw(new ParsedContracts
+            {
+                Messages =
+                {
+                    new MessageDefinition { Name = "GenericCommand" },
+                    new MessageDefinition { Name = "GenericCommand", GenericParameters = { "T" } }
+                }
+            });
 
-            // Act
-            var result = GenerateRaw(contracts);
-
-            // Assert
-            contracts.Errors.ShouldBeEmpty();
-            result.ShouldContain("public sealed partial class GenericCommand");
-            result.ShouldContain("public sealed partial class GenericCommand<T>");
+            code.ShouldContain("public sealed partial class GenericCommand");
+            code.ShouldContain("public sealed partial class GenericCommand<T>");
         }
 
         protected override string GenerateRaw(ParsedContracts contracts) => CSharpGenerator.Generate(contracts);
