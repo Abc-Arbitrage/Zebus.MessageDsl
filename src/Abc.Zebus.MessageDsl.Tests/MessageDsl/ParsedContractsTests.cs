@@ -229,6 +229,16 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
         }
 
         [Test]
+        public void should_parse_pragma_internal_and_public()
+        {
+            var contracts = ParseValid("#pragma internal\r\nMsgA()\r\n#pragma public\r\nMsgB()");
+            contracts.Messages[0].Options.Internal.ShouldBeTrue();
+            contracts.Messages[0].Options.Public.ShouldBeFalse();
+            contracts.Messages[1].Options.Internal.ShouldBeFalse();
+            contracts.Messages[1].Options.Public.ShouldBeTrue();
+        }
+
+        [Test]
         public void should_parse_custom_types()
         {
             var contracts = ParseValid(@"FooType!(int id);");

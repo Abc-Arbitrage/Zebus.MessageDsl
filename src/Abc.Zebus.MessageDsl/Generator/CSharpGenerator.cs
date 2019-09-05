@@ -113,7 +113,11 @@ namespace Abc.Zebus.MessageDsl.Generator
             foreach (var attribute in enumDef.Attributes)
                 WriteAttributeLine(attribute);
 
-            Writer.Write("public enum {0}", Identifier(enumDef.Name));
+            Writer.Write(
+                "{0} enum {1}",
+                enumDef.Options.Internal ? "internal" : "public",
+                Identifier(enumDef.Name)
+            );
 
             if (enumDef.UnderlyingType.NetType != "int")
                 Writer.Write(" : {0}", enumDef.UnderlyingType.NetType);
@@ -159,7 +163,11 @@ namespace Abc.Zebus.MessageDsl.Generator
             foreach (var attribute in message.Attributes)
                 WriteAttributeLine(attribute);
 
-            Writer.Write("public sealed partial class {0}", Identifier(message.Name));
+            Writer.Write(
+                "{0} sealed partial class {1}",
+                message.Options.Internal ? "internal" : "public",
+                Identifier(message.Name)
+            );
 
             if (message.GenericParameters.Count > 0)
             {
@@ -267,7 +275,7 @@ namespace Abc.Zebus.MessageDsl.Generator
 
             foreach (var attribute in param.Attributes)
                 WriteAttributeLine(attribute);
-            
+
             var isWritable = param.IsWritableProperty || message.Options.Mutable;
 
             Writer.Write("public {0} {1}", param.Type.NetType, Identifier(MemberCase(param.Name)));

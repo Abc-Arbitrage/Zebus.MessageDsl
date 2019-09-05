@@ -20,9 +20,9 @@ optionDefinition
 	;
 
 pragmaDefinition
-	:	name=ID
-	|	not='!' { !IsAtEndOfLine() }? name=ID
-	|	name=ID { !IsAtEndOfLine() }? '='? valueTokens+=pragmaValueToken*
+	:	name=pragmaValueToken
+	|	not='!' name=pragmaValueToken
+	|	name=pragmaValueToken { !IsAtEndOfLine() }? '='? valueTokens+=pragmaValueToken*
 	;
 
 pragmaValueToken
@@ -75,7 +75,7 @@ interfaceList
 parameterList
 	:	'(' (parameterDefinition (',' parameterDefinition)*)? ')'
 	;
-	
+
 parameterDefinition
 	:	attributes typeName paramName=id optionalModifier='?'? ('=' defaultValue=literalValue)?
 	;
@@ -157,9 +157,9 @@ endOfLine
 
 id
 	:	escape='@'? name=ID { IsValidIdEscape($ctx.escape, $ctx.name) }?
-	|	escape='@'? name='where' { IsValidIdEscape($ctx.escape, $ctx.name) }?                                      // Contextual keywords
-	|	escape='@'  name=('true' | 'false' | 'null' | 'typeof' | 'class' | 'struct' | 'new' | 'using' | 'public')  // Keywords
-		{ IsValidIdEscape($ctx.escape, $ctx.name) }?     
+	|	escape='@'? name='where' { IsValidIdEscape($ctx.escape, $ctx.name) }?                                                   // Contextual keywords
+	|	escape='@'  name=('true' | 'false' | 'null' | 'typeof' | 'class' | 'struct' | 'new' | 'using' | 'public' | 'internal')  // Keywords
+		{ IsValidIdEscape($ctx.escape, $ctx.name) }?
 	;
 
 // --- LEXER ---
@@ -208,7 +208,7 @@ COMMENT_INLINE
 WHITESPACE
 	:	[ \t\r\n]+ -> channel(HIDDEN)
 	;
-	
+
 UNKNOWN_CHAR
 	:	.
 	;

@@ -27,7 +27,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
 
         public override AstNode VisitPragmaDefinition(PragmaDefinitionContext context)
         {
-            var pragmaName = context.name?.Text;
+            var pragmaName = context.name?.token?.Text;
 
             var optionDescriptor = _contracts.Options.GetOptionDescriptor(pragmaName);
             if (optionDescriptor != null)

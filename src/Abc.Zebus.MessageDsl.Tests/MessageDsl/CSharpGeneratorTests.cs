@@ -467,6 +467,49 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
             code.ShouldContain("public sealed partial class GenericCommand<T>");
         }
 
+        [Test]
+        public void should_generate_internal_messages()
+        {
+            var code = Generate(new MessageDefinition
+            {
+                Name = "FooExecuted",
+                Options =
+                {
+                    Internal = true
+                }
+            });
+
+            code.ShouldContain("internal sealed partial class FooExecuted : IEvent");
+        }
+
+        [Test]
+        public void should_generate_internal_enums()
+        {
+            var code = Generate(new ParsedContracts
+            {
+                Enums =
+                {
+                    new EnumDefinition
+                    {
+                        Name = "Foo",
+                        Members =
+                        {
+                            new EnumMemberDefinition
+                            {
+                                Name = "Default"
+                            }
+                        },
+                        Options =
+                        {
+                            Internal = true
+                        }
+                    }
+                }
+            });
+
+            code.ShouldContain("internal enum Foo");
+        }
+
         protected override string GenerateRaw(ParsedContracts contracts) => CSharpGenerator.Generate(contracts);
     }
 }
