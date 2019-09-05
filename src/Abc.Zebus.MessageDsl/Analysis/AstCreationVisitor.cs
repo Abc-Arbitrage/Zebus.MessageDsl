@@ -4,6 +4,7 @@ using System.Linq;
 using Abc.Zebus.MessageDsl.Ast;
 using Abc.Zebus.MessageDsl.Dsl;
 using Abc.Zebus.MessageDsl.Support;
+using JetBrains.Annotations;
 using static Abc.Zebus.MessageDsl.Dsl.MessageContractsParser;
 
 namespace Abc.Zebus.MessageDsl.Analysis
@@ -97,6 +98,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
                 Options = _currentMemberOptions
             };
 
+            ProcessAccessModifier(enumDef, context.accessModifier());
             ProcessAttributes(enumDef.Attributes, context.attributes());
 
             if (context.underlyingType != null)
@@ -289,6 +291,8 @@ namespace Abc.Zebus.MessageDsl.Analysis
                 var nameContext = context.GetRuleContext<MessageNameContext>(0);
                 message.Name = GetId(nameContext.name);
 
+                ProcessAccessModifier(message, context.accessModifier());
+
                 foreach (var typeParamToken in nameContext._typeParams)
                 {
                     var paramId = GetId(typeParamToken);
@@ -309,6 +313,26 @@ namespace Abc.Zebus.MessageDsl.Analysis
             finally
             {
                 _currentMessage = null;
+            }
+        }
+
+        private static void ProcessAccessModifier(IMemberNode member, [CanBeNull] AccessModifierContext accessModifier)
+        {
+            if (accessModifier == null)
+            {
+                member.AccessModifier = member.Options.GetAccessModifier();
+                return;
+            }
+
+            switch (accessModifier.type.Type)
+            {
+                case MessageContractsLexer.KW_PUBLIC:
+                    member.AccessModifier = AccessModifier.Public;
+                    break;
+
+                case MessageContractsLexer.KW_INTERNAL:
+                    member.AccessModifier = AccessModifier.Internal;
+                    break;
             }
         }
 

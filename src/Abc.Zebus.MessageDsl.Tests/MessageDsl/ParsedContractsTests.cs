@@ -239,6 +239,22 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
         }
 
         [Test]
+        public void should_parse_access_modifiers()
+        {
+            var contracts = ParseValid("public MsgA(); internal MsgB();");
+            contracts.Messages[0].AccessModifier.ShouldEqual(AccessModifier.Public);
+            contracts.Messages[1].AccessModifier.ShouldEqual(AccessModifier.Internal);
+        }
+
+        [Test]
+        public void should_parse_access_modifiers_in_internal_scope()
+        {
+            var contracts = ParseValid("#pragma internal\r\npublic MsgA(); internal MsgB();");
+            contracts.Messages[0].AccessModifier.ShouldEqual(AccessModifier.Public);
+            contracts.Messages[1].AccessModifier.ShouldEqual(AccessModifier.Internal);
+        }
+
+        [Test]
         public void should_parse_custom_types()
         {
             var contracts = ParseValid(@"FooType!(int id);");

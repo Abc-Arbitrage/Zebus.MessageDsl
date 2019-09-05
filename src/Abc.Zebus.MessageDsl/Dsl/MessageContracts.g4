@@ -34,7 +34,7 @@ usingDefinition
 	;
 
 enumDefinition
-	:	attributes 'public'? 'enum' name=id (':' underlyingType=typeName)? '{' (enumMember (',' enumMember)* ','?)? '}'
+	:	attributes accessModifier? 'enum' name=id (':' underlyingType=typeName)? '{' (enumMember (',' enumMember)* ','?)? '}'
 	;
 
 enumMember
@@ -61,7 +61,12 @@ enumValueAtom
 	;
 
 messageDefinition
-	:	attributes messageName customModifier='!'? parameterList interfaceList typeParamConstraintList
+	:	attributes accessModifier? messageName customModifier='!'? parameterList interfaceList typeParamConstraintList
+	;
+
+accessModifier
+	:	type=KW_PUBLIC
+	|	type=KW_INTERNAL
 	;
 
 messageName
@@ -164,6 +169,9 @@ id
 
 // --- LEXER ---
 
+KW_PUBLIC : 'public';
+KW_INTERNAL : 'internal';
+
 ID
 	:	[a-zA-Z_][a-zA-Z0-9_]*
 	;
@@ -174,7 +182,7 @@ STRING
 	;
 
 CHAR
-	:	'\'' (UNICODE_ESCAPE | '\\' ~[\r\n] | ~[\'\\\r\n]) '\''
+	:	'\'' (UNICODE_ESCAPE | '\\' ~[\r\n] | ~['\\\r\n]) '\''
 	;
 
 NUMBER

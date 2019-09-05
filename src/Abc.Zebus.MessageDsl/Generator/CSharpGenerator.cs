@@ -115,7 +115,7 @@ namespace Abc.Zebus.MessageDsl.Generator
 
             Writer.Write(
                 "{0} enum {1}",
-                enumDef.Options.Internal ? "internal" : "public",
+                AccessModifier(enumDef.AccessModifier),
                 Identifier(enumDef.Name)
             );
 
@@ -165,7 +165,7 @@ namespace Abc.Zebus.MessageDsl.Generator
 
             Writer.Write(
                 "{0} sealed partial class {1}",
-                message.Options.Internal ? "internal" : "public",
+                AccessModifier(message.AccessModifier),
                 Identifier(message.Name)
             );
 
@@ -358,6 +358,21 @@ namespace Abc.Zebus.MessageDsl.Generator
 
             if (!string.IsNullOrEmpty(attribute.Parameters))
                 Writer.Write("({0})", attribute.Parameters);
+        }
+
+        private static string AccessModifier(AccessModifier accessModifier)
+        {
+            switch (accessModifier)
+            {
+                case Ast.AccessModifier.Public:
+                    return "public";
+
+                case Ast.AccessModifier.Internal:
+                    return "internal";
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(accessModifier), accessModifier, null);
+            }
         }
 
         private static string Identifier(string id) => CSharpSyntax.Identifier(id);

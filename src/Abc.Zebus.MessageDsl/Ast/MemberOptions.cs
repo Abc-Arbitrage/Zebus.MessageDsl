@@ -1,4 +1,6 @@
-﻿namespace Abc.Zebus.MessageDsl.Ast
+﻿using JetBrains.Annotations;
+
+namespace Abc.Zebus.MessageDsl.Ast
 {
     public class MemberOptions : OptionsBase
     {
@@ -10,8 +12,11 @@
         public bool Public
         {
             get => !Internal;
-            set => Internal = !value;
+            [UsedImplicitly] set => Internal = !value;
         }
+
+        public AccessModifier GetAccessModifier()
+            => Internal ? AccessModifier.Internal : AccessModifier.Public;
 
         public MemberOptions Clone() => (MemberOptions)MemberwiseClone();
     }

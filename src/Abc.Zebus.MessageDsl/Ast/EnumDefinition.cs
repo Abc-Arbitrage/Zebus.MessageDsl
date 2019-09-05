@@ -4,12 +4,13 @@ using System.Globalization;
 
 namespace Abc.Zebus.MessageDsl.Ast
 {
-    public class EnumDefinition : AstNode, INamedNode
+    public class EnumDefinition : AstNode, IMemberNode
     {
         private MemberOptions _options;
 
         public string Name { get; set; }
         public TypeName UnderlyingType { get; set; } = "int";
+        public AccessModifier AccessModifier { get; set; }
         public AttributeSet Attributes { get; } = new AttributeSet();
         public IList<EnumMemberDefinition> Members { get; } = new List<EnumMemberDefinition>();
 

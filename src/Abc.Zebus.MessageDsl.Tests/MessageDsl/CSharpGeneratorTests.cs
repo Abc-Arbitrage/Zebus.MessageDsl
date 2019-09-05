@@ -473,10 +473,7 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
             var code = Generate(new MessageDefinition
             {
                 Name = "FooExecuted",
-                Options =
-                {
-                    Internal = true
-                }
+                AccessModifier = AccessModifier.Internal
             });
 
             code.ShouldContain("internal sealed partial class FooExecuted : IEvent");
@@ -499,10 +496,7 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
                                 Name = "Default"
                             }
                         },
-                        Options =
-                        {
-                            Internal = true
-                        }
+                        AccessModifier = AccessModifier.Internal
                     }
                 }
             });
