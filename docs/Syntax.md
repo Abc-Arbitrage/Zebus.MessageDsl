@@ -151,6 +151,21 @@ Messages can be generic and have constraints:
 EntityUpdated<TEntity>(int entityId) where TEntity : IEntity;
 ```
 
+## Access modifiers
+
+Messages and enums are `public` by default, except in a `#pragma internal` scope. Accessibility can be set explicitly using the `public` or `internal` keywords:
+
+```C#
+internal Foo(int a);
+public Bar(int b);
+
+internal enum Color {
+    Red,
+    Green,
+    Blue
+}
+```
+
 ## Message options
 
 Use the `#pragma` directive to enable or disable flags on a specific scope. The scope starts at the directive.
@@ -171,6 +186,8 @@ The available options are:
 
  - `#pragma mutable` - specifies if messages are to be generated as mutable (public setters on properties) instead of read-only (private setters).
  - `#pragma proto` - declares messages for export to a `.proto` file.
+ - `#pragma internal` - sets the default accessibility to `internal`
+ - `#pragma public` - sets the default accessibility to `public` (default, same effect as `#pragma !internal`)
 
 ## Enums
 
