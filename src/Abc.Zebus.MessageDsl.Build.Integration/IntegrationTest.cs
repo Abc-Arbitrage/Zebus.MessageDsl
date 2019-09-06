@@ -11,6 +11,7 @@ namespace Abc.Zebus.MessageDsl.Build.Integration
             GC.KeepAlive(typeof(SomeMessage));
             GC.KeepAlive(typeof(InnerNamespace.InnerMessage));
             GC.KeepAlive(typeof(Abc.Zebus.CustomNamespace.HasCustomNamespace));
+            GC.KeepAlive(typeof(Abc.Zebus.CustomExplicitNamespace.HasCustomExplicitNamespace));
             GC.KeepAlive(typeof(ExplicitItems.A.ExplicitlyDefinedMessage));
             GC.KeepAlive(typeof(ExplicitItems.B.ExplicitlyDefinedMessage));
         }
