@@ -9,6 +9,7 @@ compileUnit
 definition
 	:	optionDefinition
 	|	usingDefinition
+	|	namespaceDefinition
 	|	messageDefinition
 	|	enumDefinition
 	|	SEP
@@ -31,6 +32,10 @@ pragmaValueToken
 
 usingDefinition
 	:	'using' namespace
+	;
+
+namespaceDefinition
+	:	'namespace' name=namespaceBase
 	;
 
 enumDefinition

@@ -79,6 +79,36 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
         }
 
         [Test]
+        public void should_handle_explicit_namespace()
+        {
+            var contracts = ParseValid("namespace Foo.Bar; Foo();");
+            contracts.ExplicitNamespace.ShouldBeTrue();
+            contracts.Namespace.ShouldEqual("Foo.Bar");
+        }
+
+        [Test]
+        public void should_handle_default_namespace()
+        {
+            var contracts = ParseValid("Foo();");
+            contracts.ExplicitNamespace.ShouldBeFalse();
+            contracts.Namespace.ShouldEqual("Some.Namespace");
+        }
+
+        [Test]
+        public void should_error_on_missing_namespace()
+        {
+            var contracts = ParseInvalid("namespace;");
+            ShouldContainError(contracts, "Mismatched input ';'");
+        }
+
+        [Test]
+        public void should_disallow_namespace_clause_after_messages()
+        {
+            var contracts = ParseInvalid("Foo(); namespace Foo.Bar;");
+            ShouldContainError(contracts, "top of the file");
+        }
+
+        [Test]
         public void should_handle_attributes()
         {
             var contracts = ParseValid(@"[Transient, System.ObsoleteAttribute(""No good"")] FooExecuted([LolAttribute] int id);");

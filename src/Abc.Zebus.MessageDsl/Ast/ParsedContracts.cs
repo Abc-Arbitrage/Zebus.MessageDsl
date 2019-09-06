@@ -12,7 +12,8 @@ namespace Abc.Zebus.MessageDsl.Ast
         public IList<EnumDefinition> Enums { get; } = new List<EnumDefinition>();
         public ContractOptions Options { get; } = new ContractOptions();
         public ICollection<SyntaxError> Errors { get; private set; } = new List<SyntaxError>();
-        public string Namespace { get; private set; }
+        public string Namespace { get; internal set; }
+        public bool ExplicitNamespace { get; internal set; }
         public ICollection<string> ImportedNamespaces { get; } = new HashSet<string>();
 
         public CommonTokenStream TokenStream { get; private set; }
@@ -48,10 +49,12 @@ namespace Abc.Zebus.MessageDsl.Ast
             return result;
         }
 
-        public static ParsedContracts Parse(string definitionText, string messagesNamespace)
+        public static ParsedContracts Parse(string definitionText, string defaultNamespace)
         {
             var result = CreateParseTree(definitionText);
-            result.Namespace = messagesNamespace;
+
+            if (!result.ExplicitNamespace)
+                result.Namespace = defaultNamespace;
 
             if (result.Errors.Count == 0)
             {

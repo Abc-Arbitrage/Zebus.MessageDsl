@@ -89,6 +89,23 @@ namespace Abc.Zebus.MessageDsl.Analysis
             return null;
         }
 
+        public override AstNode VisitNamespaceDefinition(NamespaceDefinitionContext context)
+        {
+            if (_contracts.ExplicitNamespace)
+            {
+                _contracts.AddError(context, "The namespace has already been set");
+                return null;
+            }
+
+            if (_hasMessages)
+                _contracts.AddError(context, "The namespace should be set at the top of the file");
+
+            var ns = context.name?.GetText();
+            _contracts.Namespace = ns;
+            _contracts.ExplicitNamespace = true;
+            return null;
+        }
+
         public override AstNode VisitEnumDefinition(EnumDefinitionContext context)
         {
             var enumDef = new EnumDefinition
