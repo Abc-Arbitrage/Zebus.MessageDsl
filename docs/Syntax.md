@@ -35,6 +35,18 @@ C# syntax is used for comments:
 /* This is an inline comment */
 ```
 
+## Namespace
+
+You can override the default namespace with a `namespace` clause:
+
+```C#
+namespace Foo.Bar;
+
+SomeMessage(int a);
+```
+
+Note that this clause is *not* followed by braces, and takes effect for the whole file - you can't define multiple namespaces in the same file.
+
 ## Namespace imports
 
 Write a `using` directive to import a namespace:
