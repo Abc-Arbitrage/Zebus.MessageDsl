@@ -74,7 +74,14 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
         [Test]
         public void should_disallow_usings_after_messages()
         {
-            var contracts = ParseInvalid(" Foo(); using Foo.Bar;");
+            var contracts = ParseInvalid("Foo(); using Foo.Bar;");
+            ShouldContainError(contracts, "top of the file");
+        }
+
+        [Test]
+        public void should_disallow_usings_after_enums()
+        {
+            var contracts = ParseInvalid("enum Foo { Bar }; using Foo.Bar;");
             ShouldContainError(contracts, "top of the file");
         }
 
@@ -105,6 +112,13 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
         public void should_disallow_namespace_clause_after_messages()
         {
             var contracts = ParseInvalid("Foo(); namespace Foo.Bar;");
+            ShouldContainError(contracts, "top of the file");
+        }
+
+        [Test]
+        public void should_disallow_namespace_clause_after_enums()
+        {
+            var contracts = ParseInvalid("enum Foo { Bar }; namespace Foo.Bar;");
             ShouldContainError(contracts, "top of the file");
         }
 

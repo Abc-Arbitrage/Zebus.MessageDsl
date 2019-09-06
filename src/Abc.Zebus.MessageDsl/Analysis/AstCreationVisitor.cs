@@ -14,7 +14,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
         private readonly ParsedContracts _contracts;
         private readonly HashSet<string> _definedContractOptions = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        private bool _hasMessages;
+        private bool _hasDefinitions;
         private MessageDefinition _currentMessage;
         private ParameterDefinition _currentParameter;
         private AttributeSet _currentAttributeSet;
@@ -39,7 +39,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
                     return null;
                 }
 
-                if (_hasMessages)
+                if (_hasDefinitions)
                     _contracts.AddError(context, "File-level pragma {0} should be set at the top of the file", pragmaName);
             }
             else
@@ -81,7 +81,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
 
         public override AstNode VisitUsingDefinition(UsingDefinitionContext context)
         {
-            if (_hasMessages)
+            if (_hasDefinitions)
                 _contracts.AddError(context, "using clauses should be set at the top of the file");
 
             var ns = context.@namespace().GetText();
@@ -97,7 +97,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
                 return null;
             }
 
-            if (_hasMessages)
+            if (_hasDefinitions)
                 _contracts.AddError(context, "The namespace should be set at the top of the file");
 
             var ns = context.name?.GetText();
@@ -108,6 +108,8 @@ namespace Abc.Zebus.MessageDsl.Analysis
 
         public override AstNode VisitEnumDefinition(EnumDefinitionContext context)
         {
+            _hasDefinitions = true;
+            
             var enumDef = new EnumDefinition
             {
                 ParseContext = context,
@@ -300,7 +302,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
         {
             try
             {
-                _hasMessages = true;
+                _hasDefinitions = true;
                 _currentMessage = message;
                 _currentMessage.ParseContext = context;
                 _currentMessage.Options = _currentMemberOptions;
