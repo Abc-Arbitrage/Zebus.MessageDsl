@@ -12,7 +12,7 @@ namespace Abc.Zebus.MessageDsl.Ast
         public IList<EnumDefinition> Enums { get; } = new List<EnumDefinition>();
         public ContractOptions Options { get; } = new ContractOptions();
         public ICollection<SyntaxError> Errors { get; private set; } = new List<SyntaxError>();
-        public string Namespace { get; internal set; }
+        public string Namespace { get; set; }
         public bool ExplicitNamespace { get; internal set; }
         public ICollection<string> ImportedNamespaces { get; } = new HashSet<string>();
 
@@ -93,8 +93,6 @@ namespace Abc.Zebus.MessageDsl.Ast
         [StringFormatMethod("format")]
         public void AddError(IToken token, string format, params object[] args)
             => AddError(token, string.Format(format, args));
-
-        // ReSharper disable once RedundantStringFormatCall
 
         [StringFormatMethod("format")]
         public void AddError(string format, params object[] args)
