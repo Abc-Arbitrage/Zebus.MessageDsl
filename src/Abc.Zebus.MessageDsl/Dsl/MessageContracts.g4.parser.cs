@@ -59,6 +59,9 @@ namespace Abc.Zebus.MessageDsl.Dsl
             return nameToken?.StartIndex == escapeToken.StopIndex + 1;
         }
 
+        private static bool IsValidIdEscape(IToken escapeToken, ParserRuleContext nameContext) 
+            => IsValidIdEscape(escapeToken, nameContext?.Start);
+
         private bool AreTwoNextTokensConsecutive()
         {
             var firstToken = _input.Lt(1);
@@ -71,7 +74,7 @@ namespace Abc.Zebus.MessageDsl.Dsl
         {
             public string GetValidatedId(ParsedContracts contracts)
             {
-                var id = name?.Text;
+                var id = nameId?.Text ?? nameCtxKw?.GetText() ?? nameKw?.GetText();
 
                 if (string.IsNullOrEmpty(id))
                     return string.Empty;

@@ -122,6 +122,7 @@ typeName
 
 typeNameBase
 	:	(namespace '.')? id
+	|	typeKeyword
 	|	typeNameBase '<' typeName (',' typeName)* '>'
 	;
 
@@ -166,10 +167,60 @@ endOfLine
 	;
 
 id
-	:	escape='@'? name=ID { IsValidIdEscape($ctx.escape, $ctx.name) }?
-	|	escape='@'? name='where' { IsValidIdEscape($ctx.escape, $ctx.name) }?                                                   // Contextual keywords
-	|	escape='@'  name=('true' | 'false' | 'null' | 'typeof' | 'class' | 'struct' | 'new' | 'using' | 'public' | 'internal')  // Keywords
-		{ IsValidIdEscape($ctx.escape, $ctx.name) }?
+	:	escape='@'? nameId=ID { IsValidIdEscape($ctx.escape, $ctx.nameId) }?
+	|	escape='@'? nameCtxKw=contextualKeyword { IsValidIdEscape($ctx.escape, $ctx.nameCtxKw) }?
+	|	escape='@'  nameKw=keyword { IsValidIdEscape($ctx.escape, $ctx.nameKw) }?
+	;
+
+keyword
+	:	'abstract' | 'as' | 'base' | 'bool'
+	|	'break' | 'byte' | 'case' | 'catch'
+	|	'char' | 'checked' | 'class' | 'const'
+	|	'continue' | 'decimal' | 'default' | 'delegate'
+	|	'do' | 'double' | 'else' | 'enum'
+	|	'event' | 'explicit' | 'extern' | 'false'
+	|	'finally' | 'fixed' | 'float' | 'for'
+	|	'foreach' | 'goto' | 'if' | 'implicit'
+	|	'in' | 'int' | 'interface' | 'internal'
+	|	'is' | 'lock' | 'long' | 'namespace'
+	|	'new' | 'null' | 'object' | 'operator'
+	|	'out' | 'override' | 'params' | 'private'
+	|	'protected' | 'public' | 'readonly' | 'ref'
+	|	'return' | 'sbyte' | 'sealed' | 'short'
+	|	'sizeof' | 'stackalloc' | 'static' | 'string'
+	|	'struct' | 'switch' | 'this' | 'throw'
+	|	'true' | 'try' | 'typeof' | 'uint'
+	|	'ulong' | 'unchecked' | 'unsafe' | 'ushort'
+	|	'using' | 'virtual' | 'void' | 'volatile'
+	|	'while'
+	;
+
+contextualKeyword
+	:	'add' | 'alias' | 'ascending' | 'async'
+	|	'await' | 'by' | 'descending' | 'dynamic'
+	|	'equals' | 'from' | 'get' | 'global'
+	|	'group' | 'into' | 'join' | 'let'
+	|	'nameof' | 'on' | 'orderby' | 'partial'
+	|	'remove' | 'select' | 'set' | 'value'
+	|	'var' | 'when' | 'where' | 'yield'
+	;
+
+typeKeyword
+	:	'bool'
+	|	'byte'
+	|	'char'
+	|	'decimal'
+	|	'double'
+	|	'float'
+	|	'int'
+	|	'long'
+	|	'object'
+	|	'sbyte'
+	|	'short'
+	|	'string'
+	|	'uint'
+	|	'ulong'
+	|	'ushort'
 	;
 
 // --- LEXER ---
