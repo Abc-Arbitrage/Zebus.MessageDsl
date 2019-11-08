@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="*.props;*.targets;*.xml" Pack="true" PackagePath="build" />
+    <Content Include="NuGet\**" Pack="true" PackagePath="%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
   <!-- MessageDsl -->

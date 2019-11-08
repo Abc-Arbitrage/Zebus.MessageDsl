@@ -17,7 +17,7 @@
     <ZebusMessagesEnabled>false</ZebusMessagesEnabled>
   </PropertyGroup>
 
-  <Import Project="..\Abc.Zebus.MessageDsl.Build\Zebus.MessageDsl.Build.props" />
+  <Import Project="..\Abc.Zebus.MessageDsl.Build\NuGet\build\Zebus.MessageDsl.Build.props" />
 
   <ItemGroup>
     <ProjectReference Include="..\Abc.Zebus.MessageDsl.Build\Abc.Zebus.MessageDsl.Build.csproj" />
@@ -41,11 +41,11 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <ZebusMessagesBuildTaskPath Condition="'$(MSBuildRuntimeType)' != 'Core'">..\Abc.Zebus.MessageDsl.Build\bin\$(Configuration)\net46</ZebusMessagesBuildTaskPath>
-    <ZebusMessagesBuildTaskPath Condition="'$(MSBuildRuntimeType)' == 'Core'">..\Abc.Zebus.MessageDsl.Build\bin\$(Configuration)\netstandard2.0</ZebusMessagesBuildTaskPath>
+    <ZebusMessagesBuildTaskPath Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)..\Abc.Zebus.MessageDsl.Build\bin\$(Configuration)\net46</ZebusMessagesBuildTaskPath>
+    <ZebusMessagesBuildTaskPath Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)..\Abc.Zebus.MessageDsl.Build\bin\$(Configuration)\netstandard2.0</ZebusMessagesBuildTaskPath>
   </PropertyGroup>
 
-  <Import Project="..\Abc.Zebus.MessageDsl.Build\Zebus.MessageDsl.Build.targets" />
+  <Import Project="..\Abc.Zebus.MessageDsl.Build\NuGet\build\Zebus.MessageDsl.Build.targets" />
 
   <Target Name="IntegrationTestInfo" BeforeTargets="CoreCompile">
     <Message Importance="High" Text=" " />
