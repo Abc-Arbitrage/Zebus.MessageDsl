@@ -67,6 +67,41 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
         }
 
         [Test]
+        public void should_call_constructor_for_Dictionary()
+        {
+            var code = Generate(new MessageDefinition
+            {
+                Name = "FooExecuted",
+                Parameters =
+                {
+                    new ParameterDefinition("Dictionary<string,int>", "fooDico"),
+                }
+            });
+
+            code.ShouldContainIgnoreIndent("[ProtoMember(1, IsRequired = true)]\n[ProtoMap(DisableMap = true)]\npublic Dictionary<string, int> FooDico { get; private set; }");
+            code.ShouldContain("using System.Collections.Generic;");
+            code.ShouldContain("FooDico = new Dictionary<string, int>();");
+        }
+
+        [Test]
+        public void should_call_constructor_for_HashSet()
+        {
+            var code = Generate(new MessageDefinition
+            {
+                Name = "FooExecuted",
+                Parameters =
+                {
+                    new ParameterDefinition("HashSet<string>", "fooHashSet"),
+                }
+            });
+
+            code.ShouldContainIgnoreIndent("[ProtoMember(1, IsRequired = false)]\npublic HashSet<string> FooHashSet { get; private set; }");
+            code.ShouldContain("using System.Collections.Generic;");
+            code.ShouldContain("FooHashSet = new HashSet<string>();");
+        }
+
+
+        [Test]
         public void should_generate_attributes()
         {
             var code = Generate(new MessageDefinition

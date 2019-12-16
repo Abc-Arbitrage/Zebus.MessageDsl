@@ -103,6 +103,10 @@ namespace Abc.Zebus.MessageDsl.Analysis
 
                 if (paramDef.Type.IsList)
                     _contracts.ImportedNamespaces.Add(typeof(List<>).Namespace);
+                else if (paramDef.Type.IsDictionary)
+                    _contracts.ImportedNamespaces.Add(typeof(Dictionary<,>).Namespace);
+                else if (paramDef.Type.IsHashSet)
+                    _contracts.ImportedNamespaces.Add(typeof(HashSet<>).Namespace);
             }
         }
 
