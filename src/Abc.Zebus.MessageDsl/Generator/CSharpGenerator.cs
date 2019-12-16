@@ -290,24 +290,14 @@ namespace Abc.Zebus.MessageDsl.Generator
         {
             Writer.Write("{0} {1}()", message.Options.Mutable ? "public" : "private", Identifier(message.Name));
 
-            var repeatedParams = message.Parameters
-                                        .Where(param => param.Type.IsRepeated)
-                                        .ToList();
-
-            if (repeatedParams.Count == 0)
-            {
-                Writer.WriteLine(" { }");
-                return;
-            }
-
             Writer.WriteLine();
             using (Block())
             {
-                foreach (var param in repeatedParams)
+                foreach (var param in message.Parameters)
                 {
                     if (param.Type.IsArray)
                         Writer.WriteLine("{0} = Array.Empty<{1}>();", Identifier(MemberCase(param.Name)), param.Type.GetRepeatedItemType().NetType);
-                    else if (param.Type.IsList)
+                    else if (param.Type.IsList || param.Type.IsDictionary || param.Type.IsHashSet)
                         Writer.WriteLine("{0} = new {1}();", Identifier(MemberCase(param.Name)), param.Type);
                 }
             }

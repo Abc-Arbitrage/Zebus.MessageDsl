@@ -81,7 +81,8 @@ namespace Abc.Zebus.MessageDsl.Ast
         public bool IsArray => NetType.EndsWith("[]");
         public bool IsList => NetType.StartsWith("List<") && NetType.EndsWith(">");
         public bool IsDictionary => NetType.StartsWith("Dictionary<") && NetType.EndsWith(">");
-        public bool IsRepeated => IsArray || IsList;
+        public bool IsHashSet => NetType.StartsWith("HashSet<") && NetType.EndsWith(">");
+        public bool IsRepeated => IsArray || IsList || IsHashSet;
 
         public bool IsNullable => NetType.EndsWith("?");
 
@@ -99,6 +100,9 @@ namespace Abc.Zebus.MessageDsl.Ast
 
             if (IsList)
                 return NetType.Substring("List<".Length, NetType.Length - "List<>".Length);
+
+            if (IsHashSet)
+                return NetType.Substring("HashSet<".Length, NetType.Length - "HashSet<>".Length);
 
             return null;
         }
