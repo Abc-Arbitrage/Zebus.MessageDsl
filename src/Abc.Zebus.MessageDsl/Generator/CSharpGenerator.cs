@@ -288,9 +288,8 @@ namespace Abc.Zebus.MessageDsl.Generator
 
         private void WriteDefaultConstructor(MessageDefinition message)
         {
-            Writer.Write("{0} {1}()", message.Options.Mutable ? "public" : "private", Identifier(message.Name));
+            Writer.WriteLine("{0} {1}()", message.Options.Mutable ? "public" : "private", Identifier(message.Name));
 
-            Writer.WriteLine();
             using (Block())
             {
                 foreach (var param in message.Parameters)
