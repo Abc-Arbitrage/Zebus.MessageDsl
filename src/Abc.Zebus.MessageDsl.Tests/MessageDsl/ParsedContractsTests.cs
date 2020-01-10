@@ -336,13 +336,34 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
             ParseValid(@"FooEvent(int[,][,,] foo)");
             ParseValid(@"FooEvent(int[,][,,][,,,] foo)");
             ParseValid(@"FooEvent(int?[,][,,][,,,] foo)");
+            ParseValid(@"FooEvent(List<int>[] foo)");
+            ParseValid(@"FooEvent(List<int?>[] foo)");
         }
 
         [Test]
         public void should_reject_invalid_types()
         {
             ParseInvalid("FooEvent(int?? id)");
-            ParseInvalid("FooEvent(int[]? id)");
+            ParseInvalid("FooEvent(int? ? id)");
+            ParseInvalid("FooEvent(int[]<int> id)");
+            ParseInvalid("FooEvent(int[]?<int> id)");
+            ParseInvalid("FooEvent(List<int><int> id)");
+            ParseInvalid("FooEvent(List<int>?<int> id)");
+            ParseInvalid("FooEvent(List?<int> id)");
+        }
+
+        [Test]
+        public void should_parse_nullable_reference_types()
+        {
+            ParseValid(@"FooEvent(string?[] foo)");
+            ParseValid(@"FooEvent(string[]? foo)");
+            ParseValid(@"FooEvent(string?[]? foo)");
+            ParseValid(@"FooEvent(string?[]?[] foo)");
+            ParseValid(@"FooEvent(string?[]?[]? foo)");
+            ParseValid(@"FooEvent(List<string?>[] foo)");
+            ParseValid(@"FooEvent(List<string>?[] id)");
+            ParseValid(@"FooEvent(List<string>[]? foo)");
+            ParseValid(@"FooEvent(List<string?>?[]? foo)");
         }
 
         [Test]

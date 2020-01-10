@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Abc.Zebus.MessageDsl.Ast;
+using Antlr4.Runtime;
 
 namespace Abc.Zebus.MessageDsl.Analysis
 {
@@ -41,6 +42,8 @@ namespace Abc.Zebus.MessageDsl.Analysis
                     _contracts.AddError(message.ParseContext, "Cannot generate .proto for generic message {0}", message.Name);
             }
 
+            ValidateAttributes(message.Attributes);
+
             foreach (var param in message.Parameters)
             {
                 var errorContext = param.ParseContext ?? message.ParseContext;
@@ -53,6 +56,9 @@ namespace Abc.Zebus.MessageDsl.Analysis
 
                 if (!tags.Add(param.Tag))
                     _contracts.AddError(errorContext, "Duplicate tag {0} on parameter {1}", param.Tag, param.Name);
+
+                ValidateType(param.Type, param.ParseContext);
+                ValidateAttributes(param.Attributes);
             }
 
             foreach (var constraint in message.GenericConstraints)
@@ -67,7 +73,13 @@ namespace Abc.Zebus.MessageDsl.Analysis
 
                 if (constraint.IsClass && constraint.IsStruct)
                     _contracts.AddError(errorContext, "Constraint on '{0}' cannot require both class and struct", constraint.GenericParameterName);
+
+                foreach (var constraintType in constraint.Types)
+                    ValidateType(constraintType, message.ParseContext);
             }
+
+            foreach (var iface in message.Interfaces)
+                ValidateType(iface, message.ParseContext);
         }
 
         private void ValidateEnum(EnumDefinition enumDef)
@@ -78,13 +90,29 @@ namespace Abc.Zebus.MessageDsl.Analysis
             if (enumDef.Options.Proto && enumDef.UnderlyingType.NetType != "int")
                 _contracts.AddError(enumDef.ParseContext, "An enum used in a proto file must have an underlying type of int");
 
+            ValidateAttributes(enumDef.Attributes);
+
             var definedMembers = new HashSet<string>();
 
             foreach (var member in enumDef.Members)
             {
                 if (!definedMembers.Add(member.Name))
                     _contracts.AddError(member.ParseContext, "Duplicate enum member: {0}", member.Name);
+
+                ValidateAttributes(member.Attributes);
             }
+        }
+
+        private void ValidateAttributes(AttributeSet attributes)
+        {
+            foreach (var attribute in attributes)
+                ValidateType(attribute.TypeName, attribute.ParseContext);
+        }
+
+        private void ValidateType(TypeName type, ParserRuleContext? context)
+        {
+            if (type.NetType.Contains("??"))
+                _contracts.AddError(context, "Invalid type: {0}", type.NetType);
         }
 
         private void DetectDuplicateTypes()
@@ -118,7 +146,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
                 var name = ((INamedNode)node).Name;
                 if (node is MessageDefinition messageDef && messageDef.GenericParameters.Count > 0)
                     name = $"{name}`{messageDef.GenericParameters.Count}";
-                
+
                 return name;
             }
         }

@@ -116,14 +116,14 @@ namespaceBase
 
 typeName
 	:	typeNameBase
-	|	typeNameBase '?'
+	|	typeName '?'
 	|	typeName '[' ','* ']'
+	|	typeNameBase '<' typeName (',' typeName)* '>'
 	;
 
 typeNameBase
 	:	(namespace '.')? id
 	|	typeKeyword
-	|	typeNameBase '<' typeName (',' typeName)* '>'
 	;
 
 literalValue
