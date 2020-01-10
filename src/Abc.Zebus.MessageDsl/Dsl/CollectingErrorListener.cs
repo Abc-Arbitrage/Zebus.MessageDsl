@@ -56,7 +56,7 @@ namespace Abc.Zebus.MessageDsl.Dsl
             Errors.Add(new SyntaxError(msg, offendingSymbol));
         }
 
-        private static string GetTokenDisplay(IToken token)
+        private static string GetTokenDisplay(IToken? token)
         {
             if (token == null)
                 return "(unknown)";

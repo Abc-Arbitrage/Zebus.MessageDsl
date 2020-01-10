@@ -8,7 +8,7 @@ namespace Abc.Zebus.MessageDsl.Dsl
         public int CharacterInLine { get; }
         public string Message { get; }
 
-        public SyntaxError(string message, IToken startToken = null)
+        public SyntaxError(string message, IToken? startToken = null)
         {
             Message = message;
 

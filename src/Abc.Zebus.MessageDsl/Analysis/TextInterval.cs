@@ -55,7 +55,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
         public bool Equals(TextInterval other)
             => Start == other.Start && End == other.End;
 
-        public override bool Equals(object obj) => obj is TextInterval interval && Equals(interval);
+        public override bool Equals(object? obj) => obj is TextInterval interval && Equals(interval);
         public override int GetHashCode() => unchecked((Start * 397) ^ End);
 
         public static bool operator ==(TextInterval left, TextInterval right) => left.Equals(right);

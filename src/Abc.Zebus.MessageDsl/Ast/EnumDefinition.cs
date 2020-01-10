@@ -6,9 +6,9 @@ namespace Abc.Zebus.MessageDsl.Ast
 {
     public class EnumDefinition : AstNode, IMemberNode
     {
-        private MemberOptions _options;
+        private MemberOptions? _options;
 
-        public string Name { get; set; }
+        public string Name { get; set; } = default!;
         public TypeName UnderlyingType { get; set; } = "int";
         public AccessModifier AccessModifier { get; set; }
         public AttributeSet Attributes { get; } = new AttributeSet();
@@ -16,7 +16,7 @@ namespace Abc.Zebus.MessageDsl.Ast
 
         public MemberOptions Options
         {
-            get => _options ?? (_options = new MemberOptions());
+            get => _options ??= new MemberOptions();
             set => _options = value;
         }
 
@@ -41,7 +41,7 @@ namespace Abc.Zebus.MessageDsl.Ast
             }
         }
 
-        internal object GetValidUnderlyingValue(string value)
+        internal object? GetValidUnderlyingValue(string? value)
         {
             if (string.IsNullOrEmpty(value))
                 return null;

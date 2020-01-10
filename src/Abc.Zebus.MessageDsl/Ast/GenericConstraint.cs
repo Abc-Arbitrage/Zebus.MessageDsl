@@ -4,7 +4,7 @@ namespace Abc.Zebus.MessageDsl.Ast
 {
     public class GenericConstraint : AstNode
     {
-        public string GenericParameterName { get; set; }
+        public string GenericParameterName { get; set; } = default!;
 
         public bool IsClass { get; set; }
         public bool IsStruct { get; set; }

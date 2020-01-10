@@ -8,8 +8,8 @@ namespace Abc.Zebus.MessageDsl.Generator
 {
     public abstract class GeneratorBase : IDisposable
     {
-        protected static readonly string GeneratorName = typeof(GeneratorBase).Assembly.GetName().Name;
-        protected static readonly Version GeneratorVersion = typeof(GeneratorBase).Assembly.GetName().Version;
+        protected static readonly string GeneratorName = typeof(GeneratorBase).Assembly.GetName().Name!;
+        protected static readonly Version GeneratorVersion = typeof(GeneratorBase).Assembly.GetName().Version!;
 
         private readonly StringBuilder _stringBuilder;
         protected readonly IndentedTextWriter Writer;

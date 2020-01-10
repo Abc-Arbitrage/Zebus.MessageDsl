@@ -5,7 +5,7 @@ namespace Abc.Zebus.MessageDsl.Support
 {
     internal class Disposable : IDisposable
     {
-        private Action _onDispose;
+        private Action? _onDispose;
 
         private Disposable(Action onDispose)
         {

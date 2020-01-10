@@ -11,24 +11,34 @@ namespace Abc.Zebus.MessageDsl.Ast
         public IList<MessageDefinition> Messages { get; } = new List<MessageDefinition>();
         public IList<EnumDefinition> Enums { get; } = new List<EnumDefinition>();
         public ContractOptions Options { get; } = new ContractOptions();
-        public ICollection<SyntaxError> Errors { get; private set; } = new List<SyntaxError>();
-        public string Namespace { get; set; }
+        public ICollection<SyntaxError> Errors { get; }
+        public string Namespace { get; set; } = string.Empty;
         public bool ExplicitNamespace { get; internal set; }
         public ICollection<string> ImportedNamespaces { get; } = new HashSet<string>();
 
-        public CommonTokenStream TokenStream { get; private set; }
-        public MessageContractsParser.CompileUnitContext ParseTree { get; private set; }
+        public CommonTokenStream TokenStream { get; }
+        public MessageContractsParser.CompileUnitContext ParseTree { get; }
 
         public bool IsValid => Errors.Count == 0;
 
         internal ParsedContracts()
         {
+            // For unit tests
+
+            TokenStream = default!;
+            ParseTree = default!;
+            Errors = new List<SyntaxError>();
+        }
+
+        private ParsedContracts(CommonTokenStream tokenStream, MessageContractsParser.CompileUnitContext parseTree, ICollection<SyntaxError> errors)
+        {
+            TokenStream = tokenStream;
+            ParseTree = parseTree;
+            Errors = errors;
         }
 
         public static ParsedContracts CreateParseTree(string definitionText)
         {
-            var result = new ParsedContracts();
-
             var errorListener = new CollectingErrorListener();
 
             var input = new AntlrInputStream(definitionText);
@@ -37,16 +47,15 @@ namespace Abc.Zebus.MessageDsl.Ast
             lexer.RemoveErrorListeners();
             lexer.AddErrorListener(errorListener);
 
-            result.TokenStream = new CommonTokenStream(lexer);
+            var tokenStream = new CommonTokenStream(lexer);
 
-            var parser = new MessageContractsParser(result.TokenStream);
+            var parser = new MessageContractsParser(tokenStream);
             parser.RemoveErrorListeners();
             parser.AddErrorListener(errorListener);
 
-            result.ParseTree = parser.compileUnit();
-            result.Errors = errorListener.Errors;
+            var parseTree = parser.compileUnit();
 
-            return result;
+            return new ParsedContracts(tokenStream, parseTree, errorListener.Errors);
         }
 
         public static ParsedContracts Parse(string definitionText, string defaultNamespace)
@@ -80,22 +89,22 @@ namespace Abc.Zebus.MessageDsl.Ast
         public void AddError(string message)
             => Errors.Add(new SyntaxError(message));
 
-        public void AddError(IToken token, string message)
+        public void AddError(IToken? token, string message)
             => Errors.Add(new SyntaxError(message, token));
 
-        public void AddError(ParserRuleContext context, string message)
+        public void AddError(ParserRuleContext? context, string message)
             => AddError(context?.Start, message);
 
         [StringFormatMethod("format")]
-        public void AddError(ParserRuleContext context, string format, params object[] args)
+        public void AddError(ParserRuleContext? context, string format, params object?[] args)
             => AddError(context, string.Format(format, args));
 
         [StringFormatMethod("format")]
-        public void AddError(IToken token, string format, params object[] args)
+        public void AddError(IToken? token, string format, params object?[] args)
             => AddError(token, string.Format(format, args));
 
         [StringFormatMethod("format")]
-        public void AddError(string format, params object[] args)
+        public void AddError(string format, params object?[] args)
             => AddError(string.Format(format, args));
     }
 }

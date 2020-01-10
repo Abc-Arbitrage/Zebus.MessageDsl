@@ -2,7 +2,7 @@
 {
     public class AttributeDefinition : AstNode
     {
-        private TypeName _typeName;
+        private TypeName _typeName = default!;
 
         public TypeName TypeName
         {
@@ -10,9 +10,9 @@
             private set => _typeName = NormalizeAttributeTypeName(value);
         }
 
-        public string Parameters { get; set; }
+        public string? Parameters { get; set; }
 
-        public AttributeDefinition(TypeName attributeType, string parameters = null)
+        public AttributeDefinition(TypeName attributeType, string? parameters = null)
         {
             TypeName = attributeType;
             Parameters = parameters;
@@ -22,7 +22,7 @@
         {
             const string attributeSuffix = "Attribute";
 
-            if (typeName != null && typeName.NetType.EndsWith(attributeSuffix))
+            if (typeName.NetType.EndsWith(attributeSuffix))
                 return typeName.NetType.Substring(0, typeName.NetType.Length - attributeSuffix.Length);
 
             return typeName;

@@ -3,6 +3,7 @@
     <TargetFrameworks>net471;netcoreapp2.1</TargetFrameworks>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\Abc.Zebus.MessageDsl\Abc.Zebus.MessageDsl.snk</AssemblyOriginatorKeyFile>
+    <Nullable>disable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

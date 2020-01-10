@@ -11,7 +11,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
         {
             var writer = new IndentedTextWriter(new StringWriter());
             DumpParseTree(contracts.ParseTree, writer);
-            return writer.InnerWriter.ToString();
+            return writer.InnerWriter.ToString() ?? string.Empty;
         }
 
         private static void DumpParseTree(IParseTree tree, IndentedTextWriter writer)

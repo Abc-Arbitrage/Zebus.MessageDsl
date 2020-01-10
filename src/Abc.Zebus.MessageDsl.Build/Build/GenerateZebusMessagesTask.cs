@@ -6,6 +6,8 @@ using JetBrains.Annotations;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
+#nullable enable
+
 namespace Abc.Zebus.MessageDsl.Build
 {
     [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
@@ -14,7 +16,7 @@ namespace Abc.Zebus.MessageDsl.Build
         private const string _logSubcategory = "Zebus.MessageDsl";
 
         [Required]
-        public ITaskItem[] InputFiles { get; set; }
+        public ITaskItem[] InputFiles { get; set; } = default!;
 
         public override bool Execute()
         {

@@ -3,10 +3,10 @@
     public class ParameterDefinition : AstNode, INamedNode
     {
         public int Tag { get; set; }
-        public string Name { get; set; }
-        public TypeName Type { get; set; }
+        public string Name { get; set; } = default!;
+        public TypeName Type { get; set; } = default!;
         public bool IsMarkedOptional { get; set; }
-        public string DefaultValue { get; set; }
+        public string? DefaultValue { get; set; }
         public bool IsWritableProperty { get; set; }
         public AttributeSet Attributes { get; private set; } = new AttributeSet();
 

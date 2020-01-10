@@ -15,7 +15,8 @@ namespace Abc.Zebus.MessageDsl.Ast
             return Attributes.FirstOrDefault(attr => Equals(attr.TypeName, attributeType));
         }
 
-        public bool HasAttribute(TypeName attributeType) => GetAttribute(attributeType) != null;
+        public bool HasAttribute(TypeName attributeType)
+            => GetAttribute(attributeType) != null;
 
         public void AddFlagAttribute(TypeName attributeType)
         {

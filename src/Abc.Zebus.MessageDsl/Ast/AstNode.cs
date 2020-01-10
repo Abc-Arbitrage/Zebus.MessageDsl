@@ -6,7 +6,7 @@ namespace Abc.Zebus.MessageDsl.Ast
 {
     public class AstNode
     {
-        internal ParserRuleContext ParseContext { get; set; }
+        internal ParserRuleContext? ParseContext { get; set; }
 
         public TextInterval GetSourceTextInterval()
         {

@@ -20,10 +20,8 @@ namespace Abc.Zebus.MessageDsl.Generator
 
         public static string Generate(ParsedContracts contracts)
         {
-            using (var generator = new ProtoGenerator(contracts))
-            {
-                return generator.Generate();
-            }
+            using var generator = new ProtoGenerator(contracts);
+            return generator.Generate();
         }
 
         private string Generate()
@@ -133,7 +131,7 @@ namespace Abc.Zebus.MessageDsl.Generator
                 WriteFieldOption("deprecated", "true", ref first);
 
             if (param.RoutingPosition != null)
-                WriteFieldOption("(servicebus.routing_position)", param.RoutingPosition.ToString(), ref first);
+                WriteFieldOption("(servicebus.routing_position)", param.RoutingPosition.ToString()!, ref first);
 
             if (!first)
                 Writer.Write("]");

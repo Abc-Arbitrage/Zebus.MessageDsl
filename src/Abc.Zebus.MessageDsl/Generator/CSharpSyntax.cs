@@ -38,7 +38,7 @@ namespace Abc.Zebus.MessageDsl.Generator
         // https://msdn.microsoft.com/en-us/library/aa664669.aspx
         private static readonly Regex _unicodeEscapeSequence = new Regex(@"\\u(?<hex>[0-9a-fA-F]{4})|\\U(?<hex>[0-9a-fA-F]{8})", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
-        public static string Identifier(string id)
+        public static string Identifier(string? id)
         {
             return _tokenRe.Replace(id ?? string.Empty, match =>
             {
@@ -49,7 +49,7 @@ namespace Abc.Zebus.MessageDsl.Generator
             });
         }
 
-        public static bool IsValidNamespace(string ns)
+        public static bool IsValidNamespace(string? ns)
         {
             if (string.IsNullOrEmpty(ns))
                 return false;
@@ -58,7 +58,7 @@ namespace Abc.Zebus.MessageDsl.Generator
                      .All(IsValidIdentifier);
         }
 
-        public static bool IsValidIdentifier(string id)
+        public static bool IsValidIdentifier(string? id)
         {
             if (string.IsNullOrEmpty(id))
                 return false;

@@ -22,10 +22,8 @@ namespace Abc.Zebus.MessageDsl.Generator
 
         public static string Generate(ParsedContracts contracts)
         {
-            using (var generator = new CSharpGenerator(contracts))
-            {
-                return generator.Generate();
-            }
+            using var generator = new CSharpGenerator(contracts);
+            return generator.Generate();
         }
 
         private string Generate()
@@ -295,7 +293,7 @@ namespace Abc.Zebus.MessageDsl.Generator
                 foreach (var param in message.Parameters)
                 {
                     if (param.Type.IsArray)
-                        Writer.WriteLine("{0} = Array.Empty<{1}>();", Identifier(MemberCase(param.Name)), param.Type.GetRepeatedItemType().NetType);
+                        Writer.WriteLine("{0} = Array.Empty<{1}>();", Identifier(MemberCase(param.Name)), param.Type.GetRepeatedItemType()!.NetType);
                     else if (param.Type.IsList || param.Type.IsDictionary || param.Type.IsHashSet)
                         Writer.WriteLine("{0} = new {1}();", Identifier(MemberCase(param.Name)), param.Type);
                 }

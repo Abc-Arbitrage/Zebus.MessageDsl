@@ -4,20 +4,19 @@ using System.Linq;
 using Abc.Zebus.MessageDsl.Ast;
 using Abc.Zebus.MessageDsl.Dsl;
 using Abc.Zebus.MessageDsl.Support;
-using JetBrains.Annotations;
 using static Abc.Zebus.MessageDsl.Dsl.MessageContractsParser;
 
 namespace Abc.Zebus.MessageDsl.Analysis
 {
-    internal class AstCreationVisitor : MessageContractsBaseVisitor<AstNode>
+    internal class AstCreationVisitor : MessageContractsBaseVisitor<AstNode?>
     {
         private readonly ParsedContracts _contracts;
         private readonly HashSet<string> _definedContractOptions = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         private bool _hasDefinitions;
-        private MessageDefinition _currentMessage;
-        private ParameterDefinition _currentParameter;
-        private AttributeSet _currentAttributeSet;
+        private MessageDefinition? _currentMessage;
+        private ParameterDefinition? _currentParameter;
+        private AttributeSet? _currentAttributeSet;
         private MemberOptions _currentMemberOptions;
 
         public AstCreationVisitor(ParsedContracts contracts)
@@ -26,9 +25,15 @@ namespace Abc.Zebus.MessageDsl.Analysis
             _currentMemberOptions = new MemberOptions();
         }
 
-        public override AstNode VisitPragmaDefinition(PragmaDefinitionContext context)
+        public override AstNode? VisitPragmaDefinition(PragmaDefinitionContext context)
         {
             var pragmaName = context.name?.token?.Text;
+
+            if (string.IsNullOrEmpty(pragmaName))
+            {
+                _contracts.AddError(context, "Missing pragma name");
+                return null;
+            }
 
             var optionDescriptor = _contracts.Options.GetOptionDescriptor(pragmaName);
             if (optionDescriptor != null)
@@ -79,7 +84,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
             return null;
         }
 
-        public override AstNode VisitUsingDefinition(UsingDefinitionContext context)
+        public override AstNode? VisitUsingDefinition(UsingDefinitionContext context)
         {
             if (_hasDefinitions)
                 _contracts.AddError(context, "using clauses should be set at the top of the file");
@@ -89,7 +94,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
             return null;
         }
 
-        public override AstNode VisitNamespaceDefinition(NamespaceDefinitionContext context)
+        public override AstNode? VisitNamespaceDefinition(NamespaceDefinitionContext context)
         {
             if (_contracts.ExplicitNamespace)
             {
@@ -101,15 +106,22 @@ namespace Abc.Zebus.MessageDsl.Analysis
                 _contracts.AddError(context, "The namespace should be set at the top of the file");
 
             var ns = context.name?.GetText();
+
+            if (string.IsNullOrEmpty(ns))
+            {
+                _contracts.AddError(context, "Missing namespace name");
+                return null;
+            }
+
             _contracts.Namespace = ns;
             _contracts.ExplicitNamespace = true;
             return null;
         }
 
-        public override AstNode VisitEnumDefinition(EnumDefinitionContext context)
+        public override AstNode? VisitEnumDefinition(EnumDefinitionContext context)
         {
             _hasDefinitions = true;
-            
+
             var enumDef = new EnumDefinition
             {
                 ParseContext = context,
@@ -141,7 +153,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
             return enumDef;
         }
 
-        public override AstNode VisitMessageDefinition(MessageDefinitionContext context)
+        public override AstNode? VisitMessageDefinition(MessageDefinitionContext context)
         {
             var message = new MessageDefinition
             {
@@ -152,15 +164,15 @@ namespace Abc.Zebus.MessageDsl.Analysis
             return message;
         }
 
-        public override AstNode VisitParameterList(ParameterListContext context)
+        public override AstNode? VisitParameterList(ParameterListContext context)
         {
             foreach (var param in context.parameterDefinition().Select(Visit).OfType<ParameterDefinition>())
-                _currentMessage.Parameters.Add(param);
+                _currentMessage!.Parameters.Add(param);
 
             return null;
         }
 
-        public override AstNode VisitParameterDefinition(ParameterDefinitionContext context)
+        public override AstNode? VisitParameterDefinition(ParameterDefinitionContext context)
         {
             try
             {
@@ -183,7 +195,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
             }
         }
 
-        public override AstNode VisitCustomAttribute(CustomAttributeContext context)
+        public override AstNode? VisitCustomAttribute(CustomAttributeContext context)
         {
             if (_currentAttributeSet == null)
                 return null;
@@ -200,7 +212,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
             return attr;
         }
 
-        public override AstNode VisitExplicitTag(ExplicitTagContext context)
+        public override AstNode? VisitExplicitTag(ExplicitTagContext context)
         {
             if (_currentParameter == null)
             {
@@ -230,27 +242,27 @@ namespace Abc.Zebus.MessageDsl.Analysis
             return null;
         }
 
-        public override AstNode VisitTypeParamConstraintList(TypeParamConstraintListContext context)
+        public override AstNode? VisitTypeParamConstraintList(TypeParamConstraintListContext context)
         {
             foreach (var constraintContext in context.typeParamConstraint())
             {
                 if (Visit(constraintContext) is GenericConstraint constraint)
-                    _currentMessage.GenericConstraints.Add(constraint);
+                    _currentMessage!.GenericConstraints.Add(constraint);
             }
 
             return null;
         }
 
-        public override AstNode VisitInterfaceList(InterfaceListContext context)
+        public override AstNode? VisitInterfaceList(InterfaceListContext context)
         {
-            _currentMessage.Interfaces.AddRange(
+            _currentMessage!.Interfaces.AddRange(
                 context.GetRuleContexts<TypeNameContext>()
                        .Select(typeContext => new TypeName(typeContext.GetText())));
 
             return null;
         }
 
-        public override AstNode VisitTypeParamConstraint(TypeParamConstraintContext context)
+        public override AstNode? VisitTypeParamConstraint(TypeParamConstraintContext context)
         {
             var constraint = new GenericConstraint
             {
@@ -335,7 +347,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
             }
         }
 
-        private static void ProcessAccessModifier(IMemberNode member, [CanBeNull] AccessModifierContext accessModifier)
+        private static void ProcessAccessModifier(IMemberNode member, AccessModifierContext? accessModifier)
         {
             if (accessModifier == null)
             {
@@ -355,7 +367,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
             }
         }
 
-        private void ProcessAttributes(AttributeSet attributeSet, AttributesContext context)
+        private void ProcessAttributes(AttributeSet? attributeSet, AttributesContext? context)
         {
             if (context == null || attributeSet == null)
                 return;
@@ -375,7 +387,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
             }
         }
 
-        private string GetId(IdContext context)
+        private string GetId(IdContext? context)
         {
             return context?.GetValidatedId(_contracts) ?? string.Empty;
         }

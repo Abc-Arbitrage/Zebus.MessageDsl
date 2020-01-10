@@ -51,7 +51,7 @@ namespace Abc.Zebus.MessageDsl.Dsl
                    || prevToken.Line != nextToken.Line;
         }
 
-        private static bool IsValidIdEscape(IToken escapeToken, IToken nameToken)
+        private static bool IsValidIdEscape(IToken? escapeToken, IToken? nameToken)
         {
             if (escapeToken == null)
                 return true;
@@ -59,7 +59,7 @@ namespace Abc.Zebus.MessageDsl.Dsl
             return nameToken?.StartIndex == escapeToken.StopIndex + 1;
         }
 
-        private static bool IsValidIdEscape(IToken escapeToken, ParserRuleContext nameContext) 
+        private static bool IsValidIdEscape(IToken? escapeToken, ParserRuleContext? nameContext) 
             => IsValidIdEscape(escapeToken, nameContext?.Start);
 
         private bool AreTwoNextTokensConsecutive()

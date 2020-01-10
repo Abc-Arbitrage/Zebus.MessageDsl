@@ -4,9 +4,9 @@ namespace Abc.Zebus.MessageDsl.Ast
 {
     public class MessageDefinition : AstNode, IMemberNode
     {
-        private MemberOptions _options;
+        private MemberOptions? _options;
 
-        public string Name { get; set; }
+        public string Name { get; set; } = default!;
         public AccessModifier AccessModifier { get; set; }
         public IList<string> GenericParameters { get; } = new List<string>();
         public IList<GenericConstraint> GenericConstraints { get; } = new List<GenericConstraint>();
@@ -17,7 +17,7 @@ namespace Abc.Zebus.MessageDsl.Ast
 
         public MemberOptions Options
         {
-            get => _options ?? (_options = new MemberOptions());
+            get => _options ??= new MemberOptions();
             set => _options = value;
         }
 

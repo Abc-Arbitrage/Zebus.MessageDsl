@@ -7,9 +7,9 @@ namespace Abc.Zebus.MessageDsl.Support
     internal static class Extensions
     {
         public static TValue GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
+            where TKey : notnull
         {
-            TValue result;
-            return dictionary.TryGetValue(key, out result) ? result : default(TValue);
+            return dictionary.TryGetValue(key, out var result) ? result : default;
         }
 
         public static string GetFullText(this ParserRuleContext context)
@@ -20,7 +20,7 @@ namespace Abc.Zebus.MessageDsl.Support
             return context.Start.InputStream.GetText(Interval.Of(context.Start.StartIndex, context.Stop.StopIndex));
         }
 
-        public static string GetFullTextUntil(this IToken startToken, IToken endToken)
+        public static string GetFullTextUntil(this IToken? startToken, IToken? endToken)
         {
             if (startToken == null || endToken == null || startToken.StartIndex < 0 || endToken.StopIndex < 0 || startToken.StartIndex > endToken.StartIndex || startToken.InputStream != endToken.InputStream)
                 return string.Empty;
@@ -28,7 +28,8 @@ namespace Abc.Zebus.MessageDsl.Support
             return startToken.InputStream.GetText(Interval.Of(startToken.StartIndex, endToken.StopIndex));
         }
 
-        public static HashSet<T> ToHashSet<T>(this IEnumerable<T> sequence) => new HashSet<T>(sequence);
+        public static HashSet<T> ToHashSet<T>(this IEnumerable<T> sequence)
+            => new HashSet<T>(sequence);
 
         public static void AddRange<T>(this ICollection<T> collection, IEnumerable<T> toAdd)
         {

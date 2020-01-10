@@ -72,11 +72,11 @@ namespace Abc.Zebus.MessageDsl.Ast
             _clrTypeToAlias.Add(typeof(List<>).Namespace + ".List", "List");
         }
 
-        private string _protoBufType;
+        private string? _protoBufType;
 
         public string NetType { get; }
 
-        public string ProtoBufType => _protoBufType ?? (_protoBufType = GetProtoBufType());
+        public string ProtoBufType => _protoBufType ??= GetProtoBufType();
 
         public bool IsArray => NetType.EndsWith("[]");
         public bool IsList => NetType.StartsWith("List<") && NetType.EndsWith(">");
@@ -88,12 +88,12 @@ namespace Abc.Zebus.MessageDsl.Ast
 
         public bool IsPackable => IsRepeated && _packableProtoBufTypes.Contains(ProtoBufType);
 
-        public TypeName(string netType)
+        public TypeName(string? netType)
         {
             NetType = NormalizeName(netType ?? string.Empty);
         }
 
-        public TypeName GetRepeatedItemType()
+        public TypeName? GetRepeatedItemType()
         {
             if (IsArray)
                 return NetType.Substring(0, NetType.Length - 2);
@@ -115,11 +115,11 @@ namespace Abc.Zebus.MessageDsl.Ast
             return this;
         }
 
-        public static implicit operator TypeName(string netType) => new TypeName(netType);
+        public static implicit operator TypeName(string? netType) => new TypeName(netType);
 
-        public override bool Equals(object obj) => Equals(obj as TypeName);
+        public override bool Equals(object? obj) => Equals(obj as TypeName);
 
-        public bool Equals(TypeName other) => other != null && other.NetType == NetType;
+        public bool Equals(TypeName? other) => other != null && other.NetType == NetType;
 
         public override int GetHashCode() => NetType.GetHashCode();
 
@@ -164,7 +164,7 @@ namespace Abc.Zebus.MessageDsl.Ast
             var type = GetNonNullableType();
 
             if (type.IsRepeated)
-                type = type.GetRepeatedItemType();
+                type = type.GetRepeatedItemType()!;
 
             var clrName = type.GetClrSystemTypeName();
 

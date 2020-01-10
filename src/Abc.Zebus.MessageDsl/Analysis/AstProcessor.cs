@@ -102,18 +102,18 @@ namespace Abc.Zebus.MessageDsl.Analysis
                 AddImplicitNamespaces(paramDef.Attributes);
 
                 if (paramDef.Type.IsList)
-                    _contracts.ImportedNamespaces.Add(typeof(List<>).Namespace);
+                    _contracts.ImportedNamespaces.Add(typeof(List<>).Namespace!);
                 else if (paramDef.Type.IsDictionary)
-                    _contracts.ImportedNamespaces.Add(typeof(Dictionary<,>).Namespace);
+                    _contracts.ImportedNamespaces.Add(typeof(Dictionary<,>).Namespace!);
                 else if (paramDef.Type.IsHashSet)
-                    _contracts.ImportedNamespaces.Add(typeof(HashSet<>).Namespace);
+                    _contracts.ImportedNamespaces.Add(typeof(HashSet<>).Namespace!);
             }
         }
 
         private void AddImplicitNamespaces(AttributeSet attributes)
         {
             if (attributes.HasAttribute(nameof(DescriptionAttribute)))
-                _contracts.ImportedNamespaces.Add(typeof(DescriptionAttribute).Namespace);
+                _contracts.ImportedNamespaces.Add(typeof(DescriptionAttribute).Namespace!);
         }
     }
 }
