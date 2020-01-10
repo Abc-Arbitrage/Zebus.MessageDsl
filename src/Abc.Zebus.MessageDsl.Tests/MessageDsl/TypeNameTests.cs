@@ -34,22 +34,82 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
             var type = new TypeName("int");
             type.IsArray.ShouldBeFalse();
             type.IsList.ShouldBeFalse();
+            type.IsHashSet.ShouldBeFalse();
+            type.IsDictionary.ShouldBeFalse();
             type.IsRepeated.ShouldBeFalse();
+            type.IsPackable.ShouldBeFalse();
 
             type = new TypeName("int[]");
             type.IsArray.ShouldBeTrue();
             type.IsList.ShouldBeFalse();
+            type.IsHashSet.ShouldBeFalse();
+            type.IsDictionary.ShouldBeFalse();
             type.IsRepeated.ShouldBeTrue();
+            type.IsPackable.ShouldBeTrue();
+
+            type = new TypeName("int[]?");
+            type.IsArray.ShouldBeTrue();
+            type.IsList.ShouldBeFalse();
+            type.IsHashSet.ShouldBeFalse();
+            type.IsDictionary.ShouldBeFalse();
+            type.IsRepeated.ShouldBeTrue();
+            type.IsPackable.ShouldBeTrue();
+
+            type = new TypeName("int?[]");
+            type.IsArray.ShouldBeTrue();
+            type.IsList.ShouldBeFalse();
+            type.IsHashSet.ShouldBeFalse();
+            type.IsDictionary.ShouldBeFalse();
+            type.IsRepeated.ShouldBeTrue();
+            type.IsPackable.ShouldBeFalse();
 
             type = new TypeName("List<int>");
             type.IsArray.ShouldBeFalse();
             type.IsList.ShouldBeTrue();
+            type.IsHashSet.ShouldBeFalse();
+            type.IsDictionary.ShouldBeFalse();
             type.IsRepeated.ShouldBeTrue();
+            type.IsPackable.ShouldBeTrue();
+
+            type = new TypeName("List<int>?");
+            type.IsArray.ShouldBeFalse();
+            type.IsList.ShouldBeTrue();
+            type.IsHashSet.ShouldBeFalse();
+            type.IsDictionary.ShouldBeFalse();
+            type.IsRepeated.ShouldBeTrue();
+            type.IsPackable.ShouldBeTrue();
+
+            type = new TypeName("HashSet<int>");
+            type.IsArray.ShouldBeFalse();
+            type.IsList.ShouldBeFalse();
+            type.IsHashSet.ShouldBeTrue();
+            type.IsDictionary.ShouldBeFalse();
+            type.IsRepeated.ShouldBeTrue();
+            type.IsPackable.ShouldBeTrue();
+
+            type = new TypeName("HashSet<int>?");
+            type.IsArray.ShouldBeFalse();
+            type.IsList.ShouldBeFalse();
+            type.IsHashSet.ShouldBeTrue();
+            type.IsDictionary.ShouldBeFalse();
+            type.IsRepeated.ShouldBeTrue();
+            type.IsPackable.ShouldBeTrue();
 
             type = new TypeName("System.Collections.Generic.List<int>");
             type.IsArray.ShouldBeFalse();
             type.IsList.ShouldBeTrue();
+            type.IsHashSet.ShouldBeFalse();
+            type.IsDictionary.ShouldBeFalse();
             type.IsRepeated.ShouldBeTrue();
+            type.IsPackable.ShouldBeTrue();
+
+            type = new TypeName("System.Collections.Generic.List<int>?");
+            type.IsArray.ShouldBeFalse();
+            type.IsList.ShouldBeTrue();
+            type.IsHashSet.ShouldBeFalse();
+            type.IsDictionary.ShouldBeFalse();
+            type.IsRepeated.ShouldBeTrue();
+            type.IsPackable.ShouldBeTrue();
         }
 
         [Test]
@@ -59,6 +119,12 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
             type.IsNullable.ShouldBeFalse();
 
             type = new TypeName("int?");
+            type.IsNullable.ShouldBeTrue();
+
+            type = new TypeName("string");
+            type.IsNullable.ShouldBeFalse();
+
+            type = new TypeName("string?");
             type.IsNullable.ShouldBeTrue();
         }
 
@@ -73,7 +139,15 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
             type.ProtoBufType.ShouldEqual("int32");
             type.IsPackable.ShouldBeTrue();
 
+            type = new TypeName("int[]?");
+            type.ProtoBufType.ShouldEqual("int32");
+            type.IsPackable.ShouldBeTrue();
+
             type = new TypeName("System.String");
+            type.ProtoBufType.ShouldEqual("string");
+            type.IsPackable.ShouldBeFalse();
+
+            type = new TypeName("System.String?");
             type.ProtoBufType.ShouldEqual("string");
             type.IsPackable.ShouldBeFalse();
 
@@ -144,6 +218,28 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
         {
             TypeName type = "  IFoo < Bar ? ,@Baz,Hello [, , ], @World < Tanks>, Int32>";
             type.NetType.ShouldEqual("IFoo<Bar?, Baz, Hello[,,], World<Tanks>, int>");
+        }
+
+        [Test]
+        public void should_provide_repeated_item_type()
+        {
+            var type = new TypeName("int[]");
+            type.GetRepeatedItemType().ShouldNotBeNull().NetType.ShouldEqual("int");
+
+            type = new TypeName("int[]?");
+            type.GetRepeatedItemType().ShouldNotBeNull().NetType.ShouldEqual("int");
+
+            type = new TypeName("List<int>");
+            type.GetRepeatedItemType().ShouldNotBeNull().NetType.ShouldEqual("int");
+
+            type = new TypeName("List<int>?");
+            type.GetRepeatedItemType().ShouldNotBeNull().NetType.ShouldEqual("int");
+
+            type = new TypeName("HashSet<int>");
+            type.GetRepeatedItemType().ShouldNotBeNull().NetType.ShouldEqual("int");
+
+            type = new TypeName("HashSet<int>?");
+            type.GetRepeatedItemType().ShouldNotBeNull().NetType.ShouldEqual("int");
         }
     }
 }

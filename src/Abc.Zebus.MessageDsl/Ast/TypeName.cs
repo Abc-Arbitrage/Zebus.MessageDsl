@@ -78,10 +78,10 @@ namespace Abc.Zebus.MessageDsl.Ast
 
         public string ProtoBufType => _protoBufType ??= GetProtoBufType();
 
-        public bool IsArray => NetType.EndsWith("[]");
-        public bool IsList => NetType.StartsWith("List<") && NetType.EndsWith(">");
-        public bool IsDictionary => NetType.StartsWith("Dictionary<") && NetType.EndsWith(">");
-        public bool IsHashSet => NetType.StartsWith("HashSet<") && NetType.EndsWith(">");
+        public bool IsArray => NetType.EndsWith("[]") || NetType.EndsWith("[]?");
+        public bool IsList => NetType.StartsWith("List<") && (NetType.EndsWith(">") || NetType.EndsWith(">?"));
+        public bool IsDictionary => NetType.StartsWith("Dictionary<") && (NetType.EndsWith(">") || NetType.EndsWith(">?"));
+        public bool IsHashSet => NetType.StartsWith("HashSet<") && (NetType.EndsWith(">") || NetType.EndsWith(">?"));
         public bool IsRepeated => IsArray || IsList || IsHashSet;
 
         public bool IsNullable => NetType.EndsWith("?");
@@ -95,14 +95,16 @@ namespace Abc.Zebus.MessageDsl.Ast
 
         public TypeName? GetRepeatedItemType()
         {
+            var nullableCharLength = IsNullable ? "?".Length : 0;
+
             if (IsArray)
-                return NetType.Substring(0, NetType.Length - 2);
+                return NetType.Substring(0, NetType.Length - "[]".Length - nullableCharLength);
 
             if (IsList)
-                return NetType.Substring("List<".Length, NetType.Length - "List<>".Length);
+                return NetType.Substring("List<".Length, NetType.Length - "List<>".Length - nullableCharLength);
 
             if (IsHashSet)
-                return NetType.Substring("HashSet<".Length, NetType.Length - "HashSet<>".Length);
+                return NetType.Substring("HashSet<".Length, NetType.Length - "HashSet<>".Length - nullableCharLength);
 
             return null;
         }
@@ -110,7 +112,7 @@ namespace Abc.Zebus.MessageDsl.Ast
         public TypeName GetNonNullableType()
         {
             if (IsNullable)
-                return NetType.Substring(0, NetType.Length - 1);
+                return NetType.Substring(0, NetType.Length - "?".Length);
 
             return this;
         }
@@ -139,11 +141,14 @@ namespace Abc.Zebus.MessageDsl.Ast
         {
             name = name.TrimStart('@');
 
-            name = _reSystemTypeName.Replace(name, match =>
-            {
-                var unqualifiedName = match.Groups["unqualifiedName"].Value;
-                return _clrTypeToAlias.GetValueOrDefault(unqualifiedName) ?? unqualifiedName;
-            });
+            name = _reSystemTypeName.Replace(
+                name,
+                match =>
+                {
+                    var unqualifiedName = match.Groups["unqualifiedName"].Value;
+                    return _clrTypeToAlias.GetValueOrDefault(unqualifiedName) ?? unqualifiedName;
+                }
+            );
 
             name = _clrTypeToAlias.GetValueOrDefault(name) ?? name;
 

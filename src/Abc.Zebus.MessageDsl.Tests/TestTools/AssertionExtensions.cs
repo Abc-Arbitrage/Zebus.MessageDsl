@@ -17,6 +17,13 @@ namespace Abc.Zebus.MessageDsl.Tests.TestTools
         public static void ShouldBeNull(this object actual)
             => Assert.That(actual, Is.Null);
 
+        public static T ShouldNotBeNull<T>(this T actual)
+            where T : class
+        {
+            Assert.That(actual, Is.Not.Null);
+            return actual;
+        }
+
         public static void ShouldContain(this string actual, string expected)
             => Assert.That(actual, Contains.Substring(expected));
 
