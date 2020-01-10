@@ -13,8 +13,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <ZebusDslVersion>1.3.0</ZebusDslVersion>
-    <ZebusDslBuildVersion>1.3.0</ZebusDslBuildVersion>
+    <ZebusDslVersion>1.4.0</ZebusDslVersion>
+    <ZebusDslBuildVersion>1.4.0</ZebusDslBuildVersion>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -22,7 +22,7 @@
     <Description>A message DSL for Zebus</Description>
     <PackageProjectUrl>https://github.com/Abc-Arbitrage/Zebus.MessageDsl</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Copyright>Copyright © ABC arbitrage 2019</Copyright>
+    <Copyright>Copyright © ABC arbitrage 2020</Copyright>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <PackageOutputPath>$(MSBuildThisFileDirectory)..\output</PackageOutputPath>
   </PropertyGroup>
