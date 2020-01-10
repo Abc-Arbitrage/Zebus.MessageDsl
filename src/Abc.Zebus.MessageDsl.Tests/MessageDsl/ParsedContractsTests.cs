@@ -283,6 +283,14 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
         }
 
         [Test]
+        public void should_parse_pragma_nullable()
+        {
+            var contracts = ParseValid("#pragma nullable\r\nMsgA()\r\n#pragma !nullable\r\nMsgB()");
+            contracts.Messages[0].Options.Nullable.ShouldBeTrue();
+            contracts.Messages[1].Options.Nullable.ShouldBeFalse();
+        }
+
+        [Test]
         public void should_parse_access_modifiers()
         {
             var contracts = ParseValid("public MsgA(); internal MsgB();");

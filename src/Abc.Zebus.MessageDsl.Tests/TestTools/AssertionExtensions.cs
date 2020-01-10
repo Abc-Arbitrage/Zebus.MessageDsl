@@ -45,6 +45,12 @@ namespace Abc.Zebus.MessageDsl.Tests.TestTools
         public static void ShouldEqual<T>(this T actual, T expected)
             => Assert.That(actual, Is.EqualTo(expected));
 
+        public static void ShouldBeGreaterThan(this int actual, int value)
+            => Assert.That(actual, Is.GreaterThan(value));
+
+        public static void ShouldBeBetween(this int actual, int min, int max)
+            => Assert.That(actual, Is.InRange(min, max));
+
         public static T ExpectedSingle<T>(this IEnumerable<T> actual)
         {
             var list = actual.ToList();

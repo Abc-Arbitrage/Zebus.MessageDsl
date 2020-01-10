@@ -15,6 +15,8 @@ namespace Abc.Zebus.MessageDsl.Ast
             [UsedImplicitly] set => Internal = !value;
         }
 
+        public bool Nullable { get; set; }
+
         public AccessModifier GetAccessModifier()
             => Internal ? AccessModifier.Internal : AccessModifier.Public;
 

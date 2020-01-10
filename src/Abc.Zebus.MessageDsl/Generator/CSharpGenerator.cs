@@ -35,7 +35,6 @@ namespace Abc.Zebus.MessageDsl.Generator
             WritePragmas();
 
             var hasNamespace = !string.IsNullOrEmpty(Contracts.Namespace);
-
             if (hasNamespace)
                 Writer.WriteLine("namespace {0}", Identifier(Contracts.Namespace));
 
@@ -52,10 +51,18 @@ namespace Abc.Zebus.MessageDsl.Generator
                     firstMember = false;
                 }
 
+                var nullableRefTypes = false;
+
                 foreach (var message in Contracts.Messages)
                 {
                     if (!firstMember)
                         Writer.WriteLine();
+
+                    if (message.Options.Nullable != nullableRefTypes)
+                    {
+                        WriteNullableDirective(message.Options.Nullable);
+                        nullableRefTypes = message.Options.Nullable;
+                    }
 
                     WriteMessage(message);
                     firstMember = false;
@@ -148,6 +155,12 @@ namespace Abc.Zebus.MessageDsl.Generator
                     Writer.WriteLine();
                 }
             }
+        }
+
+        private void WriteNullableDirective(bool enable)
+        {
+            Writer.WriteLine("#nullable {0}", enable ? "enable" : "disable");
+            Writer.WriteLine();
         }
 
         private void WriteMessage(MessageDefinition message)
@@ -292,10 +305,15 @@ namespace Abc.Zebus.MessageDsl.Generator
             {
                 foreach (var param in message.Parameters)
                 {
+                    if (param.Type.IsNullable)
+                        continue;
+
                     if (param.Type.IsArray)
                         Writer.WriteLine("{0} = Array.Empty<{1}>();", Identifier(MemberCase(param.Name)), param.Type.GetRepeatedItemType()!.NetType);
                     else if (param.Type.IsList || param.Type.IsDictionary || param.Type.IsHashSet)
                         Writer.WriteLine("{0} = new {1}();", Identifier(MemberCase(param.Name)), param.Type);
+                    else if (message.Options.Nullable)
+                        Writer.WriteLine("{0} = default!;", Identifier(MemberCase(param.Name)));
                 }
             }
         }

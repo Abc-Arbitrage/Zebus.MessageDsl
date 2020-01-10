@@ -1,4 +1,5 @@
-﻿using Abc.Zebus.MessageDsl.Ast;
+﻿using System;
+using Abc.Zebus.MessageDsl.Ast;
 using Abc.Zebus.MessageDsl.Generator;
 using Abc.Zebus.MessageDsl.Tests.TestTools;
 using NUnit.Framework;
@@ -99,7 +100,6 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
             code.ShouldContain("using System.Collections.Generic;");
             code.ShouldContain("FooHashSet = new HashSet<string>();");
         }
-
 
         [Test]
         public void should_generate_attributes()
@@ -537,6 +537,55 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
             });
 
             code.ShouldContain("internal enum Foo");
+        }
+
+        [Test]
+        public void should_handle_nullable_reference_types()
+        {
+            var code = Generate(new ParsedContracts
+            {
+                Messages =
+                {
+                    new MessageDefinition { Name = "FooMessage" },
+                    new MessageDefinition { Name = "BarMessage", Options = { Nullable = true } },
+                    new MessageDefinition { Name = "BazMessage" }
+                }
+            });
+
+            var fooIndex = code.IndexOf("FooMessage", StringComparison.Ordinal);
+            var barIndex = code.IndexOf("BarMessage", StringComparison.Ordinal);
+            var bazIndex = code.IndexOf("BazMessage", StringComparison.Ordinal);
+
+            var nullableEnableIndex = code.IndexOf("#nullable enable", StringComparison.Ordinal);
+            var nullableDisableIndex = code.IndexOf("#nullable disable", StringComparison.Ordinal);
+
+            foreach (var index in new[] { fooIndex, barIndex, bazIndex, nullableEnableIndex, nullableDisableIndex })
+                index.ShouldBeGreaterThan(0);
+
+            nullableEnableIndex.ShouldBeBetween(fooIndex, barIndex);
+            nullableDisableIndex.ShouldBeBetween(barIndex, bazIndex);
+        }
+
+        [Test]
+        public void should_generate_initializers_for_nullable_reference_types()
+        {
+            var code = Generate(new MessageDefinition
+            {
+                Name = "FooExecuted",
+                Parameters =
+                {
+                    new ParameterDefinition("string", "strNotNull"),
+                    new ParameterDefinition("string?", "strNull"),
+                    new ParameterDefinition("int[]", "arrayNotNull"),
+                    new ParameterDefinition("int[]?", "arrayNull")
+                },
+                Options = { Nullable = true }
+            });
+
+            code.ShouldContain("StrNotNull = default!;");
+            code.ShouldNotContain("StrNull = default!;");
+            code.ShouldContain("ArrayNotNull = Array.Empty<int>();");
+            code.ShouldNotContain("ArrayNull = Array.Empty<int>();");
         }
 
         protected override string GenerateRaw(ParsedContracts contracts) => CSharpGenerator.Generate(contracts);
