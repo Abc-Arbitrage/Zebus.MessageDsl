@@ -55,51 +55,18 @@ namespace Abc.Zebus.MessageDsl.Ast
             if (value.Length == 0)
                 return null;
 
-            switch (UnderlyingType.NetType)
+            return UnderlyingType.NetType switch
             {
-                case "byte":
-                {
-                    return byte.TryParse(value, numberStyles, CultureInfo.InvariantCulture, out var result) ? (object)result : null;
-                }
-
-                case "sbyte":
-                {
-                    return sbyte.TryParse(value, numberStyles, CultureInfo.InvariantCulture, out var result) ? (object)result : null;
-                }
-
-                case "short":
-                {
-                    return short.TryParse(value, numberStyles, CultureInfo.InvariantCulture, out var result) ? (object)result : null;
-                }
-
-                case "ushort":
-                {
-                    return ushort.TryParse(value, numberStyles, CultureInfo.InvariantCulture, out var result) ? (object)result : null;
-                }
-
-                case "int":
-                {
-                    return int.TryParse(value, numberStyles, CultureInfo.InvariantCulture, out var result) ? (object)result : null;
-                }
-
-                case "uint":
-                {
-                    return uint.TryParse(value, numberStyles, CultureInfo.InvariantCulture, out var result) ? (object)result : null;
-                }
-
-                case "long":
-                {
-                    return long.TryParse(value, numberStyles, CultureInfo.InvariantCulture, out var result) ? (object)result : null;
-                }
-
-                case "ulong":
-                {
-                    return ulong.TryParse(value, numberStyles, CultureInfo.InvariantCulture, out var result) ? (object)result : null;
-                }
-
-                default:
-                    return null;
-            }
+                "byte"   => byte.TryParse(value, numberStyles, CultureInfo.InvariantCulture, out var result) ? (object)result : null,
+                "sbyte"  => sbyte.TryParse(value, numberStyles, CultureInfo.InvariantCulture, out var result) ? (object)result : null,
+                "short"  => short.TryParse(value, numberStyles, CultureInfo.InvariantCulture, out var result) ? (object)result : null,
+                "ushort" => ushort.TryParse(value, numberStyles, CultureInfo.InvariantCulture, out var result) ? (object)result : null,
+                "int"    => int.TryParse(value, numberStyles, CultureInfo.InvariantCulture, out var result) ? (object)result : null,
+                "uint"   => uint.TryParse(value, numberStyles, CultureInfo.InvariantCulture, out var result) ? (object)result : null,
+                "long"   => long.TryParse(value, numberStyles, CultureInfo.InvariantCulture, out var result) ? (object)result : null,
+                "ulong"  => ulong.TryParse(value, numberStyles, CultureInfo.InvariantCulture, out var result) ? (object)result : null,
+                _        => null
+            };
         }
     }
 }

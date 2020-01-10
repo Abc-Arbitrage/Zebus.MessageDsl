@@ -367,17 +367,12 @@ namespace Abc.Zebus.MessageDsl.Generator
 
         private static string AccessModifier(AccessModifier accessModifier)
         {
-            switch (accessModifier)
+            return accessModifier switch
             {
-                case Ast.AccessModifier.Public:
-                    return "public";
-
-                case Ast.AccessModifier.Internal:
-                    return "internal";
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(accessModifier), accessModifier, null);
-            }
+                Ast.AccessModifier.Public   => "public",
+                Ast.AccessModifier.Internal => "internal",
+                _                           => throw new ArgumentOutOfRangeException(nameof(accessModifier), accessModifier, null)
+            };
         }
 
         private static string Identifier(string id) => CSharpSyntax.Identifier(id);
