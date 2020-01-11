@@ -198,9 +198,10 @@ The available options are:
 
  - `#pragma mutable` - specifies if messages are to be generated as mutable (public setters on properties) instead of read-only (private setters).
  - `#pragma proto` - declares messages for export to a `.proto` file.
- - `#pragma internal` - sets the default accessibility to `internal`
- - `#pragma public` - sets the default accessibility to `public` (default, same effect as `#pragma !internal`)
-
+ - `#pragma internal` - sets the default accessibility to `internal`.
+ - `#pragma public` - sets the default accessibility to `public` (default, same effect as `#pragma !internal`).
+ - `#pragma nullable` - enables support for nullable reference types.
+ 
 ## Enums
 
 Enums can be declared just as in C#:
