@@ -588,6 +588,28 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
             code.ShouldNotContain("ArrayNull = Array.Empty<int>();");
         }
 
+        [Test]
+        public void should_not_generate_initializers_for_known_nullable_value_types()
+        {
+            var code = Generate(new MessageDefinition
+            {
+                Name = "FooExecuted",
+                Parameters =
+                {
+                    new ParameterDefinition("int", "intNotNull"),
+                    new ParameterDefinition("int?", "intNull"),
+                    new ParameterDefinition("int[]", "arrayNotNull"),
+                    new ParameterDefinition("int[]?", "arrayNull")
+                },
+                Options = { Nullable = true }
+            });
+
+            code.ShouldNotContain("IntNotNull = default!;");
+            code.ShouldNotContain("IntNull = default!;");
+            code.ShouldContain("ArrayNotNull = Array.Empty<int>();");
+            code.ShouldNotContain("ArrayNull = Array.Empty<int>();");
+        }
+
         protected override string GenerateRaw(ParsedContracts contracts) => CSharpGenerator.Generate(contracts);
     }
 }

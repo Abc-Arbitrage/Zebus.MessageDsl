@@ -312,7 +312,7 @@ namespace Abc.Zebus.MessageDsl.Generator
                         Writer.WriteLine("{0} = Array.Empty<{1}>();", Identifier(MemberCase(param.Name)), param.Type.GetRepeatedItemType()!.NetType);
                     else if (param.Type.IsList || param.Type.IsDictionary || param.Type.IsHashSet)
                         Writer.WriteLine("{0} = new {1}();", Identifier(MemberCase(param.Name)), param.Type);
-                    else if (message.Options.Nullable)
+                    else if (message.Options.Nullable && !param.Type.IsKnownValueType())
                         Writer.WriteLine("{0} = default!;", Identifier(MemberCase(param.Name)));
                 }
             }

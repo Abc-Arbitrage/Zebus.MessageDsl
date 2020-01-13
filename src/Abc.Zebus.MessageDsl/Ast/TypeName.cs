@@ -61,6 +61,12 @@ namespace Abc.Zebus.MessageDsl.Ast
             "double", "float", "int32", "int64", "uint32", "uint64", "sint32", "sint64", "fixed32", "fixed64", "sfixed32", "sfixed64", "bool"
         };
 
+        private static readonly HashSet<string> _knownValueTypes = new HashSet<string>
+        {
+            "bool", "byte", "sbyte", "char", "decimal", "double", "float", "int", "uint", "long", "ulong", "short", "ushort",
+            "TimeSpan", "DateTime", "Guid"
+        };
+
         private static readonly HashSet<string> _csharpNonTypeKeywords = CSharpSyntax.EnumerateCSharpKeywords().Except(_aliasTypeMap.Keys).ToHashSet();
 
         static TypeName()
@@ -116,6 +122,9 @@ namespace Abc.Zebus.MessageDsl.Ast
 
             return this;
         }
+
+        public bool IsKnownValueType()
+            => _knownValueTypes.Contains(GetNonNullableType().NetType);
 
         public static implicit operator TypeName(string? netType) => new TypeName(netType);
 
