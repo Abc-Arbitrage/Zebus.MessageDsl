@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Abc.Zebus.MessageDsl.Ast;
 using Antlr4.Runtime;
 
@@ -33,7 +34,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
         private void ValidateMessage(MessageDefinition message)
         {
             var paramNames = new HashSet<string>();
-            var tags = new HashSet<int>();
+
             var genericConstraints = new HashSet<string>();
 
             if (message.Options.Proto)
@@ -43,6 +44,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
             }
 
             ValidateAttributes(message.Attributes);
+            ValidateTags(message);
 
             foreach (var param in message.Parameters)
             {
@@ -50,12 +52,6 @@ namespace Abc.Zebus.MessageDsl.Analysis
 
                 if (!paramNames.Add(param.Name))
                     _contracts.AddError(errorContext, "Duplicate parameter name: {0}", param.Name);
-
-                if (!IsValidTag(param.Tag))
-                    _contracts.AddError(errorContext, "Tag for parameter '{0}' is not within the valid range ({1})", param.Name, param.Tag);
-
-                if (!tags.Add(param.Tag))
-                    _contracts.AddError(errorContext, "Duplicate tag {0} on parameter {1}", param.Tag, param.Name);
 
                 ValidateType(param.Type, param.ParseContext);
                 ValidateAttributes(param.Attributes);
@@ -80,6 +76,43 @@ namespace Abc.Zebus.MessageDsl.Analysis
 
             foreach (var baseType in message.BaseTypes)
                 ValidateType(baseType, message.ParseContext);
+        }
+
+        private void ValidateTags(MessageDefinition message)
+        {
+            var tags = new HashSet<int>();
+
+            foreach (var param in message.Parameters)
+            {
+                var errorContext = param.ParseContext ?? message.ParseContext;
+
+                if (!IsValidTag(param.Tag))
+                    _contracts.AddError(errorContext, "Tag for parameter '{0}' is not within the valid range ({1})", param.Name, param.Tag);
+
+                if (!tags.Add(param.Tag))
+                    _contracts.AddError(errorContext, "Duplicate tag {0} on parameter {1}", param.Tag, param.Name);
+            }
+
+            foreach (var attr in message.Attributes)
+            {
+                if (!Equals(attr.TypeName, KnownTypes.ProtoIncludeAttribute))
+                    continue;
+
+                var errorContext = attr.ParseContext ?? message.ParseContext;
+
+                var match = Regex.Match(attr.Parameters ?? string.Empty, @"^\s*(?<tag>[0-9]+)\s*,");
+                if (!match.Success || !int.TryParse(match.Groups["tag"].Value, out var tag))
+                {
+                    _contracts.AddError(errorContext, "Invalid [{0}] parameters", KnownTypes.ProtoIncludeAttribute);
+                    continue;
+                }
+
+                if (!IsValidTag(tag))
+                    _contracts.AddError(errorContext, "Tag for [{0}] is not within the valid range ({1})", KnownTypes.ProtoIncludeAttribute, tag);
+
+                if (!tags.Add(tag))
+                    _contracts.AddError(errorContext, "Duplicate tag {0} on [{1}]", tag, KnownTypes.ProtoIncludeAttribute);
+            }
         }
 
         private void ValidateEnum(EnumDefinition enumDef)
@@ -141,7 +174,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
                     _contracts.AddError(typeNode.ParseContext, "Duplicate type name: {0}", nameWithGenericArity);
             }
 
-            string GetNameWithGenericArity(AstNode node)
+            static string GetNameWithGenericArity(AstNode node)
             {
                 var name = ((INamedNode)node).Name;
                 if (node is MessageDefinition messageDef && messageDef.GenericParameters.Count > 0)
@@ -153,7 +186,8 @@ namespace Abc.Zebus.MessageDsl.Analysis
 
         public static bool IsValidTag(int tag)
         {
-            return tag >= ProtoMinTag && tag <= ProtoMaxTag
+            return tag >= ProtoMinTag
+                   && tag <= ProtoMaxTag
                    && (tag < ProtoFirstReservedTag || tag > ProtoLastReservedTag);
         }
     }

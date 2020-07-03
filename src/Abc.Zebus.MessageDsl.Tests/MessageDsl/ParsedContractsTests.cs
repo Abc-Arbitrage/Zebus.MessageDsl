@@ -231,6 +231,21 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
         }
 
         [Test]
+        public void should_validate_tags_on_proto_include()
+        {
+            ParseInvalid(@"[ProtoInclude(1, typeof(MsgB))] MsgA(int a);");
+            ParseValid(@"[ProtoInclude(1, typeof(MsgB))] MsgA();");
+            ParseValid(@"[ProtoInclude(2, typeof(MsgB))] MsgA(int a);");
+
+            ParseInvalid(@"[ProtoInclude(42, typeof(MsgB)), ProtoInclude(42, typeof(MsgC))] MsgA(int a);");
+            ParseValid(@"[ProtoInclude(42, typeof(MsgB)), ProtoInclude(43, typeof(MsgC))] MsgA(int a);");
+
+            ParseInvalid(@"[ProtoInclude(19500, typeof(MsgB))] MsgA();");
+            ParseInvalid(@"[ProtoInclude(""foo"")] MsgA();");
+            ParseInvalid(@"[ProtoInclude] MsgA();");
+        }
+
+        [Test]
         public void should_parse_boolean_options()
         {
             var contracts = ParseValid("#pragma Proto    \r\nFoo()");
