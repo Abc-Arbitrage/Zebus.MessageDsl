@@ -88,6 +88,8 @@ namespace Abc.Zebus.MessageDsl.Generator
 
                 foreach (var param in message.Parameters)
                     WriteField(param);
+
+                WriteIncludedMessages(message);
             }
         }
 
@@ -151,6 +153,29 @@ namespace Abc.Zebus.MessageDsl.Generator
             }
 
             Writer.Write("{0} = {1}", key, value);
+        }
+
+        private void WriteIncludedMessages(MessageDefinition message)
+        {
+            foreach (var attr in message.Attributes)
+            {
+                if (!Equals(attr.TypeName, KnownTypes.ProtoIncludeAttribute))
+                    continue;
+
+                if (!AttributeInterpretor.TryParseProtoInclude(attr, out var tag, out var typeName))
+                {
+                    Writer.WriteLine("// ERROR: bad sub type definition");
+                    continue;
+                }
+
+                Writer.Write("optional ");
+                Writer.Write(typeName.ProtoBufType);
+                Writer.Write(" _subType");
+                Writer.Write(typeName.ProtoBufType);
+                Writer.Write(" = ");
+                Writer.Write(tag);
+                Writer.WriteLine(";");
+            }
         }
     }
 }

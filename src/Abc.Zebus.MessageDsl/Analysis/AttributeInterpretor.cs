@@ -6,6 +6,8 @@ namespace Abc.Zebus.MessageDsl.Analysis
 {
     internal class AttributeInterpretor
     {
+        private static readonly Regex _reProtoIncludeParams = new Regex(@"^\s*(?<tag>[0-9]+)\s*,\s*typeof\s*\(\s*(?<typeName>.+)\s*\)", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
         private readonly ParsedContracts _contracts;
 
         public AttributeInterpretor(ParsedContracts contracts)
@@ -115,6 +117,25 @@ namespace Abc.Zebus.MessageDsl.Analysis
             }
 
             param.Tag = tagNb;
+        }
+
+        public static bool TryParseProtoInclude(AttributeDefinition attribute, out int tag, out TypeName messageType)
+        {
+            tag = 0;
+            messageType = null!;
+
+            if (!Equals(attribute?.TypeName, KnownTypes.ProtoIncludeAttribute))
+                return false;
+
+            var match = _reProtoIncludeParams.Match(attribute.Parameters ?? string.Empty);
+            if (!match.Success)
+                return false;
+
+            if (!int.TryParse(match.Groups["tag"].Value, out tag))
+                return false;
+
+            messageType = match.Groups["typeName"].Value;
+            return true;
         }
     }
 }

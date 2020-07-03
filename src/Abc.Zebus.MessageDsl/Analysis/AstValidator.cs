@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Abc.Zebus.MessageDsl.Ast;
 using Antlr4.Runtime;
 
@@ -100,8 +99,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
 
                 var errorContext = attr.ParseContext ?? message.ParseContext;
 
-                var match = Regex.Match(attr.Parameters ?? string.Empty, @"^\s*(?<tag>[0-9]+)\s*,");
-                if (!match.Success || !int.TryParse(match.Groups["tag"].Value, out var tag))
+                if (!AttributeInterpretor.TryParseProtoInclude(attr, out var tag, out _))
                 {
                     _contracts.AddError(errorContext, "Invalid [{0}] parameters", KnownTypes.ProtoIncludeAttribute);
                     continue;

@@ -164,6 +164,27 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
             code.ShouldContain("Alias = 0;");
         }
 
+        [Test]
+        public void should_handle_message_inheritance()
+        {
+            var code = Generate(new MessageDefinition
+            {
+                Name = "MsgA",
+                Attributes =
+                {
+                    new AttributeDefinition("ProtoInclude", "10, typeof(MsgB)"),
+                    new AttributeDefinition("ProtoInclude", "11, typeof(MsgC)")
+                },
+                Options =
+                {
+                    Proto = true
+                }
+            });
+
+            code.ShouldContain("optional MsgB _subTypeMsgB = 10;");
+            code.ShouldContain("optional MsgC _subTypeMsgC = 11;");
+        }
+
         protected override string GenerateRaw(ParsedContracts contracts)
         {
             return ProtoGenerator.Generate(contracts);
