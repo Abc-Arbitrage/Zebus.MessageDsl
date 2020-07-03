@@ -445,8 +445,8 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
         [Test]
         public void should_handle_additional_interfaces()
         {
-            ParseValid("Foo(int id) : ITest").Messages.Single().Interfaces.ShouldContain((TypeName)"ITest");
-            ParseValid("Foo(int id) : IGeneric<Foo ,Bar[ ]>").Messages.Single().Interfaces.ShouldContain((TypeName)"IGeneric<Foo, Bar[]>");
+            ParseValid("Foo(int id) : ITest").Messages.Single().BaseTypes.ShouldContain((TypeName)"ITest");
+            ParseValid("Foo(int id) : IGeneric<Foo ,Bar[ ]>").Messages.Single().BaseTypes.ShouldContain((TypeName)"IGeneric<Foo, Bar[]>");
         }
 
         [Test]
@@ -454,13 +454,13 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
         {
             var msg = ParseValid("Foo(int id)").Messages.Single();
             msg.Type.ShouldEqual(MessageType.Event);
-            msg.Interfaces.ShouldContain((TypeName)"IEvent");
-            msg.Interfaces.ShouldNotContain((TypeName)"ICommand");
+            msg.BaseTypes.ShouldContain((TypeName)"IEvent");
+            msg.BaseTypes.ShouldNotContain((TypeName)"ICommand");
 
             msg = ParseValid("Foo(int id) : ICommand").Messages.Single();
             msg.Type.ShouldEqual(MessageType.Command);
-            msg.Interfaces.ShouldContain((TypeName)"ICommand");
-            msg.Interfaces.ShouldNotContain((TypeName)"IEvent");
+            msg.BaseTypes.ShouldContain((TypeName)"ICommand");
+            msg.BaseTypes.ShouldNotContain((TypeName)"IEvent");
         }
 
         [Test]

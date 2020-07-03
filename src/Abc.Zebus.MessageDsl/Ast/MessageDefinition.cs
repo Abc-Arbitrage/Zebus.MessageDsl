@@ -12,7 +12,7 @@ namespace Abc.Zebus.MessageDsl.Ast
         public IList<GenericConstraint> GenericConstraints { get; } = new List<GenericConstraint>();
 
         public IList<ParameterDefinition> Parameters { get; } = new List<ParameterDefinition>();
-        public ICollection<TypeName> Interfaces { get; } = new HashSet<TypeName>();
+        public ICollection<TypeName> BaseTypes { get; } = new HashSet<TypeName>();
         public AttributeSet Attributes { get; } = new AttributeSet();
 
         public MemberOptions Options
@@ -32,10 +32,10 @@ namespace Abc.Zebus.MessageDsl.Ast
                 if (IsCustom)
                     return MessageType.Custom;
 
-                if (Interfaces.Contains("ICommand") || Interfaces.Contains("Abc.Zebus.ICommand"))
+                if (BaseTypes.Contains("ICommand") || BaseTypes.Contains("Abc.Zebus.ICommand"))
                     return MessageType.Command;
 
-                if (Interfaces.Contains("IEvent") || Interfaces.Contains("IDomainEvent") || Interfaces.Contains("Abc.Zebus.IEvent"))
+                if (BaseTypes.Contains("IEvent") || BaseTypes.Contains("IDomainEvent") || BaseTypes.Contains("Abc.Zebus.IEvent"))
                     return MessageType.Event;
 
                 if (Name.EndsWith("Command"))

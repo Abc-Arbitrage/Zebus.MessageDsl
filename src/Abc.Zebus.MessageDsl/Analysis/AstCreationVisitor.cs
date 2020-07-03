@@ -253,9 +253,9 @@ namespace Abc.Zebus.MessageDsl.Analysis
             return null;
         }
 
-        public override AstNode? VisitInterfaceList(InterfaceListContext context)
+        public override AstNode? VisitBaseTypeList(BaseTypeListContext context)
         {
-            _currentMessage!.Interfaces.AddRange(
+            _currentMessage!.BaseTypes.AddRange(
                 context.GetRuleContexts<TypeNameContext>()
                        .Select(typeContext => new TypeName(typeContext.GetText())));
 
@@ -336,7 +336,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
 
                 ProcessAttributes(message.Attributes, context.GetRuleContext<AttributesContext>(0));
                 Visit(context.GetRuleContext<ParameterListContext>(0));
-                Visit(context.GetRuleContext<InterfaceListContext>(0));
+                Visit(context.GetRuleContext<BaseTypeListContext>(0));
                 Visit(context.GetRuleContext<TypeParamConstraintListContext>(0));
 
                 _contracts.Messages.Add(_currentMessage);

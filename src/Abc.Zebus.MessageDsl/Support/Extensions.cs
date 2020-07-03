@@ -9,7 +9,7 @@ namespace Abc.Zebus.MessageDsl.Support
         public static TValue GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
             where TKey : notnull
         {
-            return dictionary.TryGetValue(key, out var result) ? result : default;
+            return dictionary.TryGetValue(key, out var result) ? result : default!;
         }
 
         public static string GetFullText(this ParserRuleContext context)

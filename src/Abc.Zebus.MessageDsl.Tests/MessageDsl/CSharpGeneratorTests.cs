@@ -610,6 +610,18 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
             code.ShouldNotContain("ArrayNull = Array.Empty<int>();");
         }
 
+        [Test]
+        public void should_not_reorder_base_types()
+        {
+            var code = Generate(new MessageDefinition
+            {
+                Name = "FooExecuted",
+                BaseTypes = { "BType", "AType" }
+            });
+
+            code.ShouldContain("FooExecuted : BType, AType");
+        }
+
         protected override string GenerateRaw(ParsedContracts contracts) => CSharpGenerator.Generate(contracts);
     }
 }

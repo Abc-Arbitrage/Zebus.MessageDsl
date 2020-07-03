@@ -193,16 +193,14 @@ namespace Abc.Zebus.MessageDsl.Generator
                 Writer.Write(">");
             }
 
-            var interfaces = message.Interfaces
-                                    .Distinct()
-                                    .OrderBy(i => i.NetType, StringComparer.OrdinalIgnoreCase);
+            var baseTypes = message.BaseTypes.Distinct();
 
-            var firstInterface = true;
-            foreach (var iface in interfaces)
+            var firstBaseType = true;
+            foreach (var baseType in baseTypes)
             {
-                Writer.Write(firstInterface ? " : " : ", ");
-                Writer.Write(iface.NetType);
-                firstInterface = false;
+                Writer.Write(firstBaseType ? " : " : ", ");
+                Writer.Write(baseType.NetType);
+                firstBaseType = false;
             }
 
             Writer.WriteLine();

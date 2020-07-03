@@ -66,7 +66,7 @@ enumValueAtom
 	;
 
 messageDefinition
-	:	attributes accessModifier? messageName customModifier='!'? parameterList interfaceList typeParamConstraintList
+	:	attributes accessModifier? messageName customModifier='!'? parameterList baseTypeList typeParamConstraintList
 	;
 
 accessModifier
@@ -78,7 +78,7 @@ messageName
 	:	name=id ('<' typeParams+=id (',' typeParams+=id)* '>')?
 	;
 
-interfaceList
+baseTypeList
 	:	(':' typeName (',' typeName)*)?
 	;
 

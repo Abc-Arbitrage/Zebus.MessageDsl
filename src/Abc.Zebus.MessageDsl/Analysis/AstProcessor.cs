@@ -44,15 +44,15 @@ namespace Abc.Zebus.MessageDsl.Analysis
             switch (message.Type)
             {
                 case MessageType.Event:
-                    message.Interfaces.Add("IEvent");
+                    message.BaseTypes.Add("IEvent");
                     break;
 
                 case MessageType.Command:
-                    message.Interfaces.Add("ICommand");
+                    message.BaseTypes.Add("ICommand");
                     break;
 
                 case MessageType.Custom:
-                    message.Interfaces.Add("IMessage");
+                    message.BaseTypes.Add("IMessage");
                     break;
             }
         }

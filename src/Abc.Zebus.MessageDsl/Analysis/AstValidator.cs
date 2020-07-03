@@ -78,8 +78,8 @@ namespace Abc.Zebus.MessageDsl.Analysis
                     ValidateType(constraintType, message.ParseContext);
             }
 
-            foreach (var iface in message.Interfaces)
-                ValidateType(iface, message.ParseContext);
+            foreach (var baseType in message.BaseTypes)
+                ValidateType(baseType, message.ParseContext);
         }
 
         private void ValidateEnum(EnumDefinition enumDef)
