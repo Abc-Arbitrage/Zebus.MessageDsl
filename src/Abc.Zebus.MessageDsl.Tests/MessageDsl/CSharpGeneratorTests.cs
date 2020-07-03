@@ -489,17 +489,17 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
         [Test]
         public void should_generate_two_classes_with_same_name_and_different_arity()
         {
-            var code = GenerateRaw(new ParsedContracts
+            var code = Generate(new ParsedContracts
             {
                 Messages =
                 {
-                    new MessageDefinition { Name = "GenericCommand" },
-                    new MessageDefinition { Name = "GenericCommand", GenericParameters = { "T" } }
+                    new MessageDefinition { Name = "FooExecuted" },
+                    new MessageDefinition { Name = "FooExecuted", GenericParameters = { "T" } }
                 }
             });
 
-            code.ShouldContain("public sealed partial class GenericCommand");
-            code.ShouldContain("public sealed partial class GenericCommand<T>");
+            code.ShouldContain("public sealed partial class FooExecuted : IEvent");
+            code.ShouldContain("public sealed partial class FooExecuted<T> : IEvent");
         }
 
         [Test]

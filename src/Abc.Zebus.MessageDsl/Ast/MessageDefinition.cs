@@ -9,7 +9,7 @@ namespace Abc.Zebus.MessageDsl.Ast
 
         public string Name { get; set; } = default!;
         public AccessModifier AccessModifier { get; set; }
-        public InheritanceModifier InheritanceModifier { get; set; } = InheritanceModifier.Sealed;
+        public InheritanceModifier InheritanceModifier { get; set; }
         public IList<string> GenericParameters { get; } = new List<string>();
         public IList<GenericConstraint> GenericConstraints { get; } = new List<GenericConstraint>();
 

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using Abc.Zebus.MessageDsl.Ast;
 
 namespace Abc.Zebus.MessageDsl.Analysis
@@ -27,6 +28,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
                 ResolveTags(message);
                 AddInterfaces(message);
                 AddImplicitNamespaces(message);
+                SetInheritanceModifier(message);
             }
 
             foreach (var enumDef in _contracts.Enums)
@@ -114,6 +116,18 @@ namespace Abc.Zebus.MessageDsl.Analysis
         {
             if (attributes.HasAttribute(KnownTypes.DescriptionAttribute))
                 _contracts.ImportedNamespaces.Add(typeof(DescriptionAttribute).Namespace!);
+        }
+
+        private static void SetInheritanceModifier(MessageDefinition message)
+        {
+            if (message.InheritanceModifier != InheritanceModifier.Default)
+                return;
+
+            var hasInheritedMessages = message.Attributes.Any(attr => Equals(attr.TypeName, KnownTypes.ProtoIncludeAttribute));
+
+            message.InheritanceModifier = hasInheritedMessages
+                ? InheritanceModifier.Abstract
+                : InheritanceModifier.Sealed;
         }
     }
 }

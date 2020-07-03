@@ -176,9 +176,10 @@ namespace Abc.Zebus.MessageDsl.Generator
             Writer.Write(AccessModifier(message.AccessModifier));
             Writer.Write(" ");
 
-            if (message.InheritanceModifier != Ast.InheritanceModifier.None)
+            var inheritanceModifier = InheritanceModifier(message.InheritanceModifier);
+            if (!string.IsNullOrEmpty(inheritanceModifier))
             {
-                Writer.Write(InheritanceModifier(message.InheritanceModifier));
+                Writer.Write(inheritanceModifier);
                 Writer.Write(" ");
             }
 
@@ -401,6 +402,7 @@ namespace Abc.Zebus.MessageDsl.Generator
         {
             return inheritanceModifier switch
             {
+                Ast.InheritanceModifier.Default  => string.Empty,
                 Ast.InheritanceModifier.None     => string.Empty,
                 Ast.InheritanceModifier.Sealed   => "sealed",
                 Ast.InheritanceModifier.Abstract => "abstract",

@@ -322,6 +322,13 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
         }
 
         [Test]
+        public void should_make_inherited_messages_abstract()
+        {
+            var contracts = ParseValid("[ProtoInclude(10, typeof(MsgB))] MsgA(); MsgB() : MsgA;");
+            contracts.Messages[0].InheritanceModifier.ShouldEqual(InheritanceModifier.Abstract);
+        }
+
+        [Test]
         public void should_parse_custom_types()
         {
             var contracts = ParseValid(@"FooType!(int id);");

@@ -19,6 +19,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
         public static TypeName ProtoContractAttribute { get; } = new TypeName("ProtoContract");
         public static TypeName ProtoMemberAttribute { get; } = new TypeName("ProtoMember");
         public static TypeName ProtoMapAttribute { get; } = new TypeName("ProtoMap");
+        public static TypeName ProtoIncludeAttribute { get; } = new TypeName("ProtoInclude");
 
         public static TypeName ObsoleteAttribute { get; } = new TypeName("Obsolete");
         public static TypeName DescriptionAttribute { get; } = new TypeName("Description");
