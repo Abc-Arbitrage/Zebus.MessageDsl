@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using Abc.Zebus.MessageDsl.Analysis;
 using Abc.Zebus.MessageDsl.Ast;
 
 namespace Abc.Zebus.MessageDsl.Generator
 {
     public sealed class CSharpGenerator : GeneratorBase
     {
-        private static readonly AttributeDefinition _attrProtoContract = new AttributeDefinition("ProtoContract");
+        private static readonly AttributeDefinition _attrProtoContract = new AttributeDefinition(KnownTypes.ProtoContractAttribute);
         private static readonly AttributeDefinition _attrNonUserCode = new AttributeDefinition("System.Diagnostics.DebuggerNonUserCode");
         private static readonly AttributeDefinition _attrGeneratedCode = new AttributeDefinition("System.CodeDom.Compiler.GeneratedCode", $@"""{GeneratorName}"", ""{GeneratorVersion}""");
-        private static readonly TypeName _protoMemberType = new TypeName("ProtoMember");
-        private static readonly TypeName _attrObsoleteType = new TypeName("Obsolete");
 
         private ParsedContracts Contracts { get; }
 
@@ -31,7 +30,7 @@ namespace Abc.Zebus.MessageDsl.Generator
             Reset();
 
             WriteHeader();
-            WriteUsings();
+            WriteUsingDirectives();
             WritePragmas();
 
             var hasNamespace = !string.IsNullOrEmpty(Contracts.Namespace);
@@ -82,7 +81,7 @@ namespace Abc.Zebus.MessageDsl.Generator
             Writer.WriteLine();
         }
 
-        private void WriteUsings()
+        private void WriteUsingDirectives()
         {
             var orderedNamespaces = Contracts.ImportedNamespaces
                                              .OrderByDescending(ns => ns == "System" || ns.StartsWith("System."))
@@ -96,10 +95,10 @@ namespace Abc.Zebus.MessageDsl.Generator
 
         private void WritePragmas()
         {
-            var hasObsolete = Contracts.Messages.Any(m => m.Attributes.HasAttribute(_attrObsoleteType))
-                              || Contracts.Messages.SelectMany(m => m.Parameters).Any(p => p.Attributes.HasAttribute(_attrObsoleteType))
-                              || Contracts.Enums.Any(m => m.Attributes.HasAttribute(_attrObsoleteType))
-                              || Contracts.Enums.SelectMany(m => m.Members).Any(m => m.Attributes.HasAttribute(_attrObsoleteType));
+            var hasObsolete = Contracts.Messages.Any(m => m.Attributes.HasAttribute(KnownTypes.ObsoleteAttribute))
+                              || Contracts.Messages.SelectMany(m => m.Parameters).Any(p => p.Attributes.HasAttribute(KnownTypes.ObsoleteAttribute))
+                              || Contracts.Enums.Any(m => m.Attributes.HasAttribute(KnownTypes.ObsoleteAttribute))
+                              || Contracts.Enums.SelectMany(m => m.Members).Any(m => m.Attributes.HasAttribute(KnownTypes.ObsoleteAttribute));
 
             if (hasObsolete)
             {
@@ -275,7 +274,7 @@ namespace Abc.Zebus.MessageDsl.Generator
 
         private void WriteParameterMember(MessageDefinition message, ParameterDefinition param)
         {
-            if (!param.Attributes.HasAttribute(_protoMemberType))
+            if (!param.Attributes.HasAttribute(KnownTypes.ProtoMemberAttribute))
             {
                 var protoMemberParams = new StringBuilder();
 
@@ -285,7 +284,7 @@ namespace Abc.Zebus.MessageDsl.Generator
                 if (param.IsPacked)
                     protoMemberParams.Append(", IsPacked = true");
 
-                WriteAttributeLine(new AttributeDefinition(_protoMemberType, protoMemberParams.ToString()));
+                WriteAttributeLine(new AttributeDefinition(KnownTypes.ProtoMemberAttribute, protoMemberParams.ToString()));
             }
 
             foreach (var attribute in param.Attributes)

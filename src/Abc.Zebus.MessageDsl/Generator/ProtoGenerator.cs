@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Abc.Zebus.MessageDsl.Analysis;
 using Abc.Zebus.MessageDsl.Ast;
 
 namespace Abc.Zebus.MessageDsl.Generator
@@ -127,7 +128,7 @@ namespace Abc.Zebus.MessageDsl.Generator
             if (param.IsPacked)
                 WriteFieldOption("packed", "true", ref first);
 
-            if (param.Attributes.HasAttribute("Obsolete"))
+            if (param.Attributes.HasAttribute(KnownTypes.ObsoleteAttribute))
                 WriteFieldOption("deprecated", "true", ref first);
 
             if (param.RoutingPosition != null)

@@ -44,15 +44,15 @@ namespace Abc.Zebus.MessageDsl.Analysis
             switch (message.Type)
             {
                 case MessageType.Event:
-                    message.BaseTypes.Add("IEvent");
+                    message.BaseTypes.Add(KnownTypes.EventInterface);
                     break;
 
                 case MessageType.Command:
-                    message.BaseTypes.Add("ICommand");
+                    message.BaseTypes.Add(KnownTypes.CommandInterface);
                     break;
 
                 case MessageType.Custom:
-                    message.BaseTypes.Add("IMessage");
+                    message.BaseTypes.Add(KnownTypes.MessageInterface);
                     break;
             }
         }
@@ -112,7 +112,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
 
         private void AddImplicitNamespaces(AttributeSet attributes)
         {
-            if (attributes.HasAttribute(nameof(DescriptionAttribute)))
+            if (attributes.HasAttribute(KnownTypes.DescriptionAttribute))
                 _contracts.ImportedNamespaces.Add(typeof(DescriptionAttribute).Namespace!);
         }
     }

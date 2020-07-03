@@ -9,7 +9,7 @@ namespace Abc.Zebus.MessageDsl.Ast
     {
         public IList<AttributeDefinition> Attributes { get; } = new List<AttributeDefinition>();
 
-        public AttributeDefinition GetAttribute(TypeName attributeType)
+        public AttributeDefinition? GetAttribute(TypeName attributeType)
         {
             attributeType = AttributeDefinition.NormalizeAttributeTypeName(attributeType);
             return Attributes.FirstOrDefault(attr => Equals(attr.TypeName, attributeType));

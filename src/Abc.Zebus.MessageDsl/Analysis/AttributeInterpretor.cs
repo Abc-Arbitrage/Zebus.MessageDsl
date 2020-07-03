@@ -7,9 +7,6 @@ namespace Abc.Zebus.MessageDsl.Analysis
     internal class AttributeInterpretor
     {
         private readonly ParsedContracts _contracts;
-        private static readonly TypeName _routableTypeName = new TypeName("Routable");
-        private static readonly TypeName _routingPositionTypeName = new TypeName("RoutingPosition");
-        private static readonly TypeName _transientTypeName = new TypeName("Transient");
 
         public AttributeInterpretor(ParsedContracts contracts)
         {
@@ -30,7 +27,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
 
         private void CheckIfRoutable(MessageDefinition message)
         {
-            message.IsRoutable = !message.IsCustom && message.Attributes.HasAttribute(_routableTypeName);
+            message.IsRoutable = !message.IsCustom && message.Attributes.HasAttribute(KnownTypes.RoutableAttribute);
 
             if (message.IsRoutable)
             {
@@ -38,7 +35,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
 
                 foreach (var param in message.Parameters)
                 {
-                    var routingAttr = param.Attributes.Where(attr => Equals(attr.TypeName, _routingPositionTypeName)).ToList();
+                    var routingAttr = param.Attributes.Where(attr => Equals(attr.TypeName, KnownTypes.RoutingPositionAttribute)).ToList();
 
                     if (routingAttr.Count == 0)
                         continue;
@@ -74,7 +71,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
             {
                 var firstRoutingPositionAttr = message.Parameters
                                                       .SelectMany(p => p.Attributes)
-                                                      .FirstOrDefault(attr => Equals(attr.TypeName, _routingPositionTypeName));
+                                                      .FirstOrDefault(attr => Equals(attr.TypeName, KnownTypes.RoutingPositionAttribute));
 
                 if (firstRoutingPositionAttr != null)
                     _contracts.AddError(firstRoutingPositionAttr.ParseContext, "A non-routable message should not have RoutingPosition attributes");
@@ -83,25 +80,25 @@ namespace Abc.Zebus.MessageDsl.Analysis
 
         private static void CheckIfTransient(MessageDefinition message)
         {
-            message.IsTransient = !message.IsCustom && message.Attributes.HasAttribute(_transientTypeName);
+            message.IsTransient = !message.IsCustom && message.Attributes.HasAttribute(KnownTypes.TransientAttribute);
         }
 
         private void ProcessProtoMemberAttribute(ParameterDefinition param)
         {
-            var attr = param.Attributes.GetAttribute("ProtoMember");
+            var attr = param.Attributes.GetAttribute(KnownTypes.ProtoMemberAttribute);
             if (attr == null)
                 return;
 
             if (string.IsNullOrWhiteSpace(attr.Parameters))
             {
-                _contracts.AddError(attr.ParseContext, "The [ProtoMember] attribute must have parameters");
+                _contracts.AddError(attr.ParseContext, "The [{0}] attribute must have parameters", KnownTypes.ProtoMemberAttribute);
                 return;
             }
 
             var match = Regex.Match(attr.Parameters, @"^\s*(?<nb>[0-9]+)\s*(?:,|$)");
             if (!match.Success || !int.TryParse(match.Groups["nb"].Value, out var tagNb))
             {
-                _contracts.AddError(attr.ParseContext, "Invalid [ProtoMember] parameters");
+                _contracts.AddError(attr.ParseContext, "Invalid [{0}] parameters", KnownTypes.ProtoMemberAttribute);
                 return;
             }
 

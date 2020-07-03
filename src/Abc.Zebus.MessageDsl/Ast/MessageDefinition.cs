@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Abc.Zebus.MessageDsl.Analysis;
 
 namespace Abc.Zebus.MessageDsl.Ast
 {
@@ -33,10 +34,10 @@ namespace Abc.Zebus.MessageDsl.Ast
                 if (IsCustom)
                     return MessageType.Custom;
 
-                if (BaseTypes.Contains("ICommand") || BaseTypes.Contains("Abc.Zebus.ICommand"))
+                if (BaseTypes.Contains(KnownTypes.CommandInterface) || BaseTypes.Contains(KnownTypes.CommandInterfaceFullName))
                     return MessageType.Command;
 
-                if (BaseTypes.Contains("IEvent") || BaseTypes.Contains("IDomainEvent") || BaseTypes.Contains("Abc.Zebus.IEvent"))
+                if (BaseTypes.Contains(KnownTypes.EventInterface) || BaseTypes.Contains(KnownTypes.EventInterfaceFullName))
                     return MessageType.Event;
 
                 if (Name.EndsWith("Command"))

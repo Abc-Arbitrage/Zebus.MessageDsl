@@ -4,8 +4,6 @@ namespace Abc.Zebus.MessageDsl.Analysis
 {
     internal class ContractsEnhancer
     {
-        private static readonly TypeName _protoMapAttributeType = new TypeName("ProtoMap");
-
         private readonly ParsedContracts _contracts;
 
         public ContractsEnhancer(ParsedContracts contracts)
@@ -27,8 +25,8 @@ namespace Abc.Zebus.MessageDsl.Analysis
 
         private static void ProcessParameter(ParameterDefinition parameter)
         {
-            if (parameter.Type.IsDictionary && !parameter.Attributes.HasAttribute(_protoMapAttributeType))
-                parameter.Attributes.Add(new AttributeDefinition(_protoMapAttributeType, "DisableMap = true")); // https://github.com/mgravell/protobuf-net/issues/379
+            if (parameter.Type.IsDictionary && !parameter.Attributes.HasAttribute(KnownTypes.ProtoMapAttribute))
+                parameter.Attributes.Add(new AttributeDefinition(KnownTypes.ProtoMapAttribute, "DisableMap = true")); // https://github.com/mgravell/protobuf-net/issues/379
         }
     }
 }
