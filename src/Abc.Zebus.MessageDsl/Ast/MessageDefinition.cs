@@ -2,12 +2,13 @@
 
 namespace Abc.Zebus.MessageDsl.Ast
 {
-    public class MessageDefinition : AstNode, IMemberNode
+    public class MessageDefinition : AstNode, IClassNode
     {
         private MemberOptions? _options;
 
         public string Name { get; set; } = default!;
         public AccessModifier AccessModifier { get; set; }
+        public InheritanceModifier InheritanceModifier { get; set; } = InheritanceModifier.Sealed;
         public IList<string> GenericParameters { get; } = new List<string>();
         public IList<GenericConstraint> GenericConstraints { get; } = new List<GenericConstraint>();
 

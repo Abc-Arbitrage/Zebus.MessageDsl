@@ -4,6 +4,7 @@ using System.Linq;
 using Abc.Zebus.MessageDsl.Ast;
 using Abc.Zebus.MessageDsl.Dsl;
 using Abc.Zebus.MessageDsl.Support;
+using Antlr4.Runtime;
 using static Abc.Zebus.MessageDsl.Dsl.MessageContractsParser;
 
 namespace Abc.Zebus.MessageDsl.Analysis
@@ -129,7 +130,10 @@ namespace Abc.Zebus.MessageDsl.Analysis
                 Options = _currentMemberOptions
             };
 
-            ProcessAccessModifier(enumDef, context.accessModifier());
+            var accessModifier = context.accessModifier();
+            if (accessModifier != null)
+                ProcessTypeModifiers(enumDef, new[] { accessModifier.type });
+
             ProcessAttributes(enumDef.Attributes, context.attributes());
 
             if (context.underlyingType != null)
@@ -322,7 +326,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
                 var nameContext = context.GetRuleContext<MessageNameContext>(0);
                 message.Name = GetId(nameContext.name);
 
-                ProcessAccessModifier(message, context.accessModifier());
+                ProcessTypeModifiers(message, context.typeModifier().Select(i => i.type));
 
                 foreach (var typeParamToken in nameContext._typeParams)
                 {
@@ -347,24 +351,60 @@ namespace Abc.Zebus.MessageDsl.Analysis
             }
         }
 
-        private static void ProcessAccessModifier(IMemberNode member, AccessModifierContext? accessModifier)
+        private void ProcessTypeModifiers(IMemberNode member, IEnumerable<IToken> modifiers)
         {
-            if (accessModifier == null)
+            AccessModifier? accessModifier = null;
+            InheritanceModifier? inheritanceModifier = null;
+
+            foreach (var modifier in modifiers)
             {
-                member.AccessModifier = member.Options.GetAccessModifier();
-                return;
+                switch (modifier.Type)
+                {
+                    case MessageContractsLexer.KW_PUBLIC:
+                    case MessageContractsLexer.KW_INTERNAL:
+                        if (accessModifier == null)
+                        {
+                            accessModifier = modifier.Type switch
+                            {
+                                MessageContractsLexer.KW_PUBLIC   => AccessModifier.Public,
+                                MessageContractsLexer.KW_INTERNAL => AccessModifier.Internal,
+                                _                                 => throw new InvalidOperationException($"Cannot map access modifier: {modifier.Text}")
+                            };
+                        }
+                        else
+                        {
+                            _contracts.AddError(modifier, "An access modifier has already been provided");
+                        }
+
+                        break;
+
+                    case MessageContractsLexer.KW_SEALED:
+                    case MessageContractsLexer.KW_ABSTRACT:
+                        if (inheritanceModifier == null)
+                        {
+                            if (!(member is IClassNode))
+                                _contracts.AddError(modifier, "Cannot apply inheritance modifier to a non-class type");
+
+                            inheritanceModifier = modifier.Type switch
+                            {
+                                MessageContractsLexer.KW_SEALED   => InheritanceModifier.Sealed,
+                                MessageContractsLexer.KW_ABSTRACT => InheritanceModifier.Abstract,
+                                _                                 => throw new InvalidOperationException($"Cannot map inheritance modifier: {modifier.Text}")
+                            };
+                        }
+                        else
+                        {
+                            _contracts.AddError(modifier, "An inheritance modifier has already been provided");
+                        }
+
+                        break;
+                }
             }
 
-            switch (accessModifier.type.Type)
-            {
-                case MessageContractsLexer.KW_PUBLIC:
-                    member.AccessModifier = AccessModifier.Public;
-                    break;
+            member.AccessModifier = accessModifier ?? member.Options.GetAccessModifier();
 
-                case MessageContractsLexer.KW_INTERNAL:
-                    member.AccessModifier = AccessModifier.Internal;
-                    break;
-            }
+            if (inheritanceModifier != null && member is IClassNode classNode)
+                classNode.InheritanceModifier = inheritanceModifier.Value;
         }
 
         private void ProcessAttributes(AttributeSet? attributeSet, AttributesContext? context)

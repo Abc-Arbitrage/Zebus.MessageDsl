@@ -174,11 +174,17 @@ namespace Abc.Zebus.MessageDsl.Generator
             foreach (var attribute in message.Attributes)
                 WriteAttributeLine(attribute);
 
-            Writer.Write(
-                "{0} sealed partial class {1}",
-                AccessModifier(message.AccessModifier),
-                Identifier(message.Name)
-            );
+            Writer.Write(AccessModifier(message.AccessModifier));
+            Writer.Write(" ");
+
+            if (message.InheritanceModifier != Ast.InheritanceModifier.None)
+            {
+                Writer.Write(InheritanceModifier(message.InheritanceModifier));
+                Writer.Write(" ");
+            }
+
+            Writer.Write("partial class ");
+            Writer.Write(Identifier(message.Name));
 
             if (message.GenericParameters.Count > 0)
             {
@@ -297,7 +303,17 @@ namespace Abc.Zebus.MessageDsl.Generator
 
         private void WriteDefaultConstructor(MessageDefinition message)
         {
-            Writer.WriteLine("{0} {1}()", message.Options.Mutable ? "public" : "private", Identifier(message.Name));
+            Writer.Write(
+                message.InheritanceModifier == Ast.InheritanceModifier.Abstract
+                    ? "protected"
+                    : message.Options.Mutable
+                        ? "public"
+                        : "private"
+            );
+
+            Writer.Write(" ");
+            Writer.Write(Identifier(message.Name));
+            Writer.Write("()");
 
             using (Block())
             {
@@ -318,12 +334,21 @@ namespace Abc.Zebus.MessageDsl.Generator
 
         private void WriteMessageConstructor(MessageDefinition message)
         {
+            Writer.WriteLine();
+
+            Writer.Write(
+                message.InheritanceModifier == Ast.InheritanceModifier.Abstract
+                    ? "protected"
+                    : "public"
+            );
+
+            Writer.Write(" ");
+            Writer.Write(Identifier(message.Name));
+            Writer.Write("(");
+
             var paramsToInitialize = message.Parameters
                                             .Where(param => !param.IsWritableProperty)
                                             .ToList();
-
-            Writer.WriteLine();
-            Writer.Write("public {0}(", Identifier(message.Name));
 
             var firstParam = true;
             foreach (var param in paramsToInitialize)
@@ -370,6 +395,17 @@ namespace Abc.Zebus.MessageDsl.Generator
                 Ast.AccessModifier.Public   => "public",
                 Ast.AccessModifier.Internal => "internal",
                 _                           => throw new ArgumentOutOfRangeException(nameof(accessModifier), accessModifier, null)
+            };
+        }
+
+        private static string InheritanceModifier(InheritanceModifier inheritanceModifier)
+        {
+            return inheritanceModifier switch
+            {
+                Ast.InheritanceModifier.None     => string.Empty,
+                Ast.InheritanceModifier.Sealed   => "sealed",
+                Ast.InheritanceModifier.Abstract => "abstract",
+                _                                => throw new ArgumentOutOfRangeException(nameof(inheritanceModifier), inheritanceModifier, null)
             };
         }
 

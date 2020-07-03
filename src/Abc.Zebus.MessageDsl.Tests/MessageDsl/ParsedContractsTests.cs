@@ -307,6 +307,21 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
         }
 
         [Test]
+        public void should_parse_inheritance_modifiers()
+        {
+            var contracts = ParseValid("sealed MsgA(); abstract MsgB();");
+            contracts.Messages[0].InheritanceModifier.ShouldEqual(InheritanceModifier.Sealed);
+            contracts.Messages[1].InheritanceModifier.ShouldEqual(InheritanceModifier.Abstract);
+        }
+
+        [Test]
+        public void should_default_to_sealed_message_classes()
+        {
+            var contracts = ParseValid("MsgA();");
+            contracts.Messages[0].InheritanceModifier.ShouldEqual(InheritanceModifier.Sealed);
+        }
+
+        [Test]
         public void should_parse_custom_types()
         {
             var contracts = ParseValid(@"FooType!(int id);");

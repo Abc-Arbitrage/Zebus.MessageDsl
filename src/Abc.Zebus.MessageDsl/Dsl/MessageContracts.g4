@@ -66,12 +66,19 @@ enumValueAtom
 	;
 
 messageDefinition
-	:	attributes accessModifier? messageName customModifier='!'? parameterList baseTypeList typeParamConstraintList
+	:	attributes typeModifier* messageName customModifier='!'? parameterList baseTypeList typeParamConstraintList
 	;
 
 accessModifier
 	:	type=KW_PUBLIC
 	|	type=KW_INTERNAL
+	;
+
+typeModifier
+	:	type=KW_PUBLIC
+	|	type=KW_INTERNAL
+	|	type=KW_SEALED
+	|	type=KW_ABSTRACT
 	;
 
 messageName
@@ -227,6 +234,9 @@ typeKeyword
 
 KW_PUBLIC : 'public';
 KW_INTERNAL : 'internal';
+
+KW_SEALED : 'sealed';
+KW_ABSTRACT : 'abstract';
 
 ID
 	:	[a-zA-Z_][a-zA-Z0-9_]*

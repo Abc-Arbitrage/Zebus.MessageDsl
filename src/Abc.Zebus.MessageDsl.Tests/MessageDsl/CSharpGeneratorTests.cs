@@ -540,6 +540,38 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
         }
 
         [Test]
+        public void should_generate_sealed_messages()
+        {
+            var code = Generate(new MessageDefinition
+            {
+                Name = "FooExecuted",
+                InheritanceModifier = InheritanceModifier.Sealed
+            });
+
+            code.ShouldContain("public sealed partial class FooExecuted : IEvent");
+        }
+
+        [Test]
+        public void should_generate_abstract_messages()
+        {
+            var code = Generate(new MessageDefinition
+            {
+                Name = "FooExecuted",
+                InheritanceModifier = InheritanceModifier.Abstract,
+                Parameters =
+                {
+                    new ParameterDefinition("int", "foo"),
+                    new ParameterDefinition("int", "bar")
+                }
+            });
+
+            code.ShouldContain("public abstract partial class FooExecuted : IEvent");
+            code.ShouldContain("protected FooExecuted(");
+            code.ShouldNotContain("private FooExecuted(");
+            code.ShouldNotContain("public FooExecuted(");
+        }
+
+        [Test]
         public void should_handle_nullable_reference_types()
         {
             var code = Generate(new ParsedContracts
