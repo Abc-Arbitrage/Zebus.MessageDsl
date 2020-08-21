@@ -645,6 +645,23 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
             contracts.Messages[1].GenericParameters.ExpectedSingle().ShouldEqual("T");
         }
 
+        [Test]
+        public void should_parse_default_values()
+        {
+            ParseValid(@"Foo(int i = 42);");
+            ParseValid(@"Foo(int i = default);");
+            ParseValid(@"Foo(int i = default(int));");
+            ParseValid(@"Foo(double d = 42.42);");
+            ParseValid(@"Foo(decimal d = 42.42m);");
+            ParseValid(@"Foo(bool b = true);");
+            ParseValid(@"Foo(bool b = false);");
+            ParseValid(@"Foo(string s = null);");
+            ParseValid(@"Foo(string s = ""foo"");");
+            ParseValid(@"Foo(char c = 'c');");
+            ParseValid(@"Foo(Type t = typeof(string));"); // Invalid protobuf, but accepted in the DSL
+            ParseValid(@"Foo(DayOfWeek d = DayOfWeek.Friday);");
+        }
+
         private static ParsedContracts ParseValid(string definitionText)
         {
             var contracts = Parse(definitionText);

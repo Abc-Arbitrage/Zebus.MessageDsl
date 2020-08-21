@@ -141,6 +141,7 @@ literalValue
 	|	CHAR
 	|	NUMBER
 	|	'typeof' '(' typeName ')'
+	|	'default' ( '(' typeName ')' )?
 	|	id ('.' id)+ // enum value
 	;
 
