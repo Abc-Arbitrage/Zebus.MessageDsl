@@ -14,7 +14,7 @@ namespace Abc.Zebus.MessageDsl.Ast
         public IList<GenericConstraint> GenericConstraints { get; } = new List<GenericConstraint>();
 
         public IList<ParameterDefinition> Parameters { get; } = new List<ParameterDefinition>();
-        public ICollection<TypeName> BaseTypes { get; } = new HashSet<TypeName>();
+        public IList<TypeName> BaseTypes { get; } = new List<TypeName>();
         public AttributeSet Attributes { get; } = new AttributeSet();
 
         public MemberOptions Options
