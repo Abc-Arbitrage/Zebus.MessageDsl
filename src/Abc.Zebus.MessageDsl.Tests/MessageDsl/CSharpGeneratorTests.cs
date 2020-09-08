@@ -654,6 +654,56 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
             code.ShouldContain("FooExecuted : BType, AType");
         }
 
+        [Test]
+        public void should_forward_base_type_parameters()
+        {
+            var code = Generate(new ParsedContracts
+            {
+                Messages =
+                {
+                    new MessageDefinition
+                    {
+                        Name = "FooMessage",
+                        BaseTypes = { "BarMessage" },
+                        Parameters =
+                        {
+                            new ParameterDefinition("int", "fooA"),
+                            new ParameterDefinition("int", "barA") { DefaultValue = "10" }
+                        }
+                    },
+                    new MessageDefinition
+                    {
+                        Name = "BarMessage",
+                        BaseTypes = { "BazMessage" },
+                        InheritanceModifier = InheritanceModifier.Abstract,
+                        Parameters =
+                        {
+                            new ParameterDefinition("int", "fooB") { DefaultValue = "20" },
+                            new ParameterDefinition("int", "barB") { DefaultValue = "21" }
+                        }
+                    },
+                    new MessageDefinition
+                    {
+                        Name = "BazMessage",
+                        InheritanceModifier = InheritanceModifier.Abstract,
+                        Parameters =
+                        {
+                            new ParameterDefinition("int", "fooC"),
+                            new ParameterDefinition("int", "barC") { DefaultValue = "30" }
+                        }
+                    }
+                }
+            });
+
+            code.ShouldContain("FooMessage(int fooC, int barC, int fooB, int barB, int fooA, int barA = 10)");
+            code.ShouldContain(": base(fooC, barC, fooB, barB)");
+
+            code.ShouldContain("BarMessage(int fooC, int barC = 30, int fooB = 20, int barB = 21)");
+            code.ShouldContain(": base(fooC, barC)");
+
+            code.ShouldContain("BazMessage(int fooC, int barC = 30)");
+        }
+
         protected override string GenerateRaw(ParsedContracts contracts) => CSharpGenerator.Generate(contracts);
     }
 }
