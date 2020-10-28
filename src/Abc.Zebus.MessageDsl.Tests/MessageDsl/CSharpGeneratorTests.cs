@@ -704,6 +704,147 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
             code.ShouldContain("BazMessage(int fooC, int barC = 30)");
         }
 
+        [Test]
+        public void should_not_forward_base_type_parameters_for_mutable_base_types_1()
+        {
+            var code = Generate(new ParsedContracts
+            {
+                Messages =
+                {
+                    new MessageDefinition
+                    {
+                        Name = "FooMessage",
+                        BaseTypes = { "BarMessage" },
+                        Parameters =
+                        {
+                            new ParameterDefinition("int", "fooA")
+                        }
+                    },
+                    new MessageDefinition
+                    {
+                        Name = "BarMessage",
+                        BaseTypes = { "BazMessage" },
+                        InheritanceModifier = InheritanceModifier.Abstract,
+                        Options = { Mutable = true },
+                        Parameters =
+                        {
+                            new ParameterDefinition("int", "fooB")
+                        }
+                    },
+                    new MessageDefinition
+                    {
+                        Name = "BazMessage",
+                        InheritanceModifier = InheritanceModifier.Abstract,
+                        Options = { Mutable = true },
+                        Parameters =
+                        {
+                            new ParameterDefinition("int", "fooC")
+                        }
+                    }
+                }
+            });
+
+            code.ShouldContain("FooMessage(int fooA)");
+            code.ShouldContain("BarMessage(int fooB)");
+            code.ShouldContain("BazMessage(int fooC)");
+            code.ShouldNotContain("base(");
+        }
+
+        [Test]
+        public void should_not_forward_base_type_parameters_for_mutable_base_types_2()
+        {
+            var code = Generate(new ParsedContracts
+            {
+                Messages =
+                {
+                    new MessageDefinition
+                    {
+                        Name = "FooMessage",
+                        BaseTypes = { "BarMessage" },
+                        Parameters =
+                        {
+                            new ParameterDefinition("int", "fooA")
+                        }
+                    },
+                    new MessageDefinition
+                    {
+                        Name = "BarMessage",
+                        BaseTypes = { "BazMessage" },
+                        InheritanceModifier = InheritanceModifier.Abstract,
+                        Options = { Mutable = true },
+                        Parameters =
+                        {
+                            new ParameterDefinition("int", "fooB")
+                        }
+                    },
+                    new MessageDefinition
+                    {
+                        Name = "BazMessage",
+                        InheritanceModifier = InheritanceModifier.Abstract,
+                        Parameters =
+                        {
+                            new ParameterDefinition("int", "fooC")
+                        }
+                    }
+                }
+            });
+
+            code.ShouldContain("public FooMessage(int fooC, int fooA)");
+            code.ShouldNotContain("protected FooMessage");
+            code.ShouldContain(": base(fooC)");
+
+            code.ShouldContain("protected BarMessage(int fooC, int fooB)");
+            code.ShouldContain("protected BarMessage(int fooC)");
+
+            code.ShouldContain("protected BazMessage(int fooC)");
+        }
+
+        [Test]
+        public void should_not_forward_base_type_parameters_for_mutable_base_types_3()
+        {
+            var code = Generate(new ParsedContracts
+            {
+                Messages =
+                {
+                    new MessageDefinition
+                    {
+                        Name = "FooMessage",
+                        BaseTypes = { "BarMessage" },
+                        Parameters =
+                        {
+                            new ParameterDefinition("int", "fooA")
+                        }
+                    },
+                    new MessageDefinition
+                    {
+                        Name = "BarMessage",
+                        BaseTypes = { "BazMessage" },
+                        InheritanceModifier = InheritanceModifier.Abstract,
+                        Parameters =
+                        {
+                            new ParameterDefinition("int", "fooB")
+                        }
+                    },
+                    new MessageDefinition
+                    {
+                        Name = "BazMessage",
+                        InheritanceModifier = InheritanceModifier.Abstract,
+                        Options = { Mutable = true },
+                        Parameters =
+                        {
+                            new ParameterDefinition("int", "fooC")
+                        }
+                    }
+                }
+            });
+
+            code.ShouldContain("FooMessage(int fooB, int fooA)");
+            code.ShouldContain(": base(fooB)");
+
+            code.ShouldContain("BarMessage(int fooB)");
+            code.ShouldContain("BazMessage(int fooC)");
+        }
+
         protected override string GenerateRaw(ParsedContracts contracts) => CSharpGenerator.Generate(contracts);
     }
 }

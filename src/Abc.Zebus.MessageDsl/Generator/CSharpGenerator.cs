@@ -228,6 +228,7 @@ namespace Abc.Zebus.MessageDsl.Generator
                 if (parameters.Count != 0)
                 {
                     WriteDefaultConstructor(message);
+                    WriteForwardingConstructor(message, parameters);
                     WriteMessageConstructor(message, parameters);
                 }
             }
@@ -316,6 +317,11 @@ namespace Abc.Zebus.MessageDsl.Generator
             Writer.Write(Identifier(message.Name));
             Writer.WriteLine("()");
 
+            WriteDefaultConstructorBody(message);
+        }
+
+        private void WriteDefaultConstructorBody(MessageDefinition message)
+        {
             using (Block())
             {
                 foreach (var param in message.Parameters)
@@ -331,6 +337,63 @@ namespace Abc.Zebus.MessageDsl.Generator
                         Writer.WriteLine("{0} = default!;", Identifier(MemberCase(param.Name)));
                 }
             }
+        }
+
+        private void WriteForwardingConstructor(MessageDefinition message, List<ParameterData> parameters)
+        {
+            if (message.InheritanceModifier == Ast.InheritanceModifier.Sealed
+                || !message.Options.Mutable
+                || parameters.Count == 0
+                || !parameters[0].IsFromBase
+                || parameters.All(p => p.IsFromBase))
+            {
+                return;
+            }
+
+            Writer.WriteLine();
+
+            Writer.Write("protected ");
+            Writer.Write(Identifier(message.Name));
+            Writer.Write("(");
+
+            var firstParam = true;
+            foreach (var param in parameters)
+            {
+                if (!param.IsFromBase)
+                    break;
+
+                if (firstParam)
+                    firstParam = false;
+                else
+                    Writer.Write(", ");
+
+                Writer.Write("{0} {1}", param.Parameter.Type.NetType, Identifier(ParameterCase(param.Parameter.Name)));
+            }
+
+            Writer.WriteLine(")");
+
+            using (Indent())
+            {
+                Writer.Write(": base(");
+
+                firstParam = true;
+                foreach (var param in parameters)
+                {
+                    if (!param.IsFromBase)
+                        break;
+
+                    if (firstParam)
+                        firstParam = false;
+                    else
+                        Writer.Write(", ");
+
+                    Writer.Write(Identifier(ParameterCase(param.Parameter.Name)));
+                }
+
+                Writer.WriteLine(")");
+            }
+
+            WriteDefaultConstructorBody(message);
         }
 
         private void WriteMessageConstructor(MessageDefinition message, List<ParameterData> parameters)
@@ -410,12 +473,15 @@ namespace Abc.Zebus.MessageDsl.Generator
                 if (!_messagesByName.TryGetValue(baseTypeName.NetType, out var baseType))
                     break;
 
-                var index = 0;
-
-                foreach (var param in baseType.Parameters)
+                if (!baseType.Options.Mutable)
                 {
-                    if (IsConstructorParameter(param))
-                        result.Insert(index++, new ParameterData(param, true));
+                    var index = 0;
+
+                    foreach (var param in baseType.Parameters)
+                    {
+                        if (IsConstructorParameter(param))
+                            result.Insert(index++, new ParameterData(param, true));
+                    }
                 }
 
                 baseTypeName = baseType.BaseTypes.FirstOrDefault();
