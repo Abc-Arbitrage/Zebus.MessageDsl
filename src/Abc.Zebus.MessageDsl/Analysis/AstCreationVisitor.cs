@@ -324,16 +324,11 @@ namespace Abc.Zebus.MessageDsl.Analysis
                 _currentMessage.Options = _currentMemberOptions;
 
                 var nameContext = context.GetRuleContext<MessageNameContext>(0);
-                message.Name = GetId(nameContext._typeNames.Last());
+                message.Name = GetId(nameContext.name);
 
-                if (nameContext._typeNames.Count > 1)
-                {
-                    message.ContainingClasses.AddRange(
-                        nameContext._typeNames
-                                   .Take(nameContext._typeNames.Count - 1)
-                                   .Select(name => new TypeName(name.GetText()))
-                    );
-                }
+                message.ContainingClasses.AddRange(
+                    nameContext._containingTypes.Select(name => new TypeName(name.GetText()))
+                );
 
                 ProcessTypeModifiers(message, context.typeModifier().Select(i => i.type));
 
