@@ -72,7 +72,7 @@ If the message name ends with `Command`, it will implement `ICommand`, otherwise
 DoStuff(int id) : ICommand;
 ```
 
-Additional interfaces can be specified using the same syntax.
+Additional base types can be specified using the same syntax.
 
 Add a `!` suffix to a message type in order to implement `IMessage` instead of either `ICommand` or `IEvent`. These types can be used as inner message types, or as reply messages.
 
@@ -180,6 +180,8 @@ internal enum Color {
 
 ## Message options
 
+Messages can be prefixed with the following keywords: `public`, `internal`, `sealed`, `abstract`.
+
 Use the `#pragma` directive to enable or disable flags on a specific scope. The scope starts at the directive.
 
 ```C#
@@ -201,7 +203,29 @@ The available options are:
  - `#pragma internal` - sets the default accessibility to `internal`.
  - `#pragma public` - sets the default accessibility to `public` (default, same effect as `#pragma !internal`).
  - `#pragma nullable` - enables support for nullable reference types.
- 
+
+## Inheritance
+
+A message type can inherit from another message type. The base type parameters will then be included in the constructor, unless the base type is marked as mutable.
+
+```C#
+Foo(int fooId) : Bar;
+Bar(int barId) : Baz;
+Baz(int bazId);
+```
+
+The constructor of `Foo` will be `Foo(int bazId, int barId, int fooId)`, and the constructor of `Bar` will be `Bar(int bazId, int barId)`.
+
+## Nested classes
+
+A message can be emitted as a nested class using the following syntax:
+
+```C#
+Foo.Bar.Baz(int id);
+```
+
+The `Baz` message class will be nested in `Bar`, which will itself be nested in `Foo`. All containing types need to be classes.
+
 ## Enums
 
 Enums can be declared just as in C#:
