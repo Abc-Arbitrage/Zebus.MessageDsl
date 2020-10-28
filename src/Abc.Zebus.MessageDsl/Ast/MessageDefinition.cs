@@ -12,6 +12,7 @@ namespace Abc.Zebus.MessageDsl.Ast
         public InheritanceModifier InheritanceModifier { get; set; }
         public IList<string> GenericParameters { get; } = new List<string>();
         public IList<GenericConstraint> GenericConstraints { get; } = new List<GenericConstraint>();
+        public IList<TypeName> ContainingClasses { get; } = new List<TypeName>();
 
         public IList<ParameterDefinition> Parameters { get; } = new List<ParameterDefinition>();
         public IList<TypeName> BaseTypes { get; } = new List<TypeName>();

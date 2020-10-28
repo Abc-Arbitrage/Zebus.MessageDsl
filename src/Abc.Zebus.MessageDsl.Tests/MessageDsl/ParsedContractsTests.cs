@@ -662,6 +662,15 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
             ParseValid(@"Foo(DayOfWeek d = DayOfWeek.Friday);");
         }
 
+        [Test]
+        public void should_parse_nested_classes()
+        {
+            var contracts = ParseValid("Foo.Bar.Baz();");
+            var message = contracts.Messages.ExpectedSingle();
+            message.Name.ShouldEqual("Baz");
+            message.ContainingClasses.ShouldEqual(new TypeName[] { "Foo", "Bar" });
+        }
+
         private static ParsedContracts ParseValid(string definitionText)
         {
             var contracts = Parse(definitionText);

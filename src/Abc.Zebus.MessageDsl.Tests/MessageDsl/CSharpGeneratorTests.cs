@@ -845,6 +845,18 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
             code.ShouldContain("BazMessage(int fooC)");
         }
 
+        [Test]
+        public void should_handle_nested_classes()
+        {
+            var code = Generate(new MessageDefinition
+            {
+                Name = "Baz",
+                ContainingClasses = { "Foo", "Bar" }
+            });
+
+            code.ShouldContainIgnoreIndent("partial class Foo\n{\npartial class Bar\n{\n[ProtoContract]");
+        }
+
         protected override string GenerateRaw(ParsedContracts contracts) => CSharpGenerator.Generate(contracts);
     }
 }

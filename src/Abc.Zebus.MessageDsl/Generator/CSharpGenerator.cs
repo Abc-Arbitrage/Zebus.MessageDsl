@@ -170,6 +170,15 @@ namespace Abc.Zebus.MessageDsl.Generator
 
         private void WriteMessage(MessageDefinition message)
         {
+            var containingClassesStack = new Stack<IDisposable>();
+            foreach (var containingClass in message.ContainingClasses)
+            {
+                Writer.Write("partial class ");
+                Writer.WriteLine(containingClass.NetType);
+
+                containingClassesStack.Push(Block());
+            }
+
             if (!message.Attributes.HasAttribute(_attrProtoContract.TypeName))
                 WriteAttributeLine(_attrProtoContract);
 
@@ -235,6 +244,9 @@ namespace Abc.Zebus.MessageDsl.Generator
                     WriteMessageConstructor(message, parameters);
                 }
             }
+
+            while (containingClassesStack.Count != 0)
+                containingClassesStack.Pop().Dispose();
         }
 
         private void WriteGenericConstraints(MessageDefinition message)

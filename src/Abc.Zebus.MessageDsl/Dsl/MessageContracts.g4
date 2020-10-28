@@ -82,7 +82,7 @@ typeModifier
 	;
 
 messageName
-	:	name=id ('<' typeParams+=id (',' typeParams+=id)* '>')?
+	:	typeNames+=id ('.' typeNames+=id)* ('<' typeParams+=id (',' typeParams+=id)* '>')?
 	;
 
 baseTypeList
