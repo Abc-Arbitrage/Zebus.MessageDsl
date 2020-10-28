@@ -43,6 +43,9 @@ namespace Abc.Zebus.MessageDsl.Generator
             });
         }
 
+        protected ListHelper List(string separator = ", ")
+            => new ListHelper(Writer, separator);
+
         protected string GeneratedOutput() => _stringBuilder.ToString();
 
         protected static string ParameterCase(string s) => char.ToLowerInvariant(s[0]) + s.Substring(1);
@@ -52,6 +55,31 @@ namespace Abc.Zebus.MessageDsl.Generator
         public void Dispose()
         {
             Writer.Dispose();
+        }
+
+        protected struct ListHelper
+        {
+            private readonly IndentedTextWriter _writer;
+            private readonly string _separator;
+            private bool _firstItem;
+
+            public ListHelper(IndentedTextWriter writer, string separator)
+            {
+                _writer = writer;
+                _separator = separator;
+                _firstItem = true;
+            }
+
+            public void NextItem()
+            {
+                if (_firstItem)
+                    _firstItem = false;
+                else
+                    _writer.Write(_separator);
+            }
+
+            public void Reset()
+                => _firstItem = true;
         }
     }
 }

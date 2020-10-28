@@ -194,25 +194,28 @@ namespace Abc.Zebus.MessageDsl.Generator
 
             if (message.GenericParameters.Count > 0)
             {
-                var firstTemplateParam = true;
+                Writer.Write("<");
+                var templateParamList = List();
+
                 foreach (var templateParameter in message.GenericParameters)
                 {
-                    Writer.Write(firstTemplateParam ? "<" : ", ");
+                    templateParamList.NextItem();
                     Writer.Write(Identifier(templateParameter));
-                    firstTemplateParam = false;
                 }
 
                 Writer.Write(">");
             }
 
-            var baseTypes = message.BaseTypes.Distinct();
-
-            var firstBaseType = true;
-            foreach (var baseType in baseTypes)
+            if (message.BaseTypes.Count > 0)
             {
-                Writer.Write(firstBaseType ? " : " : ", ");
-                Writer.Write(baseType.NetType);
-                firstBaseType = false;
+                Writer.Write(" : ");
+                var baseTypeList = List();
+
+                foreach (var baseType in message.BaseTypes.Distinct())
+                {
+                    baseTypeList.NextItem();
+                    Writer.Write(baseType.NetType);
+                }
             }
 
             Writer.WriteLine();
@@ -247,29 +250,28 @@ namespace Abc.Zebus.MessageDsl.Generator
                     Writer.Write(Identifier(genericConstraint.GenericParameterName));
                     Writer.Write(" : ");
 
-                    var firstConstraint = false;
+                    var constraintList = List();
 
                     if (genericConstraint.IsClass)
+                    {
+                        constraintList.NextItem();
                         Writer.Write("class");
+                    }
                     else if (genericConstraint.IsStruct)
+                    {
+                        constraintList.NextItem();
                         Writer.Write("struct");
-                    else
-                        firstConstraint = true;
+                    }
 
                     foreach (var type in genericConstraint.Types)
                     {
-                        if (!firstConstraint)
-                            Writer.Write(", ");
-
+                        constraintList.NextItem();
                         Writer.Write(type.NetType);
-                        firstConstraint = false;
                     }
 
                     if (genericConstraint.HasDefaultConstructor && !genericConstraint.IsStruct)
                     {
-                        if (!firstConstraint)
-                            Writer.Write(", ");
-
+                        constraintList.NextItem();
                         Writer.Write("new()");
                     }
 
@@ -356,17 +358,13 @@ namespace Abc.Zebus.MessageDsl.Generator
             Writer.Write(Identifier(message.Name));
             Writer.Write("(");
 
-            var firstParam = true;
+            var paramList = List();
             foreach (var param in parameters)
             {
                 if (!param.IsFromBase)
                     break;
 
-                if (firstParam)
-                    firstParam = false;
-                else
-                    Writer.Write(", ");
-
+                paramList.NextItem();
                 Writer.Write("{0} {1}", param.Parameter.Type.NetType, Identifier(ParameterCase(param.Parameter.Name)));
             }
 
@@ -376,17 +374,13 @@ namespace Abc.Zebus.MessageDsl.Generator
             {
                 Writer.Write(": base(");
 
-                firstParam = true;
+                paramList.Reset();
                 foreach (var param in parameters)
                 {
                     if (!param.IsFromBase)
                         break;
 
-                    if (firstParam)
-                        firstParam = false;
-                    else
-                        Writer.Write(", ");
-
+                    paramList.NextItem();
                     Writer.Write(Identifier(ParameterCase(param.Parameter.Name)));
                 }
 
@@ -410,14 +404,10 @@ namespace Abc.Zebus.MessageDsl.Generator
             Writer.Write(Identifier(message.Name));
             Writer.Write("(");
 
-            var firstParam = true;
+            var paramList = List();
             foreach (var param in parameters)
             {
-                if (firstParam)
-                    firstParam = false;
-                else
-                    Writer.Write(", ");
-
+                paramList.NextItem();
                 Writer.Write("{0} {1}", param.Parameter.Type.NetType, Identifier(ParameterCase(param.Parameter.Name)));
 
                 if (!param.IsRequired && !string.IsNullOrEmpty(param.Parameter.DefaultValue))
@@ -432,17 +422,13 @@ namespace Abc.Zebus.MessageDsl.Generator
                 {
                     Writer.Write(": base(");
 
-                    firstParam = true;
+                    paramList.Reset();
                     foreach (var param in parameters)
                     {
                         if (!param.IsFromBase)
                             break;
 
-                        if (firstParam)
-                            firstParam = false;
-                        else
-                            Writer.Write(", ");
-
+                        paramList.NextItem();
                         Writer.Write(Identifier(ParameterCase(param.Parameter.Name)));
                     }
 
