@@ -337,10 +337,10 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
         }
 
         [Test]
-        public void should_make_inherited_messages_abstract()
+        public void should_not_mark_inherited_messages_as_sealed()
         {
             var contracts = ParseValid("[ProtoInclude(10, typeof(MsgB))] MsgA(); MsgB() : MsgA;");
-            contracts.Messages[0].InheritanceModifier.ShouldEqual(InheritanceModifier.Abstract);
+            contracts.Messages[0].InheritanceModifier.ShouldEqual(InheritanceModifier.None);
         }
 
         [Test]

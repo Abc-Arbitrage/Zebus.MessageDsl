@@ -540,6 +540,18 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
         }
 
         [Test]
+        public void should_generate_unsealed_messages()
+        {
+            var code = Generate(new MessageDefinition
+            {
+                Name = "FooExecuted",
+                InheritanceModifier = InheritanceModifier.None
+            });
+
+            code.ShouldContain("public partial class FooExecuted : IEvent");
+        }
+
+        [Test]
         public void should_generate_sealed_messages()
         {
             var code = Generate(new MessageDefinition

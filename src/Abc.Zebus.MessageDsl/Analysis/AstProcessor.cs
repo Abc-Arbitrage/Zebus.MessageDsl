@@ -126,7 +126,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
             var hasInheritedMessages = message.Attributes.Any(attr => Equals(attr.TypeName, KnownTypes.ProtoIncludeAttribute));
 
             message.InheritanceModifier = hasInheritedMessages
-                ? InheritanceModifier.Abstract
+                ? InheritanceModifier.None
                 : InheritanceModifier.Sealed;
         }
     }
