@@ -75,6 +75,8 @@ namespace Abc.Zebus.MessageDsl.Analysis
 
             foreach (var baseType in message.BaseTypes)
                 ValidateType(baseType, message.ParseContext);
+
+            ValidateInheritance(message);
         }
 
         private void ValidateTags(MessageDefinition message)
@@ -144,6 +146,35 @@ namespace Abc.Zebus.MessageDsl.Analysis
         {
             if (type.NetType.Contains("??"))
                 _contracts.AddError(context, "Invalid type: {0}", type.NetType);
+        }
+
+        private void ValidateInheritance(MessageDefinition message)
+        {
+            if (message.BaseTypes.Count == 0)
+                return;
+
+            var seenTypes = new HashSet<TypeName>
+            {
+                message.Name
+            };
+
+            var currentMessage = message;
+
+            while (true)
+            {
+                if (currentMessage.BaseTypes.Count == 0)
+                    break;
+
+                currentMessage = _contracts.Messages.FirstOrDefault(m => m.Name == currentMessage.BaseTypes[0].NetType);
+                if (currentMessage is null)
+                    break;
+
+                if (!seenTypes.Add(currentMessage.Name))
+                {
+                    _contracts.AddError(message.ParseContext, "There is a loop in the inheritance chain");
+                    break;
+                }
+            }
         }
 
         private void DetectDuplicateTypes()

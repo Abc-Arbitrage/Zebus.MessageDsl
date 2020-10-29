@@ -671,6 +671,16 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
             message.ContainingClasses.ShouldEqual(new TypeName[] { "Foo", "Bar" });
         }
 
+        [Test]
+        public void should_detect_inheritance_loops()
+        {
+            ParseInvalid(@"Foo() : Foo;");
+            ParseInvalid(@"Foo() : Bar; [ProtoInclude(1, typeof(Foo))] Bar() : Foo;");
+            ParseInvalid(@"Foo() : Bar; [ProtoInclude(1, typeof(Foo))] Bar() : Baz; [ProtoInclude(1, typeof(Bar))] Baz() : Foo;");
+
+            ParseValid(@"Foo() : Bar; [ProtoInclude(1, typeof(Foo))] Bar();");
+        }
+
         private static ParsedContracts ParseValid(string definitionText)
         {
             var contracts = Parse(definitionText);
