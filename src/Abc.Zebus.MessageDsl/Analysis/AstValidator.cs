@@ -56,6 +56,19 @@ namespace Abc.Zebus.MessageDsl.Analysis
                 ValidateAttributes(param.Attributes);
             }
 
+            var requiredParameterSeen = false;
+
+            for (var i = message.Parameters.Count - 1; i >= 0; --i)
+            {
+                var param = message.Parameters[i];
+                var errorContext = param.ParseContext ?? message.ParseContext;
+
+                if (string.IsNullOrEmpty(param.DefaultValue))
+                    requiredParameterSeen = true;
+                else if (requiredParameterSeen)
+                    _contracts.AddError(errorContext, "Optional parameter {0} cannot appear before a required parameter", param.Name);
+            }
+
             foreach (var constraint in message.GenericConstraints)
             {
                 var errorContext = constraint.ParseContext ?? message.ParseContext;

@@ -681,6 +681,13 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
             ParseValid(@"Foo() : Bar; [ProtoInclude(1, typeof(Foo))] Bar();");
         }
 
+        [Test]
+        public void should_detect_misplaced_optional_parameters()
+        {
+            ParseInvalid("Foo(int a, int b = 42, int c);");
+            ParseValid("Foo(int a, int b = 42, int c = 10);");
+        }
+
         private static ParsedContracts ParseValid(string definitionText)
         {
             var contracts = Parse(definitionText);
