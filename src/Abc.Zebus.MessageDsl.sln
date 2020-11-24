@@ -13,6 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{A0123301
 		Directory.Build.targets = Directory.Build.targets
 		..\README.md = ..\README.md
 		..\azure-pipelines.yml = ..\azure-pipelines.yml
+		..\.github\workflows\build.yml = ..\.github\workflows\build.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abc.Zebus.MessageDsl.Build", "Abc.Zebus.MessageDsl.Build\Abc.Zebus.MessageDsl.Build.csproj", "{D7C3B2A7-F5EA-4BD1-95FF-0736EF745160}"
