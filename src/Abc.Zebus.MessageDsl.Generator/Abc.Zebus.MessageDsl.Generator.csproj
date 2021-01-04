@@ -7,7 +7,7 @@
     <RootNamespace>Abc.Zebus.MessageDsl</RootNamespace>
     <IsPackable>true</IsPackable>
     <PackageId>Zebus.MessageDsl.Generator</PackageId>
-    <Version>0.1.0</Version>
+    <Version>$(ZebusDslGeneratorVersion)</Version>
     <Description>A message DSL for Zebus (source generator for .msg files)</Description>
     <DevelopmentDependency>true</DevelopmentDependency>
     <IncludeBuildOutput>false</IncludeBuildOutput>

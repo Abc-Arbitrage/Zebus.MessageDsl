@@ -63,5 +63,8 @@ jobs:
       - name: Build Integration
         run:  dotnet build --configuration Release --no-restore src/Abc.Zebus.MessageDsl.Build.Integration/Abc.Zebus.MessageDsl.Build.Integration.csproj
 
+      - name: Generator Integration
+        run:  dotnet build --configuration Release --no-restore src/Abc.Zebus.MessageDsl.Generator.Integration/Abc.Zebus.MessageDsl.Generator.Integration.csproj
+
       - name: Test
         run: dotnet test --configuration Release --framework ${{ env.BUILD_LINUX_TEST_TFM }} --no-build src/Abc.Zebus.MessageDsl.Tests/Abc.Zebus.MessageDsl.Tests.csproj

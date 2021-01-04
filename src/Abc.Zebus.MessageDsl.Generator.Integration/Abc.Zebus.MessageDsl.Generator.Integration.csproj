@@ -43,10 +43,10 @@
 
   <Target Name="IntegrationTestInfo" BeforeTargets="CoreCompile">
     <Message Importance="High" Text=" " />
-    <Message Importance="High" Text="+----------------------------+" />
-    <Message Importance="High" Text="| Integration test: ENABLED  |" Condition="'$(IntegrationTestEnabled)' == 'true'" />
-    <Message Importance="High" Text="| Integration test: DISABLED |" Condition="'$(IntegrationTestEnabled)' != 'true'" />
-    <Message Importance="High" Text="+----------------------------+" />
+    <Message Importance="High" Text="+--------------------------------------+" />
+    <Message Importance="High" Text="| Generator Integration Test: ENABLED  |" Condition="'$(IntegrationTestEnabled)' == 'true'" />
+    <Message Importance="High" Text="| Generator Integration Test: DISABLED |" Condition="'$(IntegrationTestEnabled)' != 'true'" />
+    <Message Importance="High" Text="+--------------------------------------+" />
     <Message Importance="High" Text=" " />
   </Target>
 
