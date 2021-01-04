@@ -1,0 +1,53 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IntegrationTestEnabled>true</IntegrationTestEnabled>
+    <IntegrationTestEnabled Condition="'$(BuildingInsideVisualStudio)' == 'true'">false</IntegrationTestEnabled>
+    <IntegrationTestEnabled Condition="'$(BuildingByReSharper)' == 'true'">false</IntegrationTestEnabled>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(IntegrationTestEnabled)' == 'true'">
+    <DefineConstants>$(DefineConstants);INTEGRATION_TEST</DefineConstants>
+  </PropertyGroup>
+
+  <Import Project="..\Abc.Zebus.MessageDsl.Generator\NuGet\build\Zebus.MessageDsl.Generator.props" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\Abc.Zebus.MessageDsl.Generator\Abc.Zebus.MessageDsl.Generator.csproj"
+                      Condition="'$(IntegrationTestEnabled)' == 'true'"
+                      OutputItemType="Analyzer"
+                      ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="protobuf-net" Version="3.0.52" />
+    <PackageReference Include="Zebus.Contracts" Version="3.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ZebusMessages Update="CustomNamespace.msg">
+      <CustomToolNamespace>Abc.Zebus.CustomNamespace</CustomToolNamespace>
+    </ZebusMessages>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ZebusMessages Remove="ExplicitItems\**\*.msg" />
+    <ZebusMessages Include="ExplicitItems\A\Explicit.msg" />
+    <ZebusMessages Include="ExplicitItems\B\Explicit.msg" />
+  </ItemGroup>
+
+  <Import Project="..\Abc.Zebus.MessageDsl.Generator\NuGet\build\Zebus.MessageDsl.Generator.targets" />
+
+  <Target Name="IntegrationTestInfo" BeforeTargets="CoreCompile">
+    <Message Importance="High" Text=" " />
+    <Message Importance="High" Text="+----------------------------+" />
+    <Message Importance="High" Text="| Integration test: ENABLED  |" Condition="'$(IntegrationTestEnabled)' == 'true'" />
+    <Message Importance="High" Text="| Integration test: DISABLED |" Condition="'$(IntegrationTestEnabled)' != 'true'" />
+    <Message Importance="High" Text="+----------------------------+" />
+    <Message Importance="High" Text=" " />
+  </Target>
+
+</Project>

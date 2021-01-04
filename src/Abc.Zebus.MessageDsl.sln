@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abc.Zebus.MessageDsl.Build.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abc.Zebus.MessageDsl.Generator", "Abc.Zebus.MessageDsl.Generator\Abc.Zebus.MessageDsl.Generator.csproj", "{1F544779-2DC5-426D-8B71-3AFD7A2826A9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abc.Zebus.MessageDsl.Generator.Integration", "Abc.Zebus.MessageDsl.Generator.Integration\Abc.Zebus.MessageDsl.Generator.Integration.csproj", "{141D9E59-E339-4F40-AC7B-6C14C18C519E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,10 @@ Global
 		{1F544779-2DC5-426D-8B71-3AFD7A2826A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F544779-2DC5-426D-8B71-3AFD7A2826A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F544779-2DC5-426D-8B71-3AFD7A2826A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{141D9E59-E339-4F40-AC7B-6C14C18C519E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{141D9E59-E339-4F40-AC7B-6C14C18C519E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{141D9E59-E339-4F40-AC7B-6C14C18C519E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{141D9E59-E339-4F40-AC7B-6C14C18C519E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
