@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Abc.Zebus.MessageDsl.Ast;
 using Microsoft.CodeAnalysis;
@@ -17,6 +18,8 @@ namespace Abc.Zebus.MessageDsl.Generator
 
         public void Execute(GeneratorExecutionContext context)
         {
+            var generatedFileNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
             foreach (var file in context.AdditionalFiles)
             {
                 context.CancellationToken.ThrowIfCancellationRequested();
@@ -27,13 +30,13 @@ namespace Abc.Zebus.MessageDsl.Generator
                     continue;
 
                 if (!fileOptions.TryGetValue("build_metadata.AdditionalFiles.CustomToolNamespace", out var fileNamespace))
-                    fileNamespace = null;
+                    fileNamespace = string.Empty;
 
-                TranslateFile(context, file, fileNamespace);
+                TranslateFile(context, file, fileNamespace, generatedFileNames);
             }
         }
 
-        private static void TranslateFile(GeneratorExecutionContext context, AdditionalText file, string? fileNamespace)
+        private static void TranslateFile(GeneratorExecutionContext context, AdditionalText file, string fileNamespace, HashSet<string> generatedFileNames)
         {
             var fileContents = file.GetText(context.CancellationToken)?.ToString();
             if (fileContents is null)
@@ -45,7 +48,7 @@ namespace Abc.Zebus.MessageDsl.Generator
             try
             {
                 context.CancellationToken.ThrowIfCancellationRequested();
-                var contracts = ParsedContracts.Parse(fileContents, fileNamespace ?? string.Empty);
+                var contracts = ParsedContracts.Parse(fileContents, fileNamespace);
 
                 if (!contracts.IsValid)
                 {
@@ -62,11 +65,27 @@ namespace Abc.Zebus.MessageDsl.Generator
                 context.CancellationToken.ThrowIfCancellationRequested();
                 var output = CSharpGenerator.Generate(contracts);
 
-                context.AddSource(Path.GetFileName(file.Path) + ".cs", output);
+                context.AddSource(GetHintName(file, generatedFileNames), output);
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
                 context.ReportDiagnostic(Diagnostic.Create(MessageDslDiagnostics.UnexpectedError, Location.None, ex.ToString()));
+            }
+        }
+
+        private static string GetHintName(AdditionalText file, HashSet<string> generatedFileNames)
+        {
+            var baseName = Path.GetFileName(file.Path);
+
+            var fileName = $"{baseName}.cs";
+            if (generatedFileNames.Add(fileName))
+                return fileName;
+
+            for (var index = 1;; ++index)
+            {
+                fileName = $"{baseName}.{index:D3}.cs";
+                if (generatedFileNames.Add(fileName))
+                    return fileName;
             }
         }
     }
