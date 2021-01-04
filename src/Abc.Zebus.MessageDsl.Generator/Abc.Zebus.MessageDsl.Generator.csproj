@@ -1,0 +1,54 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Nullable>annotations</Nullable>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\Abc.Zebus.MessageDsl\Abc.Zebus.MessageDsl.snk</AssemblyOriginatorKeyFile>
+    <RootNamespace>Abc.Zebus.MessageDsl</RootNamespace>
+    <IsPackable>true</IsPackable>
+    <PackageId>Zebus.MessageDsl.Generator</PackageId>
+    <Version>0.1.0</Version>
+    <Description>A message DSL for Zebus (source generator for .msg files)</Description>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Antlr4.CodeGenerator" Version="4.6.6" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.8.0" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    <Content Include="NuGet\**" Pack="true" PackagePath="%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <!-- MessageDsl -->
+  <ItemGroup>
+    <Compile Include="..\Abc.Zebus.MessageDsl\**\*.cs" Exclude="..\Abc.Zebus.MessageDsl\obj\**\*.cs" Link="MessageDsl\%(RecursiveDir)%(FileName)%(Extension)" />
+    <Antlr4 Include="..\Abc.Zebus.MessageDsl\Dsl\*.g4" Link="MessageDsl\Dsl\%(FileName)%(Extension)" CustomToolNamespace="Abc.Zebus.MessageDsl.Dsl" />
+  </ItemGroup>
+
+  <!-- Antlr4.Runtime -->
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);0219;0162</NoWarn>
+    <DefineConstants>$(DefineConstants);PORTABLE;NETSTANDARD;NET45PLUS;NET40PLUS;NET35PLUS;NET30PLUS;NET20PLUS</DefineConstants>
+    <Antlr4RuntimeDir>..\..\lib\antlr4cs\runtime\CSharp\Antlr4.Runtime</Antlr4RuntimeDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(Antlr4RuntimeDir)\**\*.cs" Exclude="$(Antlr4RuntimeDir)\obj\**\*.cs" Link="Antlr4.Runtime\%(RecursiveDir)%(FileName)%(Extension)" />
+    <Compile Remove="$(Antlr4RuntimeDir)\Properties\AssemblyInfo.cs" />
+    <Compile Remove="$(Antlr4RuntimeDir)\Misc\Array2DHashSet`1.cs" />
+    <Compile Remove="$(Antlr4RuntimeDir)\Misc\DoubleKeyMap`3.cs" />
+    <Compile Remove="$(Antlr4RuntimeDir)\Misc\RuleDependencyProcessor.cs" />
+    <Compile Remove="$(Antlr4RuntimeDir)\Misc\TestRig.cs" />
+    <Compile Remove="$(Antlr4RuntimeDir)\Sharpen\Compat\*" />
+    <Antlr4 Include="$(Antlr4RuntimeDir)\Tree\Xpath\XPathLexer.g4" Link="Antlr4.Runtime\Tree\Xpath\%(FileName)%(Extension)" CustomToolNamespace="Antlr4.Runtime.Tree.Xpath" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(NCrunch)' == '1'">
+    <None Include="@(Antlr4)" />
+  </ItemGroup>
+
+</Project>
