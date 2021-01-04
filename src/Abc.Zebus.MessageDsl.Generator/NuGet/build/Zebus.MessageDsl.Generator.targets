@@ -1,0 +1,17 @@
+<Project>
+
+  <ItemGroup>
+    <ZebusMessages Update="@(ZebusMessages)" DefaultCustomToolNamespace="$([MSBuild]::ValueOrDefault('$(RootNamespace).%(RelativeDir)', '').Replace('\', '.').Replace('/', '.').Trim('.'))" />
+    <ZebusMessages Update="@(ZebusMessages)" CustomToolNamespace="$([MSBuild]::ValueOrDefault('%(CustomToolNamespace)', '%(DefaultCustomToolNamespace)'))" />
+    <ZebusMessages Update="@(ZebusMessages)" ZebusMessageDsl="true" />
+    <None Remove="**\*.msg" />
+    <AdditionalFiles Include="@(ZebusMessages)" />
+    <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="CustomToolNamespace" />
+    <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="ZebusMessageDsl" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(NCrunch)' == '1'">
+    <None Include="@(ZebusMessages)" />
+  </ItemGroup>
+
+</Project>

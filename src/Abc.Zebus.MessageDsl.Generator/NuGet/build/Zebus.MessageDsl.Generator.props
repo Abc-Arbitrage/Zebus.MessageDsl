@@ -1,0 +1,12 @@
+<Project>
+
+  <ItemGroup>
+    <AvailableItemName Include="ZebusMessages" />
+    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)ZebusMessages.xml" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(EnableDefaultItems)' == 'true'">
+    <ZebusMessages Include="**\*.msg" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+  </ItemGroup>
+
+</Project>
