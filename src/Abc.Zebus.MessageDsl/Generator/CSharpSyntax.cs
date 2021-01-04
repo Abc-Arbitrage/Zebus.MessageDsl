@@ -54,8 +54,8 @@ namespace Abc.Zebus.MessageDsl.Generator
             if (string.IsNullOrEmpty(ns))
                 return false;
 
-            return ns.Split(new[] { '.' }, StringSplitOptions.None)
-                     .All(IsValidIdentifier);
+            return ns!.Split(new[] { '.' }, StringSplitOptions.None)
+                      .All(IsValidIdentifier);
         }
 
         public static bool IsValidIdentifier(string? id)
@@ -63,7 +63,7 @@ namespace Abc.Zebus.MessageDsl.Generator
             if (string.IsNullOrEmpty(id))
                 return false;
 
-            id = ProcessUnicodeEscapeSequences(id);
+            id = ProcessUnicodeEscapeSequences(id!);
 
             if (!_identifierRe.IsMatch(id))
                 return false;

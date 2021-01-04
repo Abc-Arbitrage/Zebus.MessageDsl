@@ -46,7 +46,7 @@ namespace Abc.Zebus.MessageDsl.Ast
             if (string.IsNullOrEmpty(value))
                 return null;
 
-            value = value.Trim();
+            value = value!.Trim();
             var numberStyles = value.StartsWith("0x", StringComparison.OrdinalIgnoreCase) ? NumberStyles.HexNumber : NumberStyles.Integer;
 
             if (numberStyles == NumberStyles.HexNumber)

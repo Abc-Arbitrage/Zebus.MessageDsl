@@ -59,7 +59,7 @@ namespace Abc.Zebus.MessageDsl.Dsl
             return nameToken?.StartIndex == escapeToken.StopIndex + 1;
         }
 
-        private static bool IsValidIdEscape(IToken? escapeToken, ParserRuleContext? nameContext) 
+        private static bool IsValidIdEscape(IToken? escapeToken, ParserRuleContext? nameContext)
             => IsValidIdEscape(escapeToken, nameContext?.Start);
 
         private bool AreTwoNextTokensConsecutive()
@@ -79,7 +79,7 @@ namespace Abc.Zebus.MessageDsl.Dsl
                 if (string.IsNullOrEmpty(id))
                     return string.Empty;
 
-                if (CSharpSyntax.IsCSharpKeyword(id) && escape == null)
+                if (CSharpSyntax.IsCSharpKeyword(id!) && escape == null)
                     contracts.AddError(this, "'{0}' is a C# keyword and has to be escaped with '@'", id);
 
                 return id;

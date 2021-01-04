@@ -39,7 +39,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
             var optionDescriptor = _contracts.Options.GetOptionDescriptor(pragmaName);
             if (optionDescriptor != null)
             {
-                if (!_definedContractOptions.Add(pragmaName))
+                if (!_definedContractOptions.Add(pragmaName!))
                 {
                     _contracts.AddError(context.name, "Duplicate file-level pragma: {0}", pragmaName);
                     return null;
@@ -114,7 +114,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
                 return null;
             }
 
-            _contracts.Namespace = ns;
+            _contracts.Namespace = ns!;
             _contracts.ExplicitNamespace = true;
             return null;
         }
