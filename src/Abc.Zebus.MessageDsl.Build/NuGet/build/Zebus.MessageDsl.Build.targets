@@ -6,8 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ZebusMessages Update="@(ZebusMessages)" DefaultCustomToolNamespace="$([MSBuild]::ValueOrDefault('$(RootNamespace).%(RelativeDir)', '').Replace('\', '.').Replace('/', '.').Trim('.'))" />
-    <ZebusMessages Update="@(ZebusMessages)" CustomToolNamespace="$([MSBuild]::ValueOrDefault('%(CustomToolNamespace)', '%(DefaultCustomToolNamespace)'))" />
+    <ZebusMessages Update="@(ZebusMessages->WithMetadataValue('CustomToolNamespace', '(default)'))" CustomToolNamespace="$([MSBuild]::ValueOrDefault('$(RootNamespace).%(RelativeDir)', '').Replace('\', '.').Replace('/', '.').Trim('.'))" />
     <ZebusMessages Update="@(ZebusMessages)" GeneratorTargetPath="$([MSBuild]::ValueOrDefault('$(IntermediateOutputPath)ZebusMessages/%(RelativeDir)%(FileName)%(Extension).cs', '').Replace('\', '/'))" />
     <None Remove="**\*.msg" />
   </ItemGroup>

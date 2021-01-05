@@ -30,9 +30,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ZebusMessages Update="CustomNamespace.msg">
-      <CustomToolNamespace>Abc.Zebus.CustomNamespace</CustomToolNamespace>
-    </ZebusMessages>
+    <ZebusMessages Update="CustomNamespace.msg" CustomToolNamespace="Abc.Zebus.CustomNamespace" />
+    <ZebusMessages Update="EmptyNamespace.msg" CustomToolNamespace="" />
   </ItemGroup>
 
   <ItemGroup>
