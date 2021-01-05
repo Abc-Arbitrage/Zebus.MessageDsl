@@ -1,5 +1,11 @@
 <Project>
 
+  <ItemDefinitionGroup>
+    <ZebusMessages>
+      <CustomToolNamespace>(default)</CustomToolNamespace>
+    </ZebusMessages>
+  </ItemDefinitionGroup>
+
   <ItemGroup>
     <AvailableItemName Include="ZebusMessages" />
     <PropertyPageSchema Include="$(MSBuildThisFileDirectory)ZebusMessages.xml" />
