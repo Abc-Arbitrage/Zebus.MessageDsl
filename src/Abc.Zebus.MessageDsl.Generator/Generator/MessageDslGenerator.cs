@@ -26,11 +26,8 @@ namespace Abc.Zebus.MessageDsl.Generator
 
                 var fileOptions = context.AnalyzerConfigOptions.GetOptions(file);
 
-                if (!fileOptions.TryGetValue("build_metadata.AdditionalFiles.ZebusMessageDsl", out var isMessageDslFile) || !string.Equals(isMessageDslFile, "true", StringComparison.OrdinalIgnoreCase))
+                if (!fileOptions.TryGetValue("build_metadata.AdditionalFiles.ZebusMessageDslNamespace", out var fileNamespace))
                     continue;
-
-                if (!fileOptions.TryGetValue("build_metadata.AdditionalFiles.CustomToolNamespace", out var fileNamespace))
-                    fileNamespace = string.Empty;
 
                 TranslateFile(context, file, fileNamespace, generatedFileNames);
             }
