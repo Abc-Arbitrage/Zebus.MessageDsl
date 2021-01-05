@@ -5,8 +5,8 @@
 
   <PropertyGroup>
     <IntegrationTestEnabled>true</IntegrationTestEnabled>
+    <IntegrationTestEnabled Condition="'$(GeneratorIntegrationTestEnabled)' != ''">$(GeneratorIntegrationTestEnabled)</IntegrationTestEnabled>
     <IntegrationTestEnabled Condition="'$(BuildingInsideVisualStudio)' == 'true'">false</IntegrationTestEnabled>
-    <IntegrationTestEnabled Condition="'$(BuildingByReSharper)' == 'true'">false</IntegrationTestEnabled>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(IntegrationTestEnabled)' == 'true'">
