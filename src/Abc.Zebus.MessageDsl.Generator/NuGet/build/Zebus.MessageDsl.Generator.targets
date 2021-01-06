@@ -1,8 +1,8 @@
 <Project>
 
   <ItemGroup>
-    <ZebusMessages Update="@(ZebusMessages)" ZebusMessageDslNamespace="%(CustomToolNamespace)" />
-    <ZebusMessages Update="@(ZebusMessages->WithMetadataValue('CustomToolNamespace', '(default)'))" ZebusMessageDslNamespace="$([MSBuild]::ValueOrDefault('$(RootNamespace).%(RelativeDir)', '').Replace('\', '.').Replace('/', '.').Trim('.'))" />
+    <ZebusMessages Update="@(ZebusMessages)" ZebusMessageDslNamespace="$([MSBuild]::ValueOrDefault('$(RootNamespace).%(RelativeDir)', '').Replace('\', '.').Replace('/', '.').Trim('.'))" />
+    <ZebusMessages Update="@(ZebusMessages->HasMetadata('CustomToolNamespace'))" ZebusMessageDslNamespace="%(CustomToolNamespace)" />
     <None Remove="**\*.msg" />
     <AdditionalFiles Include="@(ZebusMessages)" />
     <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="ZebusMessageDslNamespace" />

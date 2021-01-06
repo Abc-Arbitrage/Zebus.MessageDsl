@@ -71,7 +71,7 @@ namespace Abc.Zebus.MessageDsl.Generator
             try
             {
                 context.CancellationToken.ThrowIfCancellationRequested();
-                var contracts = ParsedContracts.Parse(fileContents, fileNamespace);
+                var contracts = ParsedContracts.Parse(fileContents, fileNamespace.Trim());
 
                 if (!contracts.IsValid)
                 {
