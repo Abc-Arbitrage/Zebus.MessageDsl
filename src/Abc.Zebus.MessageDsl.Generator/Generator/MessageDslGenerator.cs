@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using Abc.Zebus.MessageDsl.Ast;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Text;
 
 #nullable enable
 
@@ -51,8 +50,7 @@ namespace Abc.Zebus.MessageDsl.Generator
                 {
                     foreach (var error in contracts.Errors)
                     {
-                        var linePosition = new LinePosition(error.LineNumber, error.CharacterInLine);
-                        var location = Location.Create(file.Path, default, new LinePositionSpan(linePosition, linePosition));
+                        var location = Location.Create(file.Path, default, error.ToLinePositionSpan());
                         context.ReportDiagnostic(Diagnostic.Create(MessageDslDiagnostics.MessageDslError, location, error.Message));
                     }
 

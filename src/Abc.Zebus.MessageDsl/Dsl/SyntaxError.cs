@@ -6,6 +6,8 @@ namespace Abc.Zebus.MessageDsl.Dsl
     {
         public int LineNumber { get; }
         public int CharacterInLine { get; }
+        public string? Token { get; }
+
         public string Message { get; }
 
         public SyntaxError(string message, IToken? startToken = null)
@@ -16,6 +18,7 @@ namespace Abc.Zebus.MessageDsl.Dsl
             {
                 LineNumber = startToken.Line;
                 CharacterInLine = startToken.Column + 1;
+                Token = startToken.Text;
             }
         }
 
