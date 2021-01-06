@@ -7,7 +7,6 @@
   <ItemDefinitionGroup>
     <ZebusMessages>
       <Generator>MSBuild:Compile</Generator>
-      <CustomToolNamespace>(default)</CustomToolNamespace>
     </ZebusMessages>
   </ItemDefinitionGroup>
 

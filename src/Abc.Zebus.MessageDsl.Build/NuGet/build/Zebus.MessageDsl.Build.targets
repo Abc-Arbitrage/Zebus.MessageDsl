@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ZebusMessages Update="@(ZebusMessages->WithMetadataValue('CustomToolNamespace', '(default)'))" CustomToolNamespace="$([MSBuild]::ValueOrDefault('$(RootNamespace).%(RelativeDir)', '').Replace('\', '.').Replace('/', '.').Trim('.'))" />
     <None Remove="**\*.msg" />
   </ItemGroup>
 
@@ -17,15 +16,17 @@
 
   <UsingTask TaskName="Abc.Zebus.MessageDsl.Build.GenerateZebusMessagesTask" AssemblyFile="$(ZebusMessagesBuildTaskPath)\Abc.Zebus.MessageDsl.Build.dll" />
 
-  <Target Name="PrepareGenerateZebusMessages">
+  <Target Name="PrepareZebusMessages">
     <ItemGroup>
+      <ZebusMessages Update="@(ZebusMessages)" DefaultCustomToolNamespace="$([MSBuild]::ValueOrDefault('$(RootNamespace).%(RelativeDir)', '').Replace('\', '.').Replace('/', '.').Trim('.'))" />
+      <ZebusMessages Update="@(ZebusMessages)" CustomToolNamespace="$([MSBuild]::ValueOrDefault('%(ZebusMessages.CustomToolNamespace)', '%(DefaultCustomToolNamespace)'))" />
       <ZebusMessages Update="@(ZebusMessages)" GeneratorTargetPath="$([MSBuild]::ValueOrDefault('$(IntermediateOutputPath)ZebusMessages/%(RelativeDir)%(FileName)%(Extension).cs', '').Replace('\', '/'))" />
     </ItemGroup>
   </Target>
 
   <Target Name="GenerateZebusMessages"
           BeforeTargets="CoreCompile"
-          DependsOnTargets="PrepareGenerateZebusMessages"
+          DependsOnTargets="PrepareZebusMessages"
           Condition="'@(ZebusMessages)' != '' and '$(ZebusMessagesEnabled)' == 'true'"
           Inputs="@(ZebusMessages)"
           Outputs="@(ZebusMessages->'%(GeneratorTargetPath)')">

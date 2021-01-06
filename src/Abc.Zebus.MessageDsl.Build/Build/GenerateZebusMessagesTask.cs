@@ -38,7 +38,8 @@ namespace Abc.Zebus.MessageDsl.Build
         private void TranslateFile(ITaskItem inputFile)
         {
             var fileContents = File.ReadAllText(inputFile.ItemSpec);
-            var contracts = ParsedContracts.Parse(fileContents, inputFile.GetMetadata("CustomToolNamespace") ?? string.Empty);
+            var defaultNamespace = inputFile.GetMetadata("CustomToolNamespace")?.Trim() ?? string.Empty;
+            var contracts = ParsedContracts.Parse(fileContents, defaultNamespace);
 
             if (!contracts.IsValid)
             {
