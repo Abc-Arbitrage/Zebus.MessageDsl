@@ -13,6 +13,10 @@
     <DefineConstants>$(DefineConstants);INTEGRATION_TEST</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(RiderFallbackMode)' == 'true'">
+    <DefineConstants>$(DefineConstants);RIDER_FALLBACK</DefineConstants>
+  </PropertyGroup>
+
   <Import Project="..\Abc.Zebus.MessageDsl.Generator\NuGet\build\Zebus.MessageDsl.Generator.props" />
 
   <ItemGroup>
@@ -36,6 +40,7 @@
     <ZebusMessages Remove="ExplicitItems\**\*.msg" />
     <ZebusMessages Include="ExplicitItems\A\Explicit.msg" />
     <ZebusMessages Include="ExplicitItems\B\Explicit.msg" />
+    <ZebusMessages Remove="ExplicitItems\**\*.msg" Condition="'$(RiderFallbackMode)' == 'true'" />
   </ItemGroup>
 
   <Import Project="..\Abc.Zebus.MessageDsl.Generator\NuGet\build\Zebus.MessageDsl.Generator.targets" />

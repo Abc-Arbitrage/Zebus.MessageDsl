@@ -23,10 +23,37 @@ namespace Abc.Zebus.MessageDsl.Generator
             {
                 context.CancellationToken.ThrowIfCancellationRequested();
 
-                var fileOptions = context.AnalyzerConfigOptions.GetOptions(file);
+#if RIDER_FALLBACK
+                // Rider does not provide build metadata to the generator, so this handles the simplest case.
+                // Revert when https://youtrack.jetbrains.com/issue/RIDER-55242 is fixed.
 
+                if (!file.Path.EndsWith(".msg", StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                var fileNamespace = context.Compilation.AssemblyName ?? string.Empty;
+
+                if (!string.IsNullOrEmpty(fileNamespace))
+                {
+                    var dirs = Path.GetDirectoryName(file.Path)?.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                    if (dirs != null)
+                    {
+                        for (var asmIdx = dirs.Length - 1; asmIdx >= 0; --asmIdx)
+                        {
+                            if (string.Equals(dirs[asmIdx], context.Compilation.AssemblyName, StringComparison.OrdinalIgnoreCase))
+                            {
+                                for (var dirIdx = asmIdx + 1; dirIdx < dirs.Length; ++dirIdx)
+                                    fileNamespace += "." + dirs[dirIdx];
+
+                                break;
+                            }
+                        }
+                    }
+                }
+#else
+                var fileOptions = context.AnalyzerConfigOptions.GetOptions(file);
                 if (!fileOptions.TryGetValue("build_metadata.AdditionalFiles.ZebusMessageDslNamespace", out var fileNamespace))
                     continue;
+#endif
 
                 TranslateFile(context, file, fileNamespace, generatedFileNames);
             }

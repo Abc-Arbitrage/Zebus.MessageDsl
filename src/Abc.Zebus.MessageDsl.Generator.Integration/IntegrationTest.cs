@@ -8,6 +8,11 @@ namespace Abc.Zebus.MessageDsl.Generator.Integration
     {
         static IntegrationTest()
         {
+#if RIDER_FALLBACK
+            GC.KeepAlive(typeof(SomeMessage));
+            GC.KeepAlive(typeof(InnerNamespace.InnerMessage));
+            GC.KeepAlive(typeof(Abc.Zebus.CustomExplicitNamespace.HasCustomExplicitNamespace));
+#else
             GC.KeepAlive(typeof(SomeMessage));
             GC.KeepAlive(typeof(InnerNamespace.InnerMessage));
             GC.KeepAlive(typeof(Abc.Zebus.CustomNamespace.HasCustomNamespace));
@@ -15,6 +20,7 @@ namespace Abc.Zebus.MessageDsl.Generator.Integration
             GC.KeepAlive(typeof(global::HasEmptyNamespace));
             GC.KeepAlive(typeof(ExplicitItems.A.ExplicitlyDefinedMessage));
             GC.KeepAlive(typeof(ExplicitItems.B.ExplicitlyDefinedMessage));
+#endif
         }
     }
 }
