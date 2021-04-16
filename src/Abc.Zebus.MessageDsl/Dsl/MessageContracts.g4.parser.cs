@@ -82,7 +82,7 @@ namespace Abc.Zebus.MessageDsl.Dsl
                 if (CSharpSyntax.IsCSharpKeyword(id!) && escape == null)
                     contracts.AddError(this, "'{0}' is a C# keyword and has to be escaped with '@'", id);
 
-                return id;
+                return id!;
             }
         }
     }
