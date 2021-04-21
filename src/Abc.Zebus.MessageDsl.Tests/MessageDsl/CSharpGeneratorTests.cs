@@ -884,6 +884,7 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
 
             code.ShouldContain("public partial interface IFoo");
             code.ShouldContainIgnoreIndent("[ProtoMember(1, IsRequired = true)]\npublic int Bar { get; set; }");
+            code.ShouldNotContain("DebuggerNonUserCode");
         }
 
         protected override string GenerateRaw(ParsedContracts contracts) => CSharpGenerator.Generate(contracts);

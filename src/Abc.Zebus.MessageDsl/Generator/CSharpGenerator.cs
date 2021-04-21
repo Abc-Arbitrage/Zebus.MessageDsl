@@ -182,7 +182,9 @@ namespace Abc.Zebus.MessageDsl.Generator
             if (!message.Attributes.HasAttribute(_attrProtoContract.TypeName))
                 WriteAttributeLine(_attrProtoContract);
 
-            WriteAttributeLine(_attrNonUserCode);
+            if (!message.IsInterface)
+                WriteAttributeLine(_attrNonUserCode);
+
             WriteAttributeLine(_attrGeneratedCode);
 
             foreach (var attribute in message.Attributes)
