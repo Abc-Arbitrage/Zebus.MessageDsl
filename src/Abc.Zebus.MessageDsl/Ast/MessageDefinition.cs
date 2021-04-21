@@ -16,7 +16,7 @@ namespace Abc.Zebus.MessageDsl.Ast
 
         public IList<ParameterDefinition> Parameters { get; } = new List<ParameterDefinition>();
         public IList<TypeName> BaseTypes { get; } = new List<TypeName>();
-        public AttributeSet Attributes { get; } = new AttributeSet();
+        public AttributeSet Attributes { get; } = new();
 
         public MemberOptions Options
         {

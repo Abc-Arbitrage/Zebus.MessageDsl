@@ -114,7 +114,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
 
                 var errorContext = attr.ParseContext ?? message.ParseContext;
 
-                if (!AttributeInterpretor.TryParseProtoInclude(attr, out var tag, out _))
+                if (!AttributeInterpreter.TryParseProtoInclude(attr, out var tag, out _))
                 {
                     _contracts.AddError(errorContext, "Invalid [{0}] parameters", KnownTypes.ProtoIncludeAttribute);
                     continue;
@@ -227,10 +227,6 @@ namespace Abc.Zebus.MessageDsl.Analysis
         }
 
         public static bool IsValidTag(int tag)
-        {
-            return tag >= ProtoMinTag
-                   && tag <= ProtoMaxTag
-                   && (tag < ProtoFirstReservedTag || tag > ProtoLastReservedTag);
-        }
+            => tag is >= ProtoMinTag and <= ProtoMaxTag and (< ProtoFirstReservedTag or > ProtoLastReservedTag);
     }
 }

@@ -86,7 +86,7 @@ namespace Abc.Zebus.MessageDsl.Build
         private void LogDebug(string message)
             => Log.LogMessage(_logSubcategory, null, null, null, 0, 0, 0, 0, MessageImportance.Low, message, null);
 
-        private void LogError(ITaskItem inputFile, string message, int lineNumber = 0, int columnNumber = 0)
+        private void LogError(ITaskItem? inputFile, string message, int lineNumber = 0, int columnNumber = 0)
             => Log.LogError(_logSubcategory, null, null, inputFile?.ItemSpec, lineNumber, columnNumber, 0, 0, message, null);
     }
 }

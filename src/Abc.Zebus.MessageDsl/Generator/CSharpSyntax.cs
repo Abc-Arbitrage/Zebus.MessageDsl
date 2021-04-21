@@ -7,7 +7,7 @@ namespace Abc.Zebus.MessageDsl.Generator
 {
     public static class CSharpSyntax
     {
-        private static readonly HashSet<string> _csharpKeywords = new HashSet<string>
+        private static readonly HashSet<string> _csharpKeywords = new()
         {
             "abstract", "as", "base", "bool", "break",
             "byte", "case", "catch", "char", "checked",
@@ -30,13 +30,13 @@ namespace Abc.Zebus.MessageDsl.Generator
         public static IEnumerable<string> EnumerateCSharpKeywords() => _csharpKeywords.Select(i => i);
         public static bool IsCSharpKeyword(string id) => _csharpKeywords.Contains(id);
 
-        private static readonly Regex _tokenRe = new Regex(@"@?\s*(?<id>\w+)", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        private static readonly Regex _tokenRe = new(@"@?\s*(?<id>\w+)", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
         // https://msdn.microsoft.com/en-us/library/aa664670.aspx
-        private static readonly Regex _identifierRe = new Regex(@"^@?[\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nl}_][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nl}\p{Nd}\p{Pc}\p{Mn}\p{Mc}\p{Cf}]*$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        private static readonly Regex _identifierRe = new(@"^@?[\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nl}_][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nl}\p{Nd}\p{Pc}\p{Mn}\p{Mc}\p{Cf}]*$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
         // https://msdn.microsoft.com/en-us/library/aa664669.aspx
-        private static readonly Regex _unicodeEscapeSequence = new Regex(@"\\u(?<hex>[0-9a-fA-F]{4})|\\U(?<hex>[0-9a-fA-F]{8})", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        private static readonly Regex _unicodeEscapeSequence = new(@"\\u(?<hex>[0-9a-fA-F]{4})|\\U(?<hex>[0-9a-fA-F]{8})", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
         public static string Identifier(string? id)
         {

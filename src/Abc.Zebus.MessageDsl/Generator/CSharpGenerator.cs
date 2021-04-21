@@ -9,11 +9,11 @@ namespace Abc.Zebus.MessageDsl.Generator
 {
     public sealed class CSharpGenerator : GeneratorBase
     {
-        private static readonly AttributeDefinition _attrProtoContract = new AttributeDefinition(KnownTypes.ProtoContractAttribute);
-        private static readonly AttributeDefinition _attrNonUserCode = new AttributeDefinition("System.Diagnostics.DebuggerNonUserCode");
-        private static readonly AttributeDefinition _attrGeneratedCode = new AttributeDefinition("System.CodeDom.Compiler.GeneratedCode", $@"""{GeneratorName}"", ""{GeneratorVersion}""");
+        private static readonly AttributeDefinition _attrProtoContract = new(KnownTypes.ProtoContractAttribute);
+        private static readonly AttributeDefinition _attrNonUserCode = new("System.Diagnostics.DebuggerNonUserCode");
+        private static readonly AttributeDefinition _attrGeneratedCode = new("System.CodeDom.Compiler.GeneratedCode", $@"""{GeneratorName}"", ""{GeneratorVersion}""");
 
-        private readonly Dictionary<string, MessageDefinition> _messagesByName = new Dictionary<string, MessageDefinition>();
+        private readonly Dictionary<string, MessageDefinition> _messagesByName = new();
 
         private ParsedContracts Contracts { get; }
 

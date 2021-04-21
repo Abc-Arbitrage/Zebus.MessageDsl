@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Abc.Zebus.MessageDsl.Analysis;
 using Abc.Zebus.MessageDsl.Ast;
@@ -8,6 +9,7 @@ using NUnit.Framework;
 namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
 {
     [TestFixture]
+    [SuppressMessage("ReSharper", "RedundantCast")]
     public class ParsedContractsTests
     {
         [Test]

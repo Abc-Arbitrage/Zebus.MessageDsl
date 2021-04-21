@@ -10,7 +10,7 @@ namespace Abc.Zebus.MessageDsl.Ast
     {
         public IList<MessageDefinition> Messages { get; } = new List<MessageDefinition>();
         public IList<EnumDefinition> Enums { get; } = new List<EnumDefinition>();
-        public ContractOptions Options { get; } = new ContractOptions();
+        public ContractOptions Options { get; } = new();
         public ICollection<SyntaxError> Errors { get; }
         public string Namespace { get; set; } = string.Empty;
         public bool ExplicitNamespace { get; internal set; }
@@ -79,7 +79,7 @@ namespace Abc.Zebus.MessageDsl.Ast
             var processor = new AstProcessor(this);
 
             processor.PreProcess();
-            new AttributeInterpretor(this).InterpretAttributes();
+            new AttributeInterpreter(this).InterpretAttributes();
             new ContractsEnhancer(this).Process();
             processor.PostProcess();
 

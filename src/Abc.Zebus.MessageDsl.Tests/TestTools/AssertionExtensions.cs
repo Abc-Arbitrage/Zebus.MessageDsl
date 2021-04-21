@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
 
+#nullable enable
+
 namespace Abc.Zebus.MessageDsl.Tests.TestTools
 {
     public static class AssertionExtensions
@@ -14,14 +16,14 @@ namespace Abc.Zebus.MessageDsl.Tests.TestTools
         public static void ShouldBeFalse(this bool actual)
             => Assert.That(actual, Is.False);
 
-        public static void ShouldBeNull(this object actual)
+        public static void ShouldBeNull(this object? actual)
             => Assert.That(actual, Is.Null);
 
-        public static T ShouldNotBeNull<T>(this T actual)
+        public static T ShouldNotBeNull<T>(this T? actual)
             where T : class
         {
             Assert.That(actual, Is.Not.Null);
-            return actual;
+            return actual!;
         }
 
         public static void ShouldContain(this string actual, string expected)
@@ -42,7 +44,7 @@ namespace Abc.Zebus.MessageDsl.Tests.TestTools
         public static void ShouldBeEmpty(this object actual)
             => Assert.That(actual, Is.Empty);
 
-        public static void ShouldEqual<T>(this T actual, T expected)
+        public static void ShouldEqual<T>(this T? actual, T? expected)
             => Assert.That(actual, Is.EqualTo(expected));
 
         public static void ShouldBeGreaterThan(this int actual, int value)

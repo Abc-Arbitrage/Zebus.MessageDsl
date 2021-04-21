@@ -5,7 +5,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
 {
     public readonly struct TextInterval : IEquatable<TextInterval>
     {
-        public static TextInterval Empty { get; } = new TextInterval();
+        public static TextInterval Empty { get; } = new();
 
         public int Start { get; }
         public int End { get; }

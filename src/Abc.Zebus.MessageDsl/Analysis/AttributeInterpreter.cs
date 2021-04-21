@@ -4,13 +4,13 @@ using Abc.Zebus.MessageDsl.Ast;
 
 namespace Abc.Zebus.MessageDsl.Analysis
 {
-    internal class AttributeInterpretor
+    internal class AttributeInterpreter
     {
-        private static readonly Regex _reProtoIncludeParams = new Regex(@"^\s*(?<tag>[0-9]+)\s*,\s*typeof\s*\(\s*(?<typeName>.+)\s*\)", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        private static readonly Regex _reProtoIncludeParams = new(@"^\s*(?<tag>[0-9]+)\s*,\s*typeof\s*\(\s*(?<typeName>.+)\s*\)", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
         private readonly ParsedContracts _contracts;
 
-        public AttributeInterpretor(ParsedContracts contracts)
+        public AttributeInterpreter(ParsedContracts contracts)
         {
             _contracts = contracts;
         }
@@ -119,7 +119,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
             param.Tag = tagNb;
         }
 
-        public static bool TryParseProtoInclude(AttributeDefinition attribute, out int tag, out TypeName messageType)
+        public static bool TryParseProtoInclude(AttributeDefinition? attribute, out int tag, out TypeName messageType)
         {
             tag = 0;
             messageType = null!;

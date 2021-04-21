@@ -9,13 +9,13 @@ namespace Abc.Zebus.MessageDsl.Ast
 {
     public sealed class TypeName : IEquatable<TypeName>
     {
-        private static readonly Regex _reSystemTypeName = new Regex(@"\b(?:global::|(?<!::))System\.(?<unqualifiedName>\w+)(?!\.)\b", RegexOptions.Compiled | RegexOptions.CultureInvariant);
-        private static readonly Regex _reUnqualifiedName = new Regex(@"\b(?<!\.)\w+(?!\.)\b", RegexOptions.Compiled | RegexOptions.CultureInvariant);
-        private static readonly Regex _reWhitespace = new Regex(@"\s+", RegexOptions.Compiled | RegexOptions.CultureInvariant);
-        private static readonly Regex _reComma = new Regex(@"(?<=[\w?\]>]),", RegexOptions.Compiled | RegexOptions.CultureInvariant);
-        private static readonly Regex _reIdentifierPart = new Regex(@"[^,\[\]<>\s]+", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        private static readonly Regex _reSystemTypeName = new(@"\b(?:global::|(?<!::))System\.(?<unqualifiedName>\w+)(?!\.)\b", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        private static readonly Regex _reUnqualifiedName = new(@"\b(?<!\.)\w+(?!\.)\b", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        private static readonly Regex _reWhitespace = new(@"\s+", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        private static readonly Regex _reComma = new(@"(?<=[\w?\]>]),", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        private static readonly Regex _reIdentifierPart = new(@"[^,\[\]<>\s]+", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
-        private static readonly Dictionary<string, string> _aliasTypeMap = new Dictionary<string, string>
+        private static readonly Dictionary<string, string> _aliasTypeMap = new()
         {
             { "bool", "Boolean" },
             { "byte", "Byte" },
@@ -36,7 +36,7 @@ namespace Abc.Zebus.MessageDsl.Ast
 
         private static readonly Dictionary<string, string> _clrTypeToAlias;
 
-        private static readonly HashSet<string> _knownBclTypes = new HashSet<string>
+        private static readonly HashSet<string> _knownBclTypes = new()
         {
             "TimeSpan",
             "DateTime",
@@ -44,7 +44,7 @@ namespace Abc.Zebus.MessageDsl.Ast
             "Decimal"
         };
 
-        private static readonly Dictionary<string, string> _protoTypeNameMap = new Dictionary<string, string>
+        private static readonly Dictionary<string, string> _protoTypeNameMap = new()
         {
             { "Double", "double" },
             { "Single", "float" },
@@ -56,12 +56,12 @@ namespace Abc.Zebus.MessageDsl.Ast
             { "String", "string" },
         };
 
-        private static readonly HashSet<string> _packableProtoBufTypes = new HashSet<string>
+        private static readonly HashSet<string> _packableProtoBufTypes = new()
         {
             "double", "float", "int32", "int64", "uint32", "uint64", "sint32", "sint64", "fixed32", "fixed64", "sfixed32", "sfixed64", "bool"
         };
 
-        private static readonly HashSet<string> _knownValueTypes = new HashSet<string>
+        private static readonly HashSet<string> _knownValueTypes = new()
         {
             "bool", "byte", "sbyte", "char", "decimal", "double", "float", "int", "uint", "long", "ulong", "short", "ushort",
             "TimeSpan", "DateTime", "Guid"
@@ -126,7 +126,7 @@ namespace Abc.Zebus.MessageDsl.Ast
         public bool IsKnownValueType()
             => _knownValueTypes.Contains(GetNonNullableType().NetType);
 
-        public static implicit operator TypeName(string? netType) => new TypeName(netType);
+        public static implicit operator TypeName(string? netType) => new(netType);
 
         public override bool Equals(object? obj) => Equals(obj as TypeName);
 

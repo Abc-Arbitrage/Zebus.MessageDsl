@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 namespace Abc.Zebus.MessageDsl.Ast
@@ -11,7 +12,7 @@ namespace Abc.Zebus.MessageDsl.Ast
         public string Name { get; set; } = default!;
         public TypeName UnderlyingType { get; set; } = "int";
         public AccessModifier AccessModifier { get; set; }
-        public AttributeSet Attributes { get; } = new AttributeSet();
+        public AttributeSet Attributes { get; } = new();
         public IList<EnumMemberDefinition> Members { get; } = new List<EnumMemberDefinition>();
 
         public MemberOptions Options
@@ -41,6 +42,7 @@ namespace Abc.Zebus.MessageDsl.Ast
             }
         }
 
+        [SuppressMessage("ReSharper", "HeapView.BoxingAllocation")]
         internal object? GetValidUnderlyingValue(string? value)
         {
             if (string.IsNullOrEmpty(value))
@@ -57,14 +59,14 @@ namespace Abc.Zebus.MessageDsl.Ast
 
             return UnderlyingType.NetType switch
             {
-                "byte"   => byte.TryParse(value, numberStyles, CultureInfo.InvariantCulture, out var result) ? (object)result : null,
-                "sbyte"  => sbyte.TryParse(value, numberStyles, CultureInfo.InvariantCulture, out var result) ? (object)result : null,
-                "short"  => short.TryParse(value, numberStyles, CultureInfo.InvariantCulture, out var result) ? (object)result : null,
-                "ushort" => ushort.TryParse(value, numberStyles, CultureInfo.InvariantCulture, out var result) ? (object)result : null,
-                "int"    => int.TryParse(value, numberStyles, CultureInfo.InvariantCulture, out var result) ? (object)result : null,
-                "uint"   => uint.TryParse(value, numberStyles, CultureInfo.InvariantCulture, out var result) ? (object)result : null,
-                "long"   => long.TryParse(value, numberStyles, CultureInfo.InvariantCulture, out var result) ? (object)result : null,
-                "ulong"  => ulong.TryParse(value, numberStyles, CultureInfo.InvariantCulture, out var result) ? (object)result : null,
+                "byte"   => byte.TryParse(value, numberStyles, CultureInfo.InvariantCulture, out var result) ? result : null,
+                "sbyte"  => sbyte.TryParse(value, numberStyles, CultureInfo.InvariantCulture, out var result) ? result : null,
+                "short"  => short.TryParse(value, numberStyles, CultureInfo.InvariantCulture, out var result) ? result : null,
+                "ushort" => ushort.TryParse(value, numberStyles, CultureInfo.InvariantCulture, out var result) ? result : null,
+                "int"    => int.TryParse(value, numberStyles, CultureInfo.InvariantCulture, out var result) ? result : null,
+                "uint"   => uint.TryParse(value, numberStyles, CultureInfo.InvariantCulture, out var result) ? result : null,
+                "long"   => long.TryParse(value, numberStyles, CultureInfo.InvariantCulture, out var result) ? result : null,
+                "ulong"  => ulong.TryParse(value, numberStyles, CultureInfo.InvariantCulture, out var result) ? result : null,
                 _        => null
             };
         }

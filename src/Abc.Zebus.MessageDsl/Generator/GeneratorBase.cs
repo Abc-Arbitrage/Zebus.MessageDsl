@@ -8,11 +8,11 @@ namespace Abc.Zebus.MessageDsl.Generator
 {
     public abstract class GeneratorBase : IDisposable
     {
-        protected static readonly string GeneratorName = typeof(GeneratorBase).Assembly.GetName().Name!;
-        protected static readonly Version GeneratorVersion = typeof(GeneratorBase).Assembly.GetName().Version!;
+        protected static string GeneratorName { get; } = typeof(GeneratorBase).Assembly.GetName().Name!;
+        protected static Version GeneratorVersion { get; }= typeof(GeneratorBase).Assembly.GetName().Version!;
 
         private readonly StringBuilder _stringBuilder;
-        protected readonly IndentedTextWriter Writer;
+        protected IndentedTextWriter Writer { get; }
 
         protected GeneratorBase()
         {
@@ -44,7 +44,7 @@ namespace Abc.Zebus.MessageDsl.Generator
         }
 
         protected ListHelper List(string separator = ", ")
-            => new ListHelper(Writer, separator);
+            => new(Writer, separator);
 
         protected string GeneratedOutput() => _stringBuilder.ToString();
 

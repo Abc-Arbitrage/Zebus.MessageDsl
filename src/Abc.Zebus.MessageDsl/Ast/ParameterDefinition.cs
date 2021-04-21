@@ -8,7 +8,7 @@
         public bool IsMarkedOptional { get; set; }
         public string? DefaultValue { get; set; }
         public bool IsWritableProperty { get; set; }
-        public AttributeSet Attributes { get; private set; } = new AttributeSet();
+        public AttributeSet Attributes { get; private set; } = new();
 
         public FieldRules Rules
         {
@@ -39,7 +39,7 @@
             Name = name;
         }
 
-        public ParameterDefinition Clone() => new ParameterDefinition
+        public ParameterDefinition Clone() => new()
         {
             Tag = Tag,
             Name = Name,

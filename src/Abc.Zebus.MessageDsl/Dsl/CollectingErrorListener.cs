@@ -32,24 +32,30 @@ namespace Abc.Zebus.MessageDsl.Dsl
 
         private void ReportError(string msg, IToken offendingSymbol, RecognitionException exception)
         {
-            if (exception is NoViableAltException noViableAlt)
+            switch (exception)
             {
-                var errorToken = noViableAlt.OffendingToken ?? noViableAlt.StartToken;
-                if (errorToken != null)
+                case NoViableAltException noViableAlt:
                 {
-                    msg = errorToken.Type == Recognizer<int, LexerATNSimulator>.Eof
-                        ? "More input expected, the file is not terminated properly"
-                        : $"Unexpected input at {GetTokenDisplay(errorToken)}";
+                    var errorToken = noViableAlt.OffendingToken ?? noViableAlt.StartToken;
+                    if (errorToken != null)
+                    {
+                        msg = errorToken.Type == Recognizer<int, LexerATNSimulator>.Eof
+                            ? "More input expected, the file is not terminated properly"
+                            : $"Unexpected input at {GetTokenDisplay(errorToken)}";
+                    }
+
+                    break;
                 }
-            }
 
-            if (exception is FailedPredicateException failedPredicate)
-            {
-                var tokenDisplay = GetTokenDisplay(failedPredicate.OffendingToken);
-                msg = $"Syntax error at {tokenDisplay}";
+                case FailedPredicateException failedPredicate:
+                {
+                    var tokenDisplay = GetTokenDisplay(failedPredicate.OffendingToken);
+                    msg = $"Syntax error at {tokenDisplay}";
 
-                if (failedPredicate.Context is MessageContractsParser.EndOfLineContext)
-                    msg = $"End of line expected at {tokenDisplay}";
+                    if (failedPredicate.Context is MessageContractsParser.EndOfLineContext)
+                        msg = $"End of line expected at {tokenDisplay}";
+                    break;
+                }
             }
 
             msg = Regex.Replace(msg, @"expecting\s+\{(.+)\}", "expecting one of: $1");

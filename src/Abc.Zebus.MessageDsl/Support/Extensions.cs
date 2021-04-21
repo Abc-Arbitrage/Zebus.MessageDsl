@@ -6,7 +6,7 @@ namespace Abc.Zebus.MessageDsl.Support
 {
     internal static class Extensions
     {
-        public static TValue GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
+        public static TValue? GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
             where TKey : notnull
         {
             return dictionary.TryGetValue(key, out var result) ? result : default!;
@@ -29,7 +29,7 @@ namespace Abc.Zebus.MessageDsl.Support
         }
 
         public static HashSet<T> ToHashSet<T>(this IEnumerable<T> sequence)
-            => new HashSet<T>(sequence);
+            => new(sequence);
 
         public static void AddRange<T>(this ICollection<T> collection, IEnumerable<T> toAdd)
         {

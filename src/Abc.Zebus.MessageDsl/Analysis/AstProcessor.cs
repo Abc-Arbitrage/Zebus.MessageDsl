@@ -70,7 +70,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
 
                 nextTag = param.Tag + 1;
 
-                if (nextTag >= AstValidator.ProtoFirstReservedTag && nextTag <= AstValidator.ProtoLastReservedTag)
+                if (nextTag is >= AstValidator.ProtoFirstReservedTag and <= AstValidator.ProtoLastReservedTag)
                     nextTag = AstValidator.ProtoLastReservedTag + 1;
             }
         }

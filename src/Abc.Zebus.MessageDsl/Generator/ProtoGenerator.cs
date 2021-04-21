@@ -73,7 +73,7 @@ namespace Abc.Zebus.MessageDsl.Generator
                     Writer.WriteLine("option allow_alias = true;");
 
                 foreach (var member in enumDef.Members)
-                    Writer.WriteLine("{0} = {1};", member.Name, member.ProtoValue.HasValue ? member.ProtoValue : (object)"TODO");
+                    Writer.WriteLine("{0} = {1};", member.Name, member.ProtoValue ?? (object)"TODO");
             }
         }
 
@@ -162,7 +162,7 @@ namespace Abc.Zebus.MessageDsl.Generator
                 if (!Equals(attr.TypeName, KnownTypes.ProtoIncludeAttribute))
                     continue;
 
-                if (!AttributeInterpretor.TryParseProtoInclude(attr, out var tag, out var typeName))
+                if (!AttributeInterpreter.TryParseProtoInclude(attr, out var tag, out var typeName))
                 {
                     Writer.WriteLine("// ERROR: bad sub type definition");
                     continue;
