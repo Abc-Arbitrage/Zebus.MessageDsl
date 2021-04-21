@@ -71,7 +71,7 @@ messageDefinition
 	;
 
 interfaceDefinition
-	:	attributes accessModifier? 'interface' messageName parameterList baseTypeList typeParamConstraint
+	:	attributes accessModifier? 'interface' messageName parameterList baseTypeList typeParamConstraintList
 	;
 
 accessModifier
