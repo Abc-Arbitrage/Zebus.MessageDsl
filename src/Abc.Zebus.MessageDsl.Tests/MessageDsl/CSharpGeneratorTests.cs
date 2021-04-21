@@ -869,6 +869,23 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
             code.ShouldContainIgnoreIndent("partial class Foo\n{\npartial class Bar\n{\n[ProtoContract]");
         }
 
+        [Test]
+        public void should_handle_interfaces()
+        {
+            var code = Generate(new MessageDefinition
+            {
+                Name = "IFoo",
+                IsInterface = true,
+                Parameters =
+                {
+                    new ParameterDefinition("int", "bar")
+                }
+            });
+
+            code.ShouldContain("public partial interface IFoo");
+            code.ShouldContainIgnoreIndent("[ProtoMember(1, IsRequired = true)]\npublic int Bar { get; set; }");
+        }
+
         protected override string GenerateRaw(ParsedContracts contracts) => CSharpGenerator.Generate(contracts);
     }
 }

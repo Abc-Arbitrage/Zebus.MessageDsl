@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Abc.Zebus.MessageDsl.Ast;
 using Abc.Zebus.MessageDsl.Dsl;
@@ -9,6 +10,7 @@ using static Abc.Zebus.MessageDsl.Dsl.MessageContractsParser;
 
 namespace Abc.Zebus.MessageDsl.Analysis
 {
+    [SuppressMessage("ReSharper", "ReturnTypeCanBeNotNullable")]
     internal class AstCreationVisitor : MessageContractsBaseVisitor<AstNode?>
     {
         private readonly ParsedContracts _contracts;
@@ -168,6 +170,18 @@ namespace Abc.Zebus.MessageDsl.Analysis
             return message;
         }
 
+        public override AstNode? VisitInterfaceDefinition(InterfaceDefinitionContext context)
+        {
+            var message = new MessageDefinition
+            {
+                IsInterface = true,
+                IsCustom = true
+            };
+
+            ProcessMessage(message, context);
+            return message;
+        }
+
         public override AstNode? VisitParameterList(ParameterListContext context)
         {
             foreach (var param in context.parameterDefinition().Select(Visit).OfType<ParameterDefinition>())
@@ -314,7 +328,7 @@ namespace Abc.Zebus.MessageDsl.Analysis
             return constraint;
         }
 
-        private void ProcessMessage(MessageDefinition message, MessageDefinitionContext context)
+        private void ProcessMessage(MessageDefinition message, ParserRuleContext context)
         {
             try
             {
@@ -330,7 +344,11 @@ namespace Abc.Zebus.MessageDsl.Analysis
                     nameContext._containingTypes.Select(name => new TypeName(name.GetText()))
                 );
 
-                ProcessTypeModifiers(message, context.typeModifier().Select(i => i.type));
+                ProcessTypeModifiers(
+                    message,
+                    context.GetRuleContexts<TypeModifierContext>().Select(i => i.type)
+                           .Concat(context.GetRuleContexts<AccessModifierContext>().Select(i => i.type))
+                );
 
                 foreach (var typeParamToken in nameContext._typeParams)
                 {

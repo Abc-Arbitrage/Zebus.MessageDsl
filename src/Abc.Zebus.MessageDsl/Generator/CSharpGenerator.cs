@@ -198,7 +198,8 @@ namespace Abc.Zebus.MessageDsl.Generator
                 Writer.Write(" ");
             }
 
-            Writer.Write("partial class ");
+            Writer.Write("partial ");
+            Writer.Write(message.IsInterface ? "interface " : "class ");
             Writer.Write(Identifier(message.Name));
 
             if (message.GenericParameters.Count > 0)
@@ -236,12 +237,15 @@ namespace Abc.Zebus.MessageDsl.Generator
                 foreach (var param in message.Parameters)
                     WriteParameterMember(message, param);
 
-                var parameters = GetConstructorParameters(message);
-                if (parameters.Count != 0)
+                if (!message.IsInterface)
                 {
-                    WriteDefaultConstructor(message);
-                    WriteForwardingConstructor(message, parameters);
-                    WriteMessageConstructor(message, parameters);
+                    var parameters = GetConstructorParameters(message);
+                    if (parameters.Count != 0)
+                    {
+                        WriteDefaultConstructor(message);
+                        WriteForwardingConstructor(message, parameters);
+                        WriteMessageConstructor(message, parameters);
+                    }
                 }
             }
 
@@ -310,7 +314,7 @@ namespace Abc.Zebus.MessageDsl.Generator
             foreach (var attribute in param.Attributes)
                 WriteAttributeLine(attribute);
 
-            var isWritable = param.IsWritableProperty || message.Options.Mutable;
+            var isWritable = param.IsWritableProperty || message.Options.Mutable || message.IsInterface;
 
             Writer.Write("public {0} {1}", param.Type.NetType, Identifier(MemberCase(param.Name)));
             Writer.WriteLine(isWritable ? " { get; set; }" : " { get; private set; }");
