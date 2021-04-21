@@ -13,14 +13,14 @@
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition="'$(RiderFallbackMode)' == 'true'">
     <DefineConstants>$(DefineConstants);RIDER_FALLBACK</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Antlr4.CodeGenerator" Version="4.6.6" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.8.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.9.0" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
