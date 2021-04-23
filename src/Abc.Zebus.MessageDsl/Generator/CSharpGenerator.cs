@@ -461,7 +461,12 @@ namespace Abc.Zebus.MessageDsl.Generator
                     if (param.IsFromBase)
                         continue;
 
-                    Writer.WriteLine("{0} = {1};", Identifier(MemberCase(param.Parameter.Name)), Identifier(ParameterCase(param.Parameter.Name)));
+                    Writer.Write("{0} = {1}", Identifier(MemberCase(param.Parameter.Name)), Identifier(ParameterCase(param.Parameter.Name)));
+
+                    if (param.Parameter.Type.IsArray && !param.Parameter.Type.IsNullable)
+                        Writer.Write(" ?? Array.Empty<{0}>()", param.Parameter.Type.GetRepeatedItemType()!.NetType);
+
+                    Writer.WriteLine(";");
                 }
             }
         }

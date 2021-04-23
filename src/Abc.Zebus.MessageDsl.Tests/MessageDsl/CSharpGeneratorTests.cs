@@ -887,6 +887,27 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
             code.ShouldNotContain("DebuggerNonUserCode");
         }
 
+        [Test]
+        public void should_coalesce_array_to_non_null()
+        {
+            var code = Generate(new MessageDefinition
+            {
+                Name = "Foo",
+                Parameters =
+                {
+                    new ParameterDefinition("int[]", "bar"),
+                    new ParameterDefinition("int?[]", "bar2"),
+                    new ParameterDefinition("string[]?", "baz"),
+                    new ParameterDefinition("string?[]", "baz2")
+                }
+            });
+
+            code.ShouldContain("Bar = bar ?? Array.Empty<int>();");
+            code.ShouldContain("Bar2 = bar2 ?? Array.Empty<int?>();");
+            code.ShouldNotContain("Array.Empty<string>();");
+            code.ShouldContain("Baz2 = baz2 ?? Array.Empty<string?>();");
+        }
+
         protected override string GenerateRaw(ParsedContracts contracts) => CSharpGenerator.Generate(contracts);
     }
 }
