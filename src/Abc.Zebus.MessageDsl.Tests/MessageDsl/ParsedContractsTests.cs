@@ -690,23 +690,6 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
             ParseValid("Foo(int a, int b = 42, int c = 10);");
         }
 
-        [Test]
-        public void should_parse_interfaces()
-        {
-            ParseValid("interface IFoo();");
-            ParseValid("interface IFoo(int bar);");
-            ParseValid("interface IFoo() : IMessage;");
-            ParseValid("interface IFoo<T>();");
-            ParseValid("interface IFoo<T>() where T : IMessage;");
-            ParseValid("interface IFoo<T>() : ICommand where T : IMessage;");
-            ParseValid("[Attr] interface IFoo();");
-            ParseValid("public interface IFoo();");
-            ParseValid("internal interface IFoo();");
-
-            ParseInvalid("abstract interface IFoo();");
-            ParseInvalid("sealed interface IFoo();");
-        }
-
         private static ParsedContracts ParseValid(string definitionText)
         {
             var contracts = Parse(definitionText);

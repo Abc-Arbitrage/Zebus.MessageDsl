@@ -11,7 +11,6 @@ definition
 	|	usingDefinition
 	|	namespaceDefinition
 	|	messageDefinition
-	|	interfaceDefinition
 	|	enumDefinition
 	|	SEP
 	;
@@ -68,10 +67,6 @@ enumValueAtom
 
 messageDefinition
 	:	attributes typeModifier* messageName customModifier='!'? parameterList baseTypeList typeParamConstraintList
-	;
-
-interfaceDefinition
-	:	attributes accessModifier? 'interface' messageName parameterList baseTypeList typeParamConstraintList
 	;
 
 accessModifier

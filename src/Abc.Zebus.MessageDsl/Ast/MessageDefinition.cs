@@ -27,15 +27,11 @@ namespace Abc.Zebus.MessageDsl.Ast
         public bool IsCustom { get; set; }
         public bool IsTransient { get; set; }
         public bool IsRoutable { get; set; }
-        public bool IsInterface { get; set; }
 
         public MessageType Type
         {
             get
             {
-                if (IsInterface)
-                    return MessageType.None;
-
                 if (IsCustom)
                     return MessageType.Custom;
 

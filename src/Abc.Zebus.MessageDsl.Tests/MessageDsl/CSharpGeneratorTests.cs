@@ -870,24 +870,6 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
         }
 
         [Test]
-        public void should_handle_interfaces()
-        {
-            var code = Generate(new MessageDefinition
-            {
-                Name = "IFoo",
-                IsInterface = true,
-                Parameters =
-                {
-                    new ParameterDefinition("int", "bar")
-                }
-            });
-
-            code.ShouldContain("public partial interface IFoo");
-            code.ShouldContainIgnoreIndent("[ProtoMember(1, IsRequired = true)]\npublic int Bar { get; set; }");
-            code.ShouldNotContain("DebuggerNonUserCode");
-        }
-
-        [Test]
         public void should_coalesce_array_to_non_null()
         {
             var code = Generate(new MessageDefinition
@@ -905,6 +887,7 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl
             code.ShouldContain("Bar = bar ?? Array.Empty<int>();");
             code.ShouldContain("Bar2 = bar2 ?? Array.Empty<int?>();");
             code.ShouldNotContain("Array.Empty<string>();");
+            code.ShouldContain("Baz = baz;");
             code.ShouldContain("Baz2 = baz2 ?? Array.Empty<string?>();");
         }
 

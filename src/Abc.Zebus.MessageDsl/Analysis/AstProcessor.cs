@@ -123,12 +123,6 @@ namespace Abc.Zebus.MessageDsl.Analysis
             if (message.InheritanceModifier != InheritanceModifier.Default)
                 return;
 
-            if (message.IsInterface)
-            {
-                message.InheritanceModifier = InheritanceModifier.None;
-                return;
-            }
-
             var hasInheritedMessages = message.Attributes.Any(attr => Equals(attr.TypeName, KnownTypes.ProtoIncludeAttribute));
 
             message.InheritanceModifier = hasInheritedMessages
