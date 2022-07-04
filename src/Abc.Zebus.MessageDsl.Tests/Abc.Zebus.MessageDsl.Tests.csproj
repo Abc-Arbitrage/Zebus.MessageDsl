@@ -1,19 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net48;net5.0</TargetFrameworks>
+    <TargetFrameworks>net48;net6.0</TargetFrameworks>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\Abc.Zebus.MessageDsl\Abc.Zebus.MessageDsl.snk</AssemblyOriginatorKeyFile>
     <Nullable>disable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Abc.Zebus.MessageDsl\Abc.Zebus.MessageDsl.csproj" />
+    <ProjectReference Include="..\Abc.Zebus.MessageDsl\Abc.Zebus.MessageDsl.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
-    <PackageReference Include="NUnit" Version="3.13.1" />
-    <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4"/>
+    <PackageReference Include="NUnit" Version="3.13.1"/>
+    <PackageReference Include="NUnit3TestAdapter" Version="3.17.0"/>
   </ItemGroup>
 
 </Project>
