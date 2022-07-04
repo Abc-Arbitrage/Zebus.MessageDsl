@@ -14,9 +14,6 @@
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(RiderFallbackMode)' == 'true'">
-    <DefineConstants>$(DefineConstants);RIDER_FALLBACK</DefineConstants>
-  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Antlr4.CodeGenerator" Version="4.6.6" PrivateAssets="all" />
