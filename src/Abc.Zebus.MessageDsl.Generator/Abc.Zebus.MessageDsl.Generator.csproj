@@ -17,7 +17,7 @@
 
   <ItemGroup>
     <PackageReference Include="Antlr4.CodeGenerator" Version="4.6.6" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.9.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.0.1" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,7 +34,7 @@
 
   <!-- Antlr4.Runtime -->
   <PropertyGroup>
-    <NoWarn>$(NoWarn);0219;0162</NoWarn>
+    <NoWarn>$(NoWarn);0219;0162;RS1024</NoWarn>
     <DefineConstants>$(DefineConstants);PORTABLE;NETSTANDARD;NET45PLUS;NET40PLUS;NET35PLUS;NET30PLUS;NET20PLUS</DefineConstants>
     <Antlr4RuntimeDir>..\..\lib\antlr4cs\runtime\CSharp\Antlr4.Runtime</Antlr4RuntimeDir>
   </PropertyGroup>
