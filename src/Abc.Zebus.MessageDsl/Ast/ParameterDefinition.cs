@@ -1,45 +1,46 @@
-﻿namespace Abc.Zebus.MessageDsl.Ast
+﻿namespace Abc.Zebus.MessageDsl.Ast;
+
+public class ParameterDefinition : AstNode, INamedNode
 {
-    public class ParameterDefinition : AstNode, INamedNode
+    public int Tag { get; set; }
+    public string Name { get; set; } = default!;
+    public TypeName Type { get; set; } = default!;
+    public bool IsMarkedOptional { get; set; }
+    public string? DefaultValue { get; set; }
+    public bool IsWritableProperty { get; set; }
+    public AttributeSet Attributes { get; private set; } = new();
+
+    public FieldRules Rules
     {
-        public int Tag { get; set; }
-        public string Name { get; set; } = default!;
-        public TypeName Type { get; set; } = default!;
-        public bool IsMarkedOptional { get; set; }
-        public string? DefaultValue { get; set; }
-        public bool IsWritableProperty { get; set; }
-        public AttributeSet Attributes { get; private set; } = new();
-
-        public FieldRules Rules
+        get
         {
-            get
-            {
-                if (Type.IsRepeated)
-                    return FieldRules.Repeated;
+            if (Type.IsRepeated)
+                return FieldRules.Repeated;
 
-                if (IsMarkedOptional || Type.IsNullable)
-                    return FieldRules.Optional;
+            if (IsMarkedOptional || Type.IsNullable)
+                return FieldRules.Optional;
 
-                return FieldRules.Required;
-            }
+            return FieldRules.Required;
         }
+    }
 
-        public bool IsPacked => Rules == FieldRules.Repeated && Type.IsPackable;
+    public bool IsPacked => Rules == FieldRules.Repeated && Type.IsPackable;
 
-        public int? RoutingPosition { get; set; }
+    public int? RoutingPosition { get; set; }
 
-        public ParameterDefinition()
-        {
-        }
+    public ParameterDefinition()
+    {
+    }
 
-        internal ParameterDefinition(TypeName type, string name)
-            : this()
-        {
-            Type = type;
-            Name = name;
-        }
+    internal ParameterDefinition(TypeName type, string name)
+        : this()
+    {
+        Type = type;
+        Name = name;
+    }
 
-        public ParameterDefinition Clone() => new()
+    public ParameterDefinition Clone()
+        => new()
         {
             Tag = Tag,
             Name = Name,
@@ -50,6 +51,6 @@
             ParseContext = ParseContext
         };
 
-        public override string ToString() => $"{Type} {Name}";
-    }
+    public override string ToString()
+        => $"{Type} {Name}";
 }

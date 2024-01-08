@@ -1,7 +1,6 @@
-﻿namespace Abc.Zebus.MessageDsl.Ast
+﻿namespace Abc.Zebus.MessageDsl.Ast;
+
+public interface INamedNode
 {
-    public interface INamedNode
-    {
-        string Name { get; }
-    }
+    string Name { get; }
 }

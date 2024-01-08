@@ -1,10 +1,9 @@
-﻿namespace Abc.Zebus.MessageDsl.Ast
+﻿namespace Abc.Zebus.MessageDsl.Ast;
+
+public enum FieldRules
 {
-    public enum FieldRules
-    {
-        Unspecified,
-        Required,
-        Optional,
-        Repeated
-    }
+    Unspecified,
+    Required,
+    Optional,
+    Repeated
 }

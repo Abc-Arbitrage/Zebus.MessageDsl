@@ -3,76 +3,68 @@ using System.Text.RegularExpressions;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Atn;
 
-namespace Abc.Zebus.MessageDsl.Dsl
+namespace Abc.Zebus.MessageDsl.Dsl;
+
+internal class CollectingErrorListener : IAntlrErrorListener<int>, IAntlrErrorListener<IToken>
 {
-    internal class CollectingErrorListener : IAntlrErrorListener<int>, IAntlrErrorListener<IToken>
+    public ICollection<SyntaxError> Errors { get; } = new List<SyntaxError>();
+
+    public void SyntaxError(IRecognizer recognizer, int offendingSymbol, int line, int charPositionInLine, string msg, RecognitionException e)
     {
-        public ICollection<SyntaxError> Errors { get; }
-
-        public CollectingErrorListener()
+        var fakeToken = new CommonToken(0, string.Empty)
         {
-            Errors = new List<SyntaxError>();
-        }
+            Line = line,
+            Column = charPositionInLine
+        };
 
-        public void SyntaxError(IRecognizer recognizer, int offendingSymbol, int line, int charPositionInLine, string msg, RecognitionException e)
+        ReportError(msg, fakeToken, e);
+    }
+
+    public void SyntaxError(IRecognizer recognizer, IToken offendingSymbol, int line, int charPositionInLine, string msg, RecognitionException e)
+        => ReportError(msg, offendingSymbol, e);
+
+    private void ReportError(string msg, IToken offendingSymbol, RecognitionException exception)
+    {
+        switch (exception)
         {
-            var fakeToken = new CommonToken(0, string.Empty)
+            case NoViableAltException noViableAlt:
             {
-                Line = line,
-                Column = charPositionInLine
-            };
-
-            ReportError(msg, fakeToken, e);
-        }
-
-        public void SyntaxError(IRecognizer recognizer, IToken offendingSymbol, int line, int charPositionInLine, string msg, RecognitionException e)
-        {
-            ReportError(msg, offendingSymbol, e);
-        }
-
-        private void ReportError(string msg, IToken offendingSymbol, RecognitionException exception)
-        {
-            switch (exception)
-            {
-                case NoViableAltException noViableAlt:
+                var errorToken = noViableAlt.OffendingToken ?? noViableAlt.StartToken;
+                if (errorToken != null)
                 {
-                    var errorToken = noViableAlt.OffendingToken ?? noViableAlt.StartToken;
-                    if (errorToken != null)
-                    {
-                        msg = errorToken.Type == Recognizer<int, LexerATNSimulator>.Eof
-                            ? "More input expected, the file is not terminated properly"
-                            : $"Unexpected input at {GetTokenDisplay(errorToken)}";
-                    }
-
-                    break;
+                    msg = errorToken.Type == Recognizer<int, LexerATNSimulator>.Eof
+                        ? "More input expected, the file is not terminated properly"
+                        : $"Unexpected input at {GetTokenDisplay(errorToken)}";
                 }
 
-                case FailedPredicateException failedPredicate:
-                {
-                    var tokenDisplay = GetTokenDisplay(failedPredicate.OffendingToken);
-                    msg = $"Syntax error at {tokenDisplay}";
-
-                    if (failedPredicate.Context is MessageContractsParser.EndOfLineContext)
-                        msg = $"End of line expected at {tokenDisplay}";
-                    break;
-                }
+                break;
             }
 
-            msg = Regex.Replace(msg, @"expecting\s+\{(.+)\}", "expecting one of: $1");
-            Errors.Add(new SyntaxError(msg, offendingSymbol));
+            case FailedPredicateException failedPredicate:
+            {
+                var tokenDisplay = GetTokenDisplay(failedPredicate.OffendingToken);
+                msg = $"Syntax error at {tokenDisplay}";
+
+                if (failedPredicate.Context is MessageContractsParser.EndOfLineContext)
+                    msg = $"End of line expected at {tokenDisplay}";
+                break;
+            }
         }
 
-        private static string GetTokenDisplay(IToken? token)
-        {
-            if (token == null)
-                return "(unknown)";
+        msg = Regex.Replace(msg, @"expecting\s+\{(.+)\}", "expecting one of: $1");
+        Errors.Add(new SyntaxError(msg, offendingSymbol));
+    }
 
-            if (token.Type == Recognizer<int, LexerATNSimulator>.Eof)
-                return "(end of expression)";
+    private static string GetTokenDisplay(IToken? token)
+    {
+        if (token == null)
+            return "(unknown)";
 
-            var str = token.Text ?? string.Empty;
-            str = str.Replace('\n', ' ').Replace('\r', ' ');
-            return $"'{str}'";
-        }
+        if (token.Type == Recognizer<int, LexerATNSimulator>.Eof)
+            return "(end of expression)";
+
+        var str = token.Text ?? string.Empty;
+        str = str.Replace('\n', ' ').Replace('\r', ' ');
+        return $"'{str}'";
     }
 }

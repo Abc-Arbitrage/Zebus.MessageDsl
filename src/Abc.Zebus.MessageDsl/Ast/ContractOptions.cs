@@ -1,6 +1,3 @@
-﻿namespace Abc.Zebus.MessageDsl.Ast
-{
-    public class ContractOptions : OptionsBase
-    {
-    }
-}
+﻿namespace Abc.Zebus.MessageDsl.Ast;
+
+public class ContractOptions : OptionsBase;

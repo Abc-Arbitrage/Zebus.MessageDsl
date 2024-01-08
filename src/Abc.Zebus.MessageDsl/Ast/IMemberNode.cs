@@ -1,8 +1,7 @@
-namespace Abc.Zebus.MessageDsl.Ast
+namespace Abc.Zebus.MessageDsl.Ast;
+
+internal interface IMemberNode : INamedNode
 {
-    internal interface IMemberNode : INamedNode
-    {
-        AccessModifier AccessModifier { get; set; }
-        MemberOptions Options { get; }
-    }
+    AccessModifier AccessModifier { get; set; }
+    MemberOptions Options { get; }
 }

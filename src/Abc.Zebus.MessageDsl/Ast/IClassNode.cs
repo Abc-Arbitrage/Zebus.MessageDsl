@@ -1,7 +1,6 @@
-namespace Abc.Zebus.MessageDsl.Ast
+namespace Abc.Zebus.MessageDsl.Ast;
+
+internal interface IClassNode : IMemberNode
 {
-    internal interface IClassNode : IMemberNode
-    {
-        InheritanceModifier InheritanceModifier { get; set; }
-    }
+    InheritanceModifier InheritanceModifier { get; set; }
 }

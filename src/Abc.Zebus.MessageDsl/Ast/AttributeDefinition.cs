@@ -1,46 +1,45 @@
-﻿namespace Abc.Zebus.MessageDsl.Ast
+﻿namespace Abc.Zebus.MessageDsl.Ast;
+
+public class AttributeDefinition : AstNode
 {
-    public class AttributeDefinition : AstNode
+    private TypeName _typeName = default!;
+
+    public TypeName TypeName
     {
-        private TypeName _typeName = default!;
+        get => _typeName;
+        private set => _typeName = NormalizeAttributeTypeName(value);
+    }
 
-        public TypeName TypeName
+    public string? Parameters { get; set; }
+
+    public AttributeDefinition(TypeName attributeType, string? parameters = null)
+    {
+        TypeName = attributeType;
+        Parameters = parameters;
+    }
+
+    public static TypeName NormalizeAttributeTypeName(TypeName typeName)
+    {
+        const string attributeSuffix = "Attribute";
+
+        if (typeName.NetType.EndsWith(attributeSuffix))
+            return typeName.NetType.Substring(0, typeName.NetType.Length - attributeSuffix.Length);
+
+        return typeName;
+    }
+
+    public AttributeDefinition Clone()
+    {
+        return new AttributeDefinition(TypeName, Parameters)
         {
-            get => _typeName;
-            private set => _typeName = NormalizeAttributeTypeName(value);
-        }
+            ParseContext = ParseContext
+        };
+    }
 
-        public string? Parameters { get; set; }
-
-        public AttributeDefinition(TypeName attributeType, string? parameters = null)
-        {
-            TypeName = attributeType;
-            Parameters = parameters;
-        }
-
-        public static TypeName NormalizeAttributeTypeName(TypeName typeName)
-        {
-            const string attributeSuffix = "Attribute";
-
-            if (typeName.NetType.EndsWith(attributeSuffix))
-                return typeName.NetType.Substring(0, typeName.NetType.Length - attributeSuffix.Length);
-
-            return typeName;
-        }
-
-        public AttributeDefinition Clone()
-        {
-            return new AttributeDefinition(TypeName, Parameters)
-            {
-                ParseContext = ParseContext
-            };
-        }
-
-        public override string ToString()
-        {
-            return string.IsNullOrEmpty(Parameters)
-                ? TypeName.ToString()
-                : $"{TypeName}({Parameters})";
-        }
+    public override string ToString()
+    {
+        return string.IsNullOrEmpty(Parameters)
+            ? TypeName.ToString()
+            : $"{TypeName}({Parameters})";
     }
 }

@@ -1,10 +1,9 @@
-﻿namespace Abc.Zebus.MessageDsl.Ast
+﻿namespace Abc.Zebus.MessageDsl.Ast;
+
+public enum MessageType
 {
-    public enum MessageType
-    {
-        None,
-        Custom,
-        Command,
-        Event
-    }
+    None,
+    Custom,
+    Command,
+    Event
 }

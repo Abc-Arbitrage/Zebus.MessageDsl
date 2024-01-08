@@ -1,17 +1,17 @@
 ﻿using System.Collections.Generic;
 
-namespace Abc.Zebus.MessageDsl.Ast
+namespace Abc.Zebus.MessageDsl.Ast;
+
+public class GenericConstraint : AstNode
 {
-    public class GenericConstraint : AstNode
-    {
-        public string GenericParameterName { get; set; } = default!;
+    public string GenericParameterName { get; set; } = default!;
 
-        public bool IsClass { get; set; }
-        public bool IsStruct { get; set; }
-        public bool HasDefaultConstructor { get; set; }
+    public bool IsClass { get; set; }
+    public bool IsStruct { get; set; }
+    public bool HasDefaultConstructor { get; set; }
 
-        public ISet<TypeName> Types { get; } = new HashSet<TypeName>();
+    public ISet<TypeName> Types { get; } = new HashSet<TypeName>();
 
-        public override string ToString() => GenericParameterName;
-    }
+    public override string ToString()
+        => GenericParameterName;
 }

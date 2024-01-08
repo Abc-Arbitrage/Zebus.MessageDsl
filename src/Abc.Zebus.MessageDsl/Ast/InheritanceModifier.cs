@@ -1,10 +1,9 @@
-namespace Abc.Zebus.MessageDsl.Ast
+namespace Abc.Zebus.MessageDsl.Ast;
+
+public enum InheritanceModifier
 {
-    public enum InheritanceModifier
-    {
-        Default,
-        None,
-        Sealed,
-        Abstract
-    }
+    Default,
+    None,
+    Sealed,
+    Abstract
 }

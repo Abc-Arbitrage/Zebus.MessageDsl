@@ -1,8 +1,7 @@
-namespace Abc.Zebus.MessageDsl.Ast
+namespace Abc.Zebus.MessageDsl.Ast;
+
+public enum AccessModifier
 {
-    public enum AccessModifier
-    {
-        Public,
-        Internal
-    }
+    Public,
+    Internal
 }
