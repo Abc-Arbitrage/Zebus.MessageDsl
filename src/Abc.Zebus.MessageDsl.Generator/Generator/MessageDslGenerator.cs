@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Abc.Zebus.MessageDsl.Ast;
 using Microsoft.CodeAnalysis;
@@ -13,29 +13,30 @@ namespace Abc.Zebus.MessageDsl.Generator
     [Generator]
     public class MessageDslGenerator : IIncrementalGenerator
     {
+        private static readonly Regex _sanitizePathRegex = new(@"[:\\/]+", RegexOptions.Compiled);
+
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
             var additionalTextsWithNamespaces = context.AdditionalTextsProvider
                                                        .Where(x => x.Path.EndsWith(".msg"))
                                                        .Combine(context.AnalyzerConfigOptionsProvider)
-                                                       .Select((x, _) =>
+                                                       .Select((input, _) =>
                                                        {
-                                                           var (additionalText, config) = x;
-                                                           var optionName = "build_metadata.AdditionalFiles.ZebusMessageDslNamespace";
-                                                           var fileNamespace = config.GetOptions(additionalText).TryGetValue(optionName, out var ns) ? ns : null;
-                                                           return (additionalText, fileNamespace);
+                                                           var (additionalText, config) = input;
+                                                           var fileNamespace = config.GetOptions(additionalText).TryGetValue("build_metadata.AdditionalFiles.ZebusMessageDslNamespace", out var ns) ? ns : null;
+                                                           var relativePath = config.GetOptions(additionalText).TryGetValue("build_metadata.AdditionalFiles.ZebusMessageDslRelativePath", out var dir) ? dir : null;
+                                                           return new SourceGenerationInput(additionalText, fileNamespace, relativePath);
                                                        })
-                                                       .Where(x => x.fileNamespace != null)
+                                                       .Where(x => x.FileNamespace != null)
                                                        .Select(GenerateCode)
                                                        .Collect();
 
             context.RegisterSourceOutput(additionalTextsWithNamespaces, GenerateFiles);
         }
 
-        private static SourceGenerationResult GenerateCode((AdditionalText additionalText, string? fileNamespace) additionalTextWithNamespace, CancellationToken cancellationToken)
+        private static SourceGenerationResult GenerateCode(SourceGenerationInput input, CancellationToken cancellationToken)
         {
-            var file = additionalTextWithNamespace.additionalText;
-            var fileNamespace = additionalTextWithNamespace.fileNamespace;
+            var (file, fileNamespace, relativePath) = input;
 
             var fileContents = file.GetText(cancellationToken)?.ToString();
 
@@ -60,7 +61,7 @@ namespace Abc.Zebus.MessageDsl.Generator
 
                 var output = CSharpGenerator.Generate(contracts);
 
-                return SourceGenerationResult.Success(file, output);
+                return SourceGenerationResult.Success(file, output, relativePath);
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
@@ -70,55 +71,42 @@ namespace Abc.Zebus.MessageDsl.Generator
 
         private static void GenerateFiles(SourceProductionContext context, ImmutableArray<SourceGenerationResult> results)
         {
-            var hintNames = new HashSet<string>();
-
             foreach (var result in results)
             {
                 foreach (var diagnostic in result.Diagnostics)
-                {
                     context.ReportDiagnostic(diagnostic);
-                }
 
                 if (result.AdditionalText == null || result.GeneratedSource == null)
                     continue;
 
-                var hintName = GenerateHintName(result.AdditionalText);
+                var hintName = _sanitizePathRegex.Replace(result.RelativePath ?? result.AdditionalText.Path, "_") + ".g.cs";
 
                 context.AddSource(hintName, result.GeneratedSource);
             }
-
-            string GenerateHintName(AdditionalText file)
-            {
-                var baseName = Path.GetFileName(file.Path);
-
-                var fileName = $"{baseName}.cs";
-                if (hintNames.Add(fileName))
-                    return fileName;
-
-                for (var index = 1;; ++index)
-                {
-                    fileName = $"{baseName}.{index:D3}.cs";
-                    if (hintNames.Add(fileName))
-                        return fileName;
-                }
-            }
         }
+
+        private record SourceGenerationInput(AdditionalText AdditionalText, string? FileNamespace, string? RelativePath);
 
         public class SourceGenerationResult
         {
             public IList<Diagnostic> Diagnostics { get; }
             public string? GeneratedSource { get; set; }
             public AdditionalText? AdditionalText { get; }
+            public string? RelativePath { get; }
 
-            public SourceGenerationResult(IList<Diagnostic> diagnostics, string? generatedSource, AdditionalText? additionalText)
+            public SourceGenerationResult(IList<Diagnostic> diagnostics, string? generatedSource, AdditionalText? additionalText, string? relativePath)
             {
                 Diagnostics = diagnostics;
                 GeneratedSource = generatedSource;
                 AdditionalText = additionalText;
+                RelativePath = relativePath;
             }
 
-            public static SourceGenerationResult Error(params Diagnostic[] diagnostics) => new(diagnostics, null, null);
-            public static SourceGenerationResult Success(AdditionalText? additionalText, string generatedSource) => new(Array.Empty<Diagnostic>(), generatedSource, additionalText);
+            public static SourceGenerationResult Error(params Diagnostic[] diagnostics)
+                => new(diagnostics, null, null, null);
+
+            public static SourceGenerationResult Success(AdditionalText? additionalText, string generatedSource, string? relativePath)
+                => new(Array.Empty<Diagnostic>(), generatedSource, additionalText, relativePath);
         }
     }
 }

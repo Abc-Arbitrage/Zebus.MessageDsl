@@ -3,9 +3,11 @@
   <ItemGroup>
     <ZebusMessages Update="@(ZebusMessages)" ZebusMessageDslNamespace="$([MSBuild]::ValueOrDefault('$(RootNamespace).%(RelativeDir)', '').Replace('\', '.').Replace('/', '.').Trim('.'))" />
     <ZebusMessages Update="@(ZebusMessages->HasMetadata('CustomToolNamespace'))" ZebusMessageDslNamespace="%(CustomToolNamespace)" />
+    <ZebusMessages Update="@(ZebusMessages)" ZebusMessageDslRelativePath="%(RelativeDir)%(Filename)%(Extension)" />
     <None Remove="**\*.msg" />
     <AdditionalFiles Include="@(ZebusMessages)" />
     <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="ZebusMessageDslNamespace" />
+    <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="ZebusMessageDslRelativePath" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(NCrunch)' == '1'">
