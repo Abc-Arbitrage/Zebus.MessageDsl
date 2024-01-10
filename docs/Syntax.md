@@ -85,7 +85,10 @@ ErrorsDetected(int entityId, Error[] errors);
 
 ProtoBuf tags are assigned implicitly by default, in increasing order.
 
-:warning: It is dangerous to add/remove/move message members without taking their tags into consideration. Tags define the wire format of the message.
+> [!WARNING]
+> It is dangerous to add/remove/move message members without taking their tags into consideration. Tags define the wire format of the message.
+> 
+> When removing a member, replace it with a discard (`_`) to preserve the tags of the following ones and to document the fact that a member has been removed.
 
 Tags can be redefined using the `[N]` syntax, where `N` is the desired tag number:
 
@@ -93,7 +96,13 @@ Tags can be redefined using the `[N]` syntax, where `N` is the desired tag numbe
 Foo(int a, [4] int b, int c);
 ```
 
-Implicit tag numbering resumes after an explicitly defined tag. The tags for the previous example will be: 
+Which is equivalent to:
+
+```C#
+Foo(int a, _, _, int b, int c);
+```
+
+Implicit tag numbering resumes after an explicitly defined tag. The tags for the previous examples will be: 
 
  - `a`: 1
  - `b`: 4

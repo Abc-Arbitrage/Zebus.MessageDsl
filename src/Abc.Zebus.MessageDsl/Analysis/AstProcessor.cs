@@ -41,6 +41,12 @@ internal class AstProcessor
         }
     }
 
+    public void Cleanup()
+    {
+        foreach (var message in _contracts.Messages)
+            RemoveDiscardedParameters(message);
+    }
+
     private static void AddInterfaces(MessageDefinition message)
     {
         switch (message.Type)
@@ -128,5 +134,14 @@ internal class AstProcessor
         message.InheritanceModifier = hasInheritedMessages
             ? InheritanceModifier.None
             : InheritanceModifier.Sealed;
+    }
+
+    private static void RemoveDiscardedParameters(MessageDefinition message)
+    {
+        for (var i = message.Parameters.Count - 1; i >= 0; --i)
+        {
+            if (message.Parameters[i].IsDiscarded)
+                message.Parameters.RemoveAt(i);
+        }
     }
 }

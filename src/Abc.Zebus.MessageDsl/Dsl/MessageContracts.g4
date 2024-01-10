@@ -95,6 +95,7 @@ parameterList
 
 parameterDefinition
 	:	attributes typeName paramName=id optionalModifier='?'? ('=' defaultValue=literalValue)?
+	|	discard=DISCARD
 	;
 
 typeParamConstraintList
@@ -240,7 +241,8 @@ KW_SEALED : 'sealed';
 KW_ABSTRACT : 'abstract';
 
 ID
-	:	[a-zA-Z_][a-zA-Z0-9_]*
+	:	[a-zA-Z][a-zA-Z0-9_]*
+	|	'_' [a-zA-Z0-9_]+
 	;
 
 STRING
@@ -259,6 +261,10 @@ NUMBER
 
 SEP
 	:	';'
+	;
+
+DISCARD
+	:	'_'
 	;
 
 fragment HEX

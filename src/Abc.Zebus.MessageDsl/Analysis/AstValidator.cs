@@ -46,6 +46,9 @@ internal class AstValidator
 
         foreach (var param in message.Parameters)
         {
+            if (param.IsDiscarded)
+                continue;
+
             var errorContext = param.ParseContext ?? message.ParseContext;
 
             if (!paramNames.Add(param.Name))
@@ -61,6 +64,9 @@ internal class AstValidator
         {
             var param = message.Parameters[i];
             var errorContext = param.ParseContext ?? message.ParseContext;
+
+            if (param.IsDiscarded)
+                continue;
 
             if (string.IsNullOrEmpty(param.DefaultValue))
                 requiredParameterSeen = true;

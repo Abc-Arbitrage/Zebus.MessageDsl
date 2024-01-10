@@ -732,6 +732,41 @@ public class ParsedContractsTests
         contracts.Messages[1].Name.ShouldEqualOneOf("Bar", "Baz");
     }
 
+    [Test]
+    public void should_handle_parameter_discards()
+    {
+        var contracts = ParseValid("Foo(int bar, _, int baz)");
+        var message = contracts.Messages.ExpectedSingle();
+        message.Parameters.Count.ShouldEqual(2);
+        message.Parameters[0].Name.ShouldEqual("bar");
+        message.Parameters[0].Tag.ShouldEqual(1);
+        message.Parameters[1].Name.ShouldEqual("baz");
+        message.Parameters[1].Tag.ShouldEqual(3);
+    }
+
+    [Test]
+    public void should_handle_tag_collisions_in_discards()
+    {
+        ParseInvalid("Foo(int bar, _, [2] int baz)");
+        ParseValid("Foo(int bar, _, [3] int baz)");
+    }
+
+    [Test]
+    public void should_accept_discards_between_optional_parameters()
+    {
+        ParseValid("Foo(int a = 1, _, int c = 3)");
+    }
+
+    [Test]
+    [TestCase("Foo(int a, _, _, int d)")]
+    [TestCase("Foo(int a, _, int c, _)")]
+    [TestCase("Foo(_)")]
+    [TestCase("Foo(_, _)")]
+    public void should_accept_discards(string message)
+    {
+        ParseValid(message);
+    }
+
     private static ParsedContracts ParseValid(string definitionText)
     {
         var contracts = Parse(definitionText);
@@ -761,7 +796,7 @@ public class ParsedContractsTests
             Console.WriteLine("ERROR: {0}", error);
 
         foreach (var message in contracts.Messages)
-            Console.WriteLine($"MESSAGE: {message}");
+            Console.WriteLine($"MESSAGE: {message}({string.Join(", ", message.Parameters.Select(p => $"[{p.Tag}] {p}"))})");
 
         return contracts;
     }

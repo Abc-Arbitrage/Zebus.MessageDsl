@@ -10,6 +10,8 @@ public class ParameterDefinition : AstNode, INamedNode
     public bool IsWritableProperty { get; set; }
     public AttributeSet Attributes { get; private set; } = new();
 
+    internal bool IsDiscarded { get; set; }
+
     public FieldRules Rules
     {
         get
@@ -48,9 +50,10 @@ public class ParameterDefinition : AstNode, INamedNode
             IsMarkedOptional = IsMarkedOptional,
             DefaultValue = DefaultValue,
             Attributes = Attributes.Clone(),
+            IsDiscarded = IsDiscarded,
             ParseContext = ParseContext
         };
 
     public override string ToString()
-        => $"{Type} {Name}";
+        => IsDiscarded ? "_" : $"{Type} {Name}";
 }

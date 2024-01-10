@@ -85,6 +85,7 @@ public class ParsedContracts
         processor.PostProcess();
 
         new AstValidator(this).Validate();
+        processor.Cleanup();
     }
 
     public void AddError(string message)

@@ -183,6 +183,17 @@ internal class AstCreationVisitor : MessageContractsBaseVisitor<AstNode?>
     {
         try
         {
+            if (context.discard is not null)
+            {
+                return new ParameterDefinition
+                {
+                    Name = "_",
+                    Type = new TypeName(null),
+                    IsDiscarded = true,
+                    ParseContext = context
+                };
+            }
+
             _currentParameter = new ParameterDefinition
             {
                 Name = GetId(context.paramName),
