@@ -692,15 +692,52 @@ public class ParsedContractsTests
         ParseValid("Foo(int a, int b = 42, int c = 10);");
     }
 
+    [Test]
+    public void should_generate_ast_for_incomplete_code()
+    {
+        var contracts = ParseInvalid("Foo(int bar");
+        var message = contracts.Messages.ExpectedSingle();
+        var param = message.Parameters.ExpectedSingle();
+        param.Type.NetType.ShouldEqual("int");
+        param.Name.ShouldEqual("bar");
+    }
+
+    [Test]
+    [TestCase("Foo")]
+    [TestCase("Foo;")]
+    [TestCase("Foo(")]
+    [TestCase("Foo(;")]
+    [TestCase("Foo(int")]
+    [TestCase("Foo(int;")]
+    [TestCase("Foo(int first")]
+    [TestCase("Foo(int first;")]
+    [TestCase("Foo(int first,")]
+    [TestCase("Foo(int first,;")]
+    [TestCase("Foo(int first, string")]
+    [TestCase("Foo(int first, string;")]
+    [TestCase("Foo(int first, string second")]
+    [TestCase("Foo(int first, string second;")]
+    public void should_split_on_incomplete_message(string firstLine)
+    {
+        var contracts = ParseInvalid(
+            $"""
+             {firstLine}
+             Bar(int something, int somethingElse)
+             Baz(int something, int somethingElse)
+             """
+        );
+
+        contracts.Messages.Count.ShouldBeGreaterThan(1);
+        contracts.Messages[0].Name.ShouldEqual("Foo");
+        contracts.Messages[1].Name.ShouldEqualOneOf("Bar", "Baz");
+    }
+
     private static ParsedContracts ParseValid(string definitionText)
     {
         var contracts = Parse(definitionText);
 
         if (contracts.Errors.Any())
-        {
-            SyntaxDebugHelper.DumpParseTree(contracts);
             Assert.Fail("There are unexpected errors");
-        }
 
         return contracts;
     }
@@ -710,10 +747,7 @@ public class ParsedContractsTests
         var contracts = Parse(definitionText);
 
         if (!contracts.Errors.Any())
-        {
-            SyntaxDebugHelper.DumpParseTree(contracts);
             Assert.Fail("Errors were expected");
-        }
 
         return contracts;
     }
@@ -725,6 +759,9 @@ public class ParsedContractsTests
 
         foreach (var error in contracts.Errors)
             Console.WriteLine("ERROR: {0}", error);
+
+        foreach (var message in contracts.Messages)
+            Console.WriteLine($"MESSAGE: {message}");
 
         return contracts;
     }

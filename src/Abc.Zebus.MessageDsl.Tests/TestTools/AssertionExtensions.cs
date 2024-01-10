@@ -47,6 +47,9 @@ public static class AssertionExtensions
     public static void ShouldEqual<T>(this T? actual, T? expected)
         => Assert.That(actual, Is.EqualTo(expected));
 
+    public static void ShouldEqualOneOf<T>(this T? actual, params T[] expected)
+        => Assert.That(actual, Is.AnyOf(expected));
+
     public static void ShouldBeGreaterThan(this int actual, int value)
         => Assert.That(actual, Is.GreaterThan(value));
 

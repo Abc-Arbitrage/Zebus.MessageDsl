@@ -6,6 +6,7 @@ using Abc.Zebus.MessageDsl.Ast;
 using Abc.Zebus.MessageDsl.Dsl;
 using Abc.Zebus.MessageDsl.Support;
 using Antlr4.Runtime;
+using Antlr4.Runtime.Tree;
 using static Abc.Zebus.MessageDsl.Dsl.MessageContractsParser;
 
 namespace Abc.Zebus.MessageDsl.Analysis;
@@ -436,4 +437,7 @@ internal class AstCreationVisitor : MessageContractsBaseVisitor<AstNode?>
 
     private string GetId(IdContext? context)
         => context?.GetValidatedId(_contracts) ?? string.Empty;
+
+    private new AstNode? Visit(IParseTree? tree)
+        => tree is not null ? base.Visit(tree) : null;
 }

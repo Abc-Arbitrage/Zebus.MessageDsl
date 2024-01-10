@@ -27,7 +27,7 @@ partial class MessageContractsParser
         return true;
     }
 
-    private bool IsAtImplicitSeparator()
+    internal bool IsAtImplicitSeparator()
     {
         var prevToken = _input.Lt(-1);
         var nextToken = _input.Lt(1);

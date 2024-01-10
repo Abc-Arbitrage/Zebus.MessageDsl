@@ -12,7 +12,7 @@ public class ParsedContracts
     public IList<EnumDefinition> Enums { get; } = new List<EnumDefinition>();
     public ContractOptions Options { get; } = new();
     public ICollection<SyntaxError> Errors { get; }
-    public string Namespace { get; set; } = string.Empty;
+    public string? Namespace { get; set; }
     public bool ExplicitNamespace { get; internal set; }
     public ICollection<string> ImportedNamespaces { get; } = new HashSet<string>();
 
@@ -49,7 +49,11 @@ public class ParsedContracts
 
         var tokenStream = new CommonTokenStream(lexer);
 
-        var parser = new MessageContractsParser(tokenStream);
+        var parser = new MessageContractsParser(tokenStream)
+        {
+            ErrorHandler = new MessageContractsErrorStrategy()
+        };
+
         parser.RemoveErrorListeners();
         parser.AddErrorListener(errorListener);
 
@@ -58,18 +62,15 @@ public class ParsedContracts
         return new ParsedContracts(tokenStream, parseTree, errorListener.Errors);
     }
 
-    public static ParsedContracts Parse(string definitionText, string defaultNamespace)
+    public static ParsedContracts Parse(string definitionText, string? defaultNamespace)
     {
         var result = CreateParseTree(definitionText);
 
         if (!result.ExplicitNamespace)
             result.Namespace = defaultNamespace;
 
-        if (result.Errors.Count == 0)
-        {
-            new AstCreationVisitor(result).VisitCompileUnit(result.ParseTree);
-            result.Process();
-        }
+        new AstCreationVisitor(result).VisitCompileUnit(result.ParseTree);
+        result.Process();
 
         return result;
     }

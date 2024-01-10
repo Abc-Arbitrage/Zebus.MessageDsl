@@ -36,36 +36,35 @@ public class MessageDslGenerator : IIncrementalGenerator
 
     private static SourceGenerationResult GenerateCode(SourceGenerationInput input, CancellationToken cancellationToken)
     {
-        var (file, fileNamespace, relativePath) = input;
+        var result = new SourceGenerationResult(input);
 
-        var fileContents = file.GetText(cancellationToken)?.ToString();
+        var fileContents = input.AdditionalText.GetText(cancellationToken)?.ToString();
 
         if (fileContents is null)
-            return SourceGenerationResult.Error(Diagnostic.Create(MessageDslDiagnostics.CouldNotReadFileContents, Location.Create(file.Path, default, default)));
+        {
+            result.AddDiagnostic(Diagnostic.Create(MessageDslDiagnostics.CouldNotReadFileContents, Location.Create(input.AdditionalText.Path, default, default)));
+            return result;
+        }
 
         try
         {
-            var contracts = ParsedContracts.Parse(fileContents, fileNamespace!.Trim());
+            var contracts = ParsedContracts.Parse(fileContents, input.FileNamespace?.Trim());
 
-            if (!contracts.IsValid)
+            foreach (var error in contracts.Errors)
             {
-                var diagnostics = new List<Diagnostic>();
-                foreach (var error in contracts.Errors)
-                {
-                    var location = Location.Create(file.Path, default, error.ToLinePositionSpan());
-                    diagnostics.Add(Diagnostic.Create(MessageDslDiagnostics.MessageDslError, location, error.Message));
-                }
-
-                return SourceGenerationResult.Error(diagnostics.ToArray());
+                var location = Location.Create(input.AdditionalText.Path, default, error.ToLinePositionSpan());
+                result.AddDiagnostic(Diagnostic.Create(MessageDslDiagnostics.MessageDslError, location, error.Message));
             }
 
             var output = CSharpGenerator.Generate(contracts);
+            result.GeneratedSource = output;
 
-            return SourceGenerationResult.Success(file, output, relativePath);
+            return result;
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            return SourceGenerationResult.Error(Diagnostic.Create(MessageDslDiagnostics.UnexpectedError, Location.None, ex.ToString()));
+            result.AddDiagnostic(Diagnostic.Create(MessageDslDiagnostics.UnexpectedError, Location.None, ex.ToString()));
+            return result;
         }
     }
 
@@ -76,36 +75,26 @@ public class MessageDslGenerator : IIncrementalGenerator
             foreach (var diagnostic in result.Diagnostics)
                 context.ReportDiagnostic(diagnostic);
 
-            if (result.AdditionalText == null || result.GeneratedSource == null)
+            if (result.GeneratedSource == null)
                 continue;
 
             var hintName = _sanitizePathRegex.Replace(result.RelativePath ?? result.AdditionalText.Path, "_") + ".g.cs";
-
             context.AddSource(hintName, result.GeneratedSource);
         }
     }
 
     private record SourceGenerationInput(AdditionalText AdditionalText, string? FileNamespace, string? RelativePath);
 
-    public class SourceGenerationResult
+    private class SourceGenerationResult(SourceGenerationInput input)
     {
-        public IList<Diagnostic> Diagnostics { get; }
+        private readonly List<Diagnostic> _diagnostics = new();
+
+        public AdditionalText AdditionalText { get; } = input.AdditionalText;
+        public IReadOnlyList<Diagnostic> Diagnostics => _diagnostics;
         public string? GeneratedSource { get; set; }
-        public AdditionalText? AdditionalText { get; }
-        public string? RelativePath { get; }
+        public string? RelativePath { get; } = input.RelativePath;
 
-        private SourceGenerationResult(IList<Diagnostic> diagnostics, string? generatedSource, AdditionalText? additionalText, string? relativePath)
-        {
-            Diagnostics = diagnostics;
-            GeneratedSource = generatedSource;
-            AdditionalText = additionalText;
-            RelativePath = relativePath;
-        }
-
-        public static SourceGenerationResult Error(params Diagnostic[] diagnostics)
-            => new(diagnostics, null, null, null);
-
-        public static SourceGenerationResult Success(AdditionalText? additionalText, string generatedSource, string? relativePath)
-            => new(Array.Empty<Diagnostic>(), generatedSource, additionalText, relativePath);
+        public void AddDiagnostic(Diagnostic diagnostic)
+            => _diagnostics.Add(diagnostic);
     }
 }

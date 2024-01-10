@@ -41,7 +41,7 @@ public sealed class CSharpGenerator : GeneratorBase
 
         var hasNamespace = !string.IsNullOrEmpty(Contracts.Namespace);
         if (hasNamespace)
-            Writer.WriteLine("namespace {0}", Identifier(Contracts.Namespace));
+            Writer.WriteLine("namespace {0}", Identifier(Contracts.Namespace!));
 
         using (hasNamespace ? Block() : null)
         {
