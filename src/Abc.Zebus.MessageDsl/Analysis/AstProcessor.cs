@@ -154,45 +154,23 @@ internal class AstProcessor
         {
             if (parameter.IsDiscarded)
             {
-                if (currentReservation.TryAddTag(parameter.Tag))
-                    continue;
-
-                currentReservation.AddAttributeIfNotEmpty(message);
-                currentReservation = new ReservationRange(parameter.Tag);
+                if (currentReservation.TryAddTag(parameter.Tag, out var updatedReservation))
+                {
+                    currentReservation = updatedReservation;
+                }
+                else
+                {
+                    currentReservation.AddToMessage(message);
+                    currentReservation = new ReservationRange(parameter.Tag);
+                }
             }
             else
             {
-                currentReservation.AddAttributeIfNotEmpty(message);
+                currentReservation.AddToMessage(message);
                 currentReservation = ReservationRange.None;
             }
         }
 
-        currentReservation.AddAttributeIfNotEmpty(message);
-    }
-
-    private struct ReservationRange(int startTag)
-    {
-        public static ReservationRange None => default;
-
-        private readonly int _startTag = startTag;
-        private int _endTag = startTag;
-
-        public bool TryAddTag(int tag)
-        {
-            if (_startTag < AstValidator.ProtoMinTag || tag != _endTag + 1)
-                return false;
-
-            _endTag = tag;
-            return true;
-        }
-
-        public void AddAttributeIfNotEmpty(MessageDefinition message)
-        {
-            if (_startTag >= AstValidator.ProtoMinTag)
-                message.Attributes.Add(new AttributeDefinition(KnownTypes.ProtoReservedAttribute, _startTag == _endTag ? $"{_startTag}" : $"{_startTag}, {_endTag}"));
-        }
-
-        public override string ToString()
-            => _startTag >= AstValidator.ProtoMinTag ? $"{_startTag} - {_endTag}" : "None";
+        currentReservation.AddToMessage(message);
     }
 }

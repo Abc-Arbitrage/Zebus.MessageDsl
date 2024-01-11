@@ -10,9 +10,12 @@ public class AttributeSet : AstNode, IList<AttributeDefinition>
     public IList<AttributeDefinition> Attributes { get; } = new List<AttributeDefinition>();
 
     public AttributeDefinition? GetAttribute(TypeName attributeType)
+        => Attributes.Count != 0 ? GetAttributes(attributeType).FirstOrDefault() : null;
+
+    public IEnumerable<AttributeDefinition> GetAttributes(TypeName attributeType)
     {
         attributeType = AttributeDefinition.NormalizeAttributeTypeName(attributeType);
-        return Attributes.FirstOrDefault(attr => Equals(attr.TypeName, attributeType));
+        return Attributes.Where(attr => Equals(attr.TypeName, attributeType));
     }
 
     public bool HasAttribute(TypeName attributeType)

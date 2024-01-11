@@ -784,6 +784,24 @@ public class ParsedContractsTests
     }
 
     [Test]
+    [TestCase("[ProtoReserved(2)] Foo(int a)", ExpectedResult = true)]
+    [TestCase("[ProtoReserved(2)] Foo(int a, int b)", ExpectedResult = false)]
+    [TestCase("[ProtoReserved(2)] Foo(int a, _, int b)", ExpectedResult = true)]
+    [TestCase("[ProtoReserved(2), ProtoReserved(4)] Foo(int a, _, int b)", ExpectedResult = true)]
+    [TestCase("[ProtoReserved(2), ProtoReserved(4)] Foo(int a, _, int b, int c)", ExpectedResult = false)]
+    [TestCase("[ProtoReserved(2), ProtoReserved(4)] Foo(int a, _, int b, _, int c)", ExpectedResult = true)]
+    [TestCase("[ProtoReserved(2, 4)] Foo(int a, _, int b, _, int c)", ExpectedResult = false)]
+    [TestCase("[ProtoReserved(2, 4)] Foo(int a, _, _, _, int b)", ExpectedResult = true)]
+    [TestCase("[ProtoReserved(2, 4)] Foo(int a, [5] int b)", ExpectedResult = true)]
+    [TestCase("[ProtoReserved(2, 4)] Foo(int a, [3] int b)", ExpectedResult = false)]
+    [TestCase("[ProtoReserved(\"lol\")] Foo()", ExpectedResult = false)]
+    [TestCase("[ProtoReserved(2, \"lol\")] Foo()", ExpectedResult = true)]
+    [TestCase("[ProtoReserved(2, 4, \"lol\")] Foo()", ExpectedResult = true)]
+    [TestCase("[ProtoReserved(4, 2)] Foo()", ExpectedResult = false)]
+    public bool should_validate_proto_reserved_attributes(string definitionText)
+        => Parse(definitionText).IsValid;
+
+    [Test]
     public void should_generate_reservation_for_discards()
     {
         var contracts = ParseValid("Foo(int bar, _, _, _, int baz, _, int qux, _)");
@@ -817,7 +835,9 @@ public class ParsedContractsTests
 
     private static ParsedContracts Parse(string definitionText)
     {
+        Console.WriteLine();
         Console.WriteLine("PARSE: {0}", definitionText);
+
         var contracts = ParsedContracts.Parse(definitionText, "Some.Namespace");
 
         foreach (var error in contracts.Errors)

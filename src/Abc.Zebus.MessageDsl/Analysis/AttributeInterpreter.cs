@@ -7,6 +7,7 @@ namespace Abc.Zebus.MessageDsl.Analysis;
 internal class AttributeInterpreter
 {
     private static readonly Regex _reProtoIncludeParams = new(@"^\s*(?<tag>[0-9]+)\s*,\s*typeof\s*\(\s*(?<typeName>.+)\s*\)", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+    private static readonly Regex _reProtoReservedParams = new(@"^\s*(?<startTag>[0-9]+)(?:\s*,\s*(?<endTag>[0-9]+))?", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
     private readonly ParsedContracts _contracts;
 
@@ -17,12 +18,13 @@ internal class AttributeInterpreter
 
     public void InterpretAttributes()
     {
-        foreach (var messageDefinition in _contracts.Messages)
+        foreach (var message in _contracts.Messages)
         {
-            CheckIfTransient(messageDefinition);
-            CheckIfRoutable(messageDefinition);
+            CheckIfTransient(message);
+            CheckIfRoutable(message);
+            ProcessProtoReservedAttributes(message);
 
-            foreach (var parameterDefinition in messageDefinition.Parameters)
+            foreach (var parameterDefinition in message.Parameters)
                 ProcessProtoMemberAttribute(parameterDefinition);
         }
     }
@@ -65,7 +67,7 @@ internal class AttributeInterpreter
                                          .SequenceEqual(Enumerable.Range(1, routableParamCount));
 
             if (routableParamCount == 0)
-                _contracts.AddError(message.ParseContext, "A routable message must have parameters with routing positions");
+                _contracts.AddError(message.ParseContext, "A routable message must have arguments with routing positions");
             else if (!isValidSequence)
                 _contracts.AddError(message.ParseContext, "Routing positions must form a continuous sequence starting with 1");
         }
@@ -85,6 +87,43 @@ internal class AttributeInterpreter
         message.IsTransient = !message.IsCustom && message.Attributes.HasAttribute(KnownTypes.TransientAttribute);
     }
 
+    private void ProcessProtoReservedAttributes(MessageDefinition message)
+    {
+        foreach (var attr in message.Attributes.GetAttributes(KnownTypes.ProtoReservedAttribute))
+        {
+            var errorContext = attr.ParseContext ?? message.ParseContext;
+
+            if (string.IsNullOrWhiteSpace(attr.Parameters))
+            {
+                _contracts.AddError(errorContext, $"The [{KnownTypes.ProtoReservedAttribute}] attribute must have arguments");
+                return;
+            }
+
+            var match = _reProtoReservedParams.Match(attr.Parameters);
+            if (!match.Success || !int.TryParse(match.Groups["startTag"].Value, out var startTag))
+            {
+                _contracts.AddError(errorContext, $"Invalid [{KnownTypes.ProtoReservedAttribute}] arguments");
+                return;
+            }
+
+            var endTag = startTag;
+
+            if (match.Groups["endTag"].Success && !int.TryParse(match.Groups["endTag"].Value, out endTag))
+            {
+                _contracts.AddError(errorContext, $"Invalid [{KnownTypes.ProtoReservedAttribute}] arguments");
+                return;
+            }
+
+            if (startTag > endTag)
+            {
+                _contracts.AddError(errorContext, $"Invalid [{KnownTypes.ProtoReservedAttribute}] tag range");
+                return;
+            }
+
+            message.ReservedRanges.Add(new ReservationRange(startTag, endTag));
+        }
+    }
+
     private void ProcessProtoMemberAttribute(ParameterDefinition param)
     {
         var attr = param.Attributes.GetAttribute(KnownTypes.ProtoMemberAttribute);
@@ -93,14 +132,14 @@ internal class AttributeInterpreter
 
         if (string.IsNullOrWhiteSpace(attr.Parameters))
         {
-            _contracts.AddError(attr.ParseContext, $"The [{KnownTypes.ProtoMemberAttribute}] attribute must have parameters");
+            _contracts.AddError(attr.ParseContext, $"The [{KnownTypes.ProtoMemberAttribute}] attribute must have arguments");
             return;
         }
 
         var match = Regex.Match(attr.Parameters, @"^\s*(?<nb>[0-9]+)\s*(?:,|$)");
         if (!match.Success || !int.TryParse(match.Groups["nb"].Value, out var tagNb))
         {
-            _contracts.AddError(attr.ParseContext, $"Invalid [{KnownTypes.ProtoMemberAttribute}] parameters");
+            _contracts.AddError(attr.ParseContext, $"Invalid [{KnownTypes.ProtoMemberAttribute}] arguments");
             return;
         }
 

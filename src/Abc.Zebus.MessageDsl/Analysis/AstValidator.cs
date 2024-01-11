@@ -103,6 +103,9 @@ internal class AstValidator
 
         foreach (var param in message.Parameters)
         {
+            if (param.IsDiscarded)
+                continue;
+
             var errorContext = param.ParseContext ?? message.ParseContext;
 
             if (!IsValidTag(param.Tag))
@@ -110,6 +113,9 @@ internal class AstValidator
 
             if (!tags.Add(param.Tag))
                 _contracts.AddError(errorContext, $"Duplicate tag {param.Tag} on parameter {param.Name}");
+
+            if (message.ReservedRanges.Any(range => range.Contains(param.Tag)))
+                _contracts.AddError(errorContext, $"Tag {param.Tag} of parameter {param.Name} is reserved");
         }
 
         foreach (var attr in message.Attributes)

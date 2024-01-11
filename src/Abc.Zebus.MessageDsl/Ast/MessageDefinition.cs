@@ -48,6 +48,8 @@ public class MessageDefinition : AstNode, IClassNode
         }
     }
 
+    internal List<ReservationRange> ReservedRanges { get; } = new();
+
     public override string ToString()
         => Name;
 }
