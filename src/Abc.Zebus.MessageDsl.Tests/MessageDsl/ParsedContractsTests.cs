@@ -813,6 +813,37 @@ public class ParsedContractsTests
         message.Attributes[2].Parameters.ShouldEqual("8");
     }
 
+    [Test]
+    [TestCase("Bar(int a)", ExpectedResult = true)]
+    [TestCase("[Foo] Bar([Foo] int a)", ExpectedResult = true)]
+    [TestCase("[type: Foo] Bar(int a)", ExpectedResult = true)]
+    [TestCase("[field: Foo] Bar(int a)", ExpectedResult = false)]
+    [TestCase("[param: Foo] Bar(int a)", ExpectedResult = false)]
+    [TestCase("[property: Foo] Bar(int a)", ExpectedResult = false)]
+    [TestCase("[type: Foo, Baz] Bar(int a)", ExpectedResult = true)]
+    [TestCase("[null: Foo] Bar(int a)", ExpectedResult = false)]
+    [TestCase("[other: Foo] Bar(int a)", ExpectedResult = false)]
+    [TestCase("Bar([Foo] int a)", ExpectedResult = true)]
+    [TestCase("Bar([type: Foo] int a)", ExpectedResult = false)]
+    [TestCase("Bar([field: Foo] int a)", ExpectedResult = false)]
+    [TestCase("Bar([param: Foo] int a)", ExpectedResult = true)]
+    [TestCase("Bar([property: Foo] int a)", ExpectedResult = true)]
+    [TestCase("enum Bar { Baz }", ExpectedResult = true)]
+    [TestCase("[Foo] enum Bar { Baz }", ExpectedResult = true)]
+    [TestCase("[type: Foo] enum Bar { Baz }", ExpectedResult = true)]
+    [TestCase("[param: Foo] enum Bar { Baz }", ExpectedResult = false)]
+    [TestCase("[property: Foo] enum Bar { Baz }", ExpectedResult = false)]
+    [TestCase("[null: Foo] enum Bar { Baz }", ExpectedResult = false)]
+    [TestCase("[other: Foo] enum Bar { Baz }", ExpectedResult = false)]
+    [TestCase("enum Bar { [Foo] Baz }", ExpectedResult = true)]
+    [TestCase("enum Bar { [type: Foo] Baz }", ExpectedResult = false)]
+    [TestCase("enum Bar { [field: Foo] Baz }", ExpectedResult = true)]
+    [TestCase("enum Bar { [param: Foo] Baz }", ExpectedResult = false)]
+    [TestCase("enum Bar { [property: Foo] Baz }", ExpectedResult = false)]
+    [TestCase("enum Bar { [other: Foo] Baz }", ExpectedResult = false)]
+    public bool should_validate_attribute_targets(string definitionText)
+        => Parse(definitionText).IsValid;
+
     private static ParsedContracts ParseValid(string definitionText)
     {
         var contracts = Parse(definitionText);

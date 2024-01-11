@@ -891,6 +891,52 @@ public class CSharpGeneratorTests : GeneratorTests
         code.ShouldContain("Baz2 = baz2 ?? Array.Empty<string?>();");
     }
 
+    [Test]
+    [TestCase(AttributeTarget.Default)]
+    [TestCase(AttributeTarget.Property)]
+    public void should_generate_attributes_on_properties(AttributeTarget target)
+    {
+        var code = Generate(new MessageDefinition
+        {
+            Name = "FooExecuted",
+            Parameters =
+            {
+                new ParameterDefinition("int", "foo")
+                {
+                    Attributes =
+                    {
+                        new AttributeDefinition("Target") { Target = target }
+                    }
+                }
+            }
+        });
+
+        code.ShouldContainIgnoreIndent("[Target]\npublic int Foo { get; private set; }");
+        code.ShouldNotContain("] int foo");
+    }
+
+    [Test]
+    public void should_generate_attributes_on_parameters()
+    {
+        var code = Generate(new MessageDefinition
+        {
+            Name = "FooExecuted",
+            Parameters =
+            {
+                new ParameterDefinition("int", "foo")
+                {
+                    Attributes =
+                    {
+                        new AttributeDefinition("Target") { Target = AttributeTarget.Param }
+                    }
+                }
+            }
+        });
+
+        code.ShouldNotContainIgnoreIndent("[Target]\npublic int Foo { get; private set; }");
+        code.ShouldContain("] int foo");
+    }
+
     protected override string GenerateRaw(ParsedContracts contracts)
         => CSharpGenerator.Generate(contracts);
 }

@@ -1,4 +1,5 @@
-﻿using Abc.Zebus.MessageDsl.Ast;
+﻿using System.Linq;
+using Abc.Zebus.MessageDsl.Ast;
 
 namespace Abc.Zebus.MessageDsl.Analysis;
 
@@ -25,7 +26,7 @@ internal class ContractsEnhancer
 
     private static void ProcessParameter(ParameterDefinition parameter)
     {
-        if (parameter.Type.IsDictionary && !parameter.Attributes.HasAttribute(KnownTypes.ProtoMapAttribute))
+        if (parameter.Type.IsDictionary && !parameter.Attributes.GetAttributes(KnownTypes.ProtoMapAttribute).Any(attr => attr.Target is AttributeTarget.Default or AttributeTarget.Property))
             parameter.Attributes.Add(new AttributeDefinition(KnownTypes.ProtoMapAttribute, "DisableMap = true")); // https://github.com/mgravell/protobuf-net/issues/379
     }
 }

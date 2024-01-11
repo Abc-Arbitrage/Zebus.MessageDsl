@@ -12,6 +12,11 @@ internal class AstValidator
     public const int ProtoFirstReservedTag = 19000;
     public const int ProtoLastReservedTag = 19999;
 
+    private static readonly AttributeTarget[] _validAttributeTargetsMessage = [AttributeTarget.Type];
+    private static readonly AttributeTarget[] _validAttributeTargetsMessageMember = [AttributeTarget.Param, AttributeTarget.Property];
+    private static readonly AttributeTarget[] _validAttributeTargetsEnum = [AttributeTarget.Type];
+    private static readonly AttributeTarget[] _validAttributeTargetsEnumMember = [AttributeTarget.Field];
+
     private readonly ParsedContracts _contracts;
 
     public AstValidator(ParsedContracts contracts)
@@ -41,7 +46,7 @@ internal class AstValidator
                 _contracts.AddError(message.ParseContext, $"Cannot generate .proto for generic message {message.Name}");
         }
 
-        ValidateAttributes(message.Attributes);
+        ValidateAttributes(message.Attributes, _validAttributeTargetsMessage);
         ValidateTags(message);
 
         foreach (var param in message.Parameters)
@@ -55,7 +60,7 @@ internal class AstValidator
                 _contracts.AddError(errorContext, $"Duplicate parameter name: {param.Name}");
 
             ValidateType(param.Type, param.ParseContext);
-            ValidateAttributes(param.Attributes);
+            ValidateAttributes(param.Attributes, _validAttributeTargetsMessageMember);
         }
 
         var requiredParameterSeen = false;
@@ -147,7 +152,7 @@ internal class AstValidator
         if (enumDef.Options.Proto && enumDef.UnderlyingType.NetType != "int")
             _contracts.AddError(enumDef.ParseContext, "An enum used in a proto file must have an underlying type of int");
 
-        ValidateAttributes(enumDef.Attributes);
+        ValidateAttributes(enumDef.Attributes, _validAttributeTargetsEnum);
 
         var definedMembers = new HashSet<string>();
 
@@ -156,14 +161,19 @@ internal class AstValidator
             if (!definedMembers.Add(member.Name))
                 _contracts.AddError(member.ParseContext, $"Duplicate enum member: {member.Name}");
 
-            ValidateAttributes(member.Attributes);
+            ValidateAttributes(member.Attributes, _validAttributeTargetsEnumMember);
         }
     }
 
-    private void ValidateAttributes(AttributeSet attributes)
+    private void ValidateAttributes(AttributeSet attributes, AttributeTarget[] validTargets)
     {
         foreach (var attribute in attributes)
+        {
             ValidateType(attribute.TypeName, attribute.ParseContext);
+
+            if (attribute.Target != AttributeTarget.Default && !validTargets.Contains(attribute.Target))
+                _contracts.AddError(attribute.ParseContext, $"Invalid target for attribute: {attribute.Target.ToString().ToLowerInvariant()}, valid targets in this context: {string.Join(", ", validTargets.Select(i => i.ToString().ToLowerInvariant()))}");
+        }
     }
 
     private void ValidateType(TypeName type, ParserRuleContext? context)

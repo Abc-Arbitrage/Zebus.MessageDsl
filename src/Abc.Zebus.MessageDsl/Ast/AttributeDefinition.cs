@@ -11,6 +11,7 @@ public class AttributeDefinition : AstNode
     }
 
     public string? Parameters { get; set; }
+    public AttributeTarget Target { get; set; }
 
     public AttributeDefinition(TypeName attributeType, string? parameters = null)
     {
@@ -32,6 +33,7 @@ public class AttributeDefinition : AstNode
     {
         return new AttributeDefinition(TypeName, Parameters)
         {
+            Target = Target,
             ParseContext = ParseContext
         };
     }

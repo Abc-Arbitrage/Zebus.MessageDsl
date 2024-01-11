@@ -14,6 +14,9 @@ public class AttributeSet : AstNode, IList<AttributeDefinition>
 
     public IEnumerable<AttributeDefinition> GetAttributes(TypeName attributeType)
     {
+        if (Attributes.Count == 0)
+            return Enumerable.Empty<AttributeDefinition>();
+
         attributeType = AttributeDefinition.NormalizeAttributeTypeName(attributeType);
         return Attributes.Where(attr => Equals(attr.TypeName, attributeType));
     }

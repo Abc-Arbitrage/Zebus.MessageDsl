@@ -33,7 +33,13 @@ public static class AssertionExtensions
         => Assert.That(actual, Contains.Item(expected));
 
     public static void ShouldContainIgnoreIndent(this string actual, string expected)
-        => Assert.That(Regex.Replace(actual, @"^[ ]+|\r", string.Empty, RegexOptions.CultureInvariant | RegexOptions.Multiline), Contains.Substring(expected));
+        => Assert.That(RemoveSpaces(actual), Contains.Substring(expected));
+
+    public static void ShouldNotContainIgnoreIndent(this string actual, string unexpected)
+        => Assert.That(RemoveSpaces(actual), Does.Not.Contain(unexpected));
+
+    private static string RemoveSpaces(string value)
+        => Regex.Replace(value, @"^[ ]+|\r", string.Empty, RegexOptions.CultureInvariant | RegexOptions.Multiline);
 
     public static void ShouldNotContain(this string actual, string unexpected)
         => Assert.That(actual, Does.Not.Contain(unexpected));

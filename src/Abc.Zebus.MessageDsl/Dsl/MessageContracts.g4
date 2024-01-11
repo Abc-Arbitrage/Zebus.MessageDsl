@@ -147,7 +147,15 @@ literalValue
 	;
 
 attributes
-	:	('[' attribute (',' attribute)* ']')*
+	:	attributeBlock*
+	;
+
+attributeBlock
+	:	'[' attributeTarget? attribute (',' attribute)* ']'
+	;
+
+attributeTarget
+	:	target=word ':'
 	;
 
 attribute
@@ -179,6 +187,13 @@ id
 	:	escape='@'? nameId=ID { IsValidIdEscape($ctx.escape, $ctx.nameId) }?
 	|	escape='@'? nameCtxKw=contextualKeyword { IsValidIdEscape($ctx.escape, $ctx.nameCtxKw) }?
 	|	escape='@'  nameKw=keyword { IsValidIdEscape($ctx.escape, $ctx.nameKw) }?
+	;
+
+word
+	:	ID | DISCARD
+	|	keyword
+	|	contextualKeyword
+	|	typeKeyword
 	;
 
 keyword

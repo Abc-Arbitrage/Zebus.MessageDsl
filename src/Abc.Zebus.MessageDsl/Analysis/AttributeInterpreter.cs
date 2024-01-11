@@ -31,7 +31,10 @@ internal class AttributeInterpreter
 
     private void CheckIfRoutable(MessageDefinition message)
     {
-        message.IsRoutable = !message.IsCustom && message.Attributes.HasAttribute(KnownTypes.RoutableAttribute);
+        message.IsRoutable = !message.IsCustom
+                             && message.Attributes
+                                       .GetAttributes(KnownTypes.RoutableAttribute)
+                                       .Any(attr => attr.Target is AttributeTarget.Default or AttributeTarget.Type);
 
         if (message.IsRoutable)
         {
@@ -39,7 +42,10 @@ internal class AttributeInterpreter
 
             foreach (var param in message.Parameters)
             {
-                var routingAttr = param.Attributes.Where(attr => Equals(attr.TypeName, KnownTypes.RoutingPositionAttribute)).ToList();
+                var routingAttr = param.Attributes
+                                       .Where(attr => attr.Target is AttributeTarget.Default or AttributeTarget.Property
+                                                      && Equals(attr.TypeName, KnownTypes.RoutingPositionAttribute))
+                                       .ToList();
 
                 switch (routingAttr)
                 {
@@ -75,6 +81,7 @@ internal class AttributeInterpreter
         {
             var firstRoutingPositionAttr = message.Parameters
                                                   .SelectMany(p => p.Attributes)
+                                                  .Where(attr => attr.Target is AttributeTarget.Default or AttributeTarget.Property)
                                                   .FirstOrDefault(attr => Equals(attr.TypeName, KnownTypes.RoutingPositionAttribute));
 
             if (firstRoutingPositionAttr != null)
@@ -84,7 +91,10 @@ internal class AttributeInterpreter
 
     private static void CheckIfTransient(MessageDefinition message)
     {
-        message.IsTransient = !message.IsCustom && message.Attributes.HasAttribute(KnownTypes.TransientAttribute);
+        message.IsTransient = !message.IsCustom
+                              && message.Attributes
+                                        .GetAttributes(KnownTypes.TransientAttribute)
+                                        .Any(attr => attr.Target is AttributeTarget.Default or AttributeTarget.Type);
     }
 
     private void ProcessProtoReservedAttributes(MessageDefinition message)
@@ -127,7 +137,7 @@ internal class AttributeInterpreter
     private void ProcessProtoMemberAttribute(ParameterDefinition param)
     {
         var attr = param.Attributes.GetAttribute(KnownTypes.ProtoMemberAttribute);
-        if (attr == null)
+        if (attr is not { Target: AttributeTarget.Default or AttributeTarget.Property })
             return;
 
         if (string.IsNullOrWhiteSpace(attr.Parameters))

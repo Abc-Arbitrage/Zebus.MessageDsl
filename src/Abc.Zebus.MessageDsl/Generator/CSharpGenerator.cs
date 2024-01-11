@@ -115,13 +115,16 @@ public sealed class CSharpGenerator : GeneratorBase
 
     private void WriteEnum(EnumDefinition enumDef)
     {
-        if (!enumDef.Attributes.HasAttribute(_attrProtoContract.TypeName))
+        if (!enumDef.Attributes.GetAttributes(_attrProtoContract.TypeName).Any(attr => attr.Target is AttributeTarget.Default or AttributeTarget.Type))
             WriteAttributeLine(_attrProtoContract);
 
         WriteAttributeLine(_attrGeneratedCode);
 
         foreach (var attribute in enumDef.Attributes)
-            WriteAttributeLine(attribute);
+        {
+            if (attribute.Target is AttributeTarget.Default or AttributeTarget.Type)
+                WriteAttributeLine(attribute);
+        }
 
         Writer.Write(
             "{0} enum {1}",
@@ -142,7 +145,10 @@ public sealed class CSharpGenerator : GeneratorBase
             foreach (var member in enumDef.Members)
             {
                 foreach (var attribute in member.Attributes)
-                    WriteAttributeLine(attribute);
+                {
+                    if (attribute.Target is AttributeTarget.Default or AttributeTarget.Field)
+                        WriteAttributeLine(attribute);
+                }
 
                 Writer.Write(Identifier(member.Name));
 
@@ -179,14 +185,17 @@ public sealed class CSharpGenerator : GeneratorBase
             containingClassesStack.Push(Block());
         }
 
-        if (!message.Attributes.HasAttribute(_attrProtoContract.TypeName))
+        if (!message.Attributes.GetAttributes(_attrProtoContract.TypeName).Any(attr => attr.Target is AttributeTarget.Default or AttributeTarget.Type))
             WriteAttributeLine(_attrProtoContract);
 
         WriteAttributeLine(_attrNonUserCode);
         WriteAttributeLine(_attrGeneratedCode);
 
         foreach (var attribute in message.Attributes)
-            WriteAttributeLine(attribute);
+        {
+            if (attribute.Target is AttributeTarget.Default or AttributeTarget.Type)
+                WriteAttributeLine(attribute);
+        }
 
         Writer.Write(AccessModifier(message.AccessModifier));
         Writer.Write(" ");
@@ -294,7 +303,7 @@ public sealed class CSharpGenerator : GeneratorBase
 
     private void WriteParameterMember(MessageDefinition message, ParameterDefinition param)
     {
-        if (!param.Attributes.HasAttribute(KnownTypes.ProtoMemberAttribute))
+        if (!param.Attributes.GetAttributes(KnownTypes.ProtoMemberAttribute).Any(attr => attr.Target is AttributeTarget.Default or AttributeTarget.Property))
         {
             var protoMemberParams = new StringBuilder();
 
@@ -308,7 +317,10 @@ public sealed class CSharpGenerator : GeneratorBase
         }
 
         foreach (var attribute in param.Attributes)
-            WriteAttributeLine(attribute);
+        {
+            if (attribute.Target is AttributeTarget.Default or AttributeTarget.Property)
+                WriteAttributeLine(attribute);
+        }
 
         var isWritable = param.IsWritableProperty || message.Options.Mutable;
 
@@ -377,6 +389,13 @@ public sealed class CSharpGenerator : GeneratorBase
                 break;
 
             paramList.NextItem();
+
+            foreach (var attribute in param.Parameter.Attributes)
+            {
+                if (attribute.Target is AttributeTarget.Param)
+                    WriteAttributeInline(attribute);
+            }
+
             Writer.Write("{0} {1}", param.Parameter.Type.NetType, Identifier(ParameterCase(param.Parameter.Name)));
         }
 
@@ -420,6 +439,13 @@ public sealed class CSharpGenerator : GeneratorBase
         foreach (var param in parameters)
         {
             paramList.NextItem();
+
+            foreach (var attribute in param.Parameter.Attributes)
+            {
+                if (attribute.Target is AttributeTarget.Param)
+                    WriteAttributeInline(attribute);
+            }
+
             Writer.Write("{0} {1}", param.Parameter.Type.NetType, Identifier(ParameterCase(param.Parameter.Name)));
 
             if (!param.IsRequired && !string.IsNullOrEmpty(param.Parameter.DefaultValue))
@@ -518,11 +544,18 @@ public sealed class CSharpGenerator : GeneratorBase
     private void WriteAttributeLine(AttributeDefinition attribute)
     {
         Writer.Write("[");
-        WriteAttribute(attribute);
+        WriteAttributeBody(attribute);
         Writer.WriteLine("]");
     }
 
-    private void WriteAttribute(AttributeDefinition attribute)
+    private void WriteAttributeInline(AttributeDefinition attribute)
+    {
+        Writer.Write("[");
+        WriteAttributeBody(attribute);
+        Writer.Write("] ");
+    }
+
+    private void WriteAttributeBody(AttributeDefinition attribute)
     {
         Writer.Write(Identifier(attribute.TypeName.NetType));
 

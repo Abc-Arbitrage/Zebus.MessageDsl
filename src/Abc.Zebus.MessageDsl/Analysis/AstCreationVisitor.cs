@@ -21,6 +21,7 @@ internal class AstCreationVisitor : MessageContractsBaseVisitor<AstNode?>
     private MessageDefinition? _currentMessage;
     private ParameterDefinition? _currentParameter;
     private AttributeSet? _currentAttributeSet;
+    private AttributeTarget _currentAttributeTarget;
     private MemberOptions _currentMemberOptions;
 
     public AstCreationVisitor(ParsedContracts contracts)
@@ -213,6 +214,32 @@ internal class AstCreationVisitor : MessageContractsBaseVisitor<AstNode?>
         }
     }
 
+    public override AstNode? VisitAttributeBlock(AttributeBlockContext context)
+    {
+        var previousAttributeTarget = _currentAttributeTarget;
+
+        try
+        {
+            _currentAttributeTarget = AttributeTarget.Default;
+
+            if (context.attributeTarget() is { } targetContext)
+            {
+                var targetText = targetContext.target.GetText();
+
+                if (Enum.TryParse(targetText, true, out AttributeTarget target) && target != AttributeTarget.Default && string.Equals(targetText, targetText.ToLowerInvariant(), StringComparison.Ordinal))
+                    _currentAttributeTarget = target;
+                else
+                    _contracts.AddError(targetContext, $"Invalid attribute target: '{targetText}'");
+            }
+
+            return base.VisitAttributeBlock(context);
+        }
+        finally
+        {
+            _currentAttributeTarget = previousAttributeTarget;
+        }
+    }
+
     public override AstNode? VisitCustomAttribute(CustomAttributeContext context)
     {
         if (_currentAttributeSet == null)
@@ -223,6 +250,7 @@ internal class AstCreationVisitor : MessageContractsBaseVisitor<AstNode?>
 
         var attr = new AttributeDefinition(context.attributeType.GetText(), attrParametersText)
         {
+            Target = _currentAttributeTarget,
             ParseContext = context
         };
 

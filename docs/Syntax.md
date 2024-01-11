@@ -145,14 +145,33 @@ Default values are only used in the constructor. They have no influence over wha
 
 ## Attributes
 
-Attributes can be specified for messages and message members:
+Attributes can be specified for messages, message members and for enums:
 
 ```C#
 [Transient]
 Foo(int a, [Obsolete] int b)
 ```
 
-Note that the `[Obsolete]` attribute will go on the member property, *not* on the constructor parameter.
+Note that the `[Obsolete]` attribute will go on the member property by default, *not* on the constructor parameter.
+
+You can customize the targets of attributes using the same syntax as in C#:
+
+```C#
+Foo(int a, [param: Obsolete] int b)
+```
+
+The `[Obsolete]` attribute will now be applied to the constructor parameter only, not to the associated member property.
+
+The supported attribute targets are:
+
+| Target     | Usable on          | Default | Will apply on         |
+|------------|--------------------|---------|-----------------------|
+| `type`     | Messages and enums | Yes     | Message class or enum |
+| `param`    | Message members    | No      | Constructor parameter |
+| `property` | Message members    | Yes     | Member property       |
+| `field`    | Enum fields        | Yes     | Enum field            |
+
+Only the `param` target will change the default behavior. The other targets are available for consistency.
 
 ## Routable messages
 
