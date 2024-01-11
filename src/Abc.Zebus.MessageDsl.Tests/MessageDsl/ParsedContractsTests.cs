@@ -783,6 +783,18 @@ public class ParsedContractsTests
         ParseValid(message);
     }
 
+    [Test]
+    public void should_generate_reservation_for_discards()
+    {
+        var contracts = ParseValid("Foo(int bar, _, _, _, int baz, _, int qux, _)");
+        var message = contracts.Messages.ExpectedSingle();
+        message.Attributes.Count.ShouldEqual(3);
+        message.Attributes.ShouldAll(i => i.TypeName.Equals(KnownTypes.ProtoReservedAttribute));
+        message.Attributes[0].Parameters.ShouldEqual("2, 4");
+        message.Attributes[1].Parameters.ShouldEqual("6");
+        message.Attributes[2].Parameters.ShouldEqual("8");
+    }
+
     private static ParsedContracts ParseValid(string definitionText)
     {
         var contracts = Parse(definitionText);

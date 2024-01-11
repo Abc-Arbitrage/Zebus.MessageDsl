@@ -47,11 +47,11 @@ public static class AssertionExtensions
     public static void ShouldEqual<T>(this T? actual, T? expected)
         => Assert.That(actual, Is.EqualTo(expected));
 
-    public static void ShouldEqualOneOf<T>(this T? actual, params T[] expected)
-        => Assert.That(actual, Is.AnyOf(expected));
-
     public static void ShouldBeGreaterThan(this int actual, int value)
         => Assert.That(actual, Is.GreaterThan(value));
+
+    public static void ShouldAll<T>(this IEnumerable<T> items, Predicate<T> predicate)
+        => Assert.That(items, Is.All.Matches(predicate));
 
     public static void ShouldBeBetween(this int actual, int min, int max)
         => Assert.That(actual, Is.InRange(min, max));

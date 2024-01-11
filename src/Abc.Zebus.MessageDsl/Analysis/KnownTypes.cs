@@ -20,6 +20,7 @@ internal static class KnownTypes
     public static TypeName ProtoMemberAttribute { get; } = new("ProtoMember");
     public static TypeName ProtoMapAttribute { get; } = new("ProtoMap");
     public static TypeName ProtoIncludeAttribute { get; } = new("ProtoInclude");
+    public static TypeName ProtoReservedAttribute { get; } = new("ProtoReserved");
 
     public static TypeName ObsoleteAttribute { get; } = new("Obsolete");
     public static TypeName DescriptionAttribute { get; } = new("Description");
