@@ -4,15 +4,25 @@ namespace Abc.Zebus.MessageDsl.Dsl;
 
 internal class MessageContractsErrorStrategy : DefaultErrorStrategy
 {
+    private MarkAndIndex? _startOfCurrentDefinition;
+
     public override void Sync(Parser recognizer)
     {
         if (InErrorRecoveryMode(recognizer))
             return;
 
+        if (recognizer.Context.RuleIndex == MessageContractsParser.RULE_definition)
+        {
+            if (_startOfCurrentDefinition is { } mark)
+                recognizer.InputStream.Release(mark.Mark);
+
+            _startOfCurrentDefinition = new MarkAndIndex(recognizer.InputStream.Mark(), recognizer.InputStream.Index);
+        }
+
         base.Sync(recognizer);
 
-        if (InErrorRecoveryMode(recognizer) && IsInDefinitionRule(recognizer))
-            throw new GoToNextDefinitionException(recognizer);
+        if (InErrorRecoveryMode(recognizer))
+            GoToNextDefinition(recognizer);
     }
 
     public override void ReportError(Parser recognizer, RecognitionException e)
@@ -21,17 +31,25 @@ internal class MessageContractsErrorStrategy : DefaultErrorStrategy
             return;
 
         base.ReportError(recognizer, e);
-
-        if (IsInDefinitionRule(recognizer))
-            throw new GoToNextDefinitionException(recognizer);
+        GoToNextDefinition(recognizer);
     }
 
     public override void Recover(Parser recognizer, RecognitionException e)
     {
         if (e is GoToNextDefinitionException)
         {
+            // Unwind the stack to the end of the current definition rule
             if (recognizer.Context.RuleIndex != MessageContractsParser.RULE_definition)
                 throw e;
+
+            // Rewind the input to the start of the definition, then skip a single token
+            if (_startOfCurrentDefinition is { } mark)
+            {
+                _startOfCurrentDefinition = null;
+                recognizer.InputStream.Seek(mark.Index);
+                recognizer.Consume();
+                recognizer.InputStream.Release(mark.Mark);
+            }
 
             while (true)
             {
@@ -50,6 +68,12 @@ internal class MessageContractsErrorStrategy : DefaultErrorStrategy
         base.Recover(recognizer, e);
     }
 
+    private static void GoToNextDefinition(Parser recognizer)
+    {
+        if (IsInDefinitionRule(recognizer))
+            throw new GoToNextDefinitionException(recognizer);
+    }
+
     private static bool IsInDefinitionRule(Parser recognizer)
     {
         RuleContext ctx = recognizer.Context;
@@ -65,5 +89,8 @@ internal class MessageContractsErrorStrategy : DefaultErrorStrategy
         return false;
     }
 
-    private class GoToNextDefinitionException(Parser recognizer) : RecognitionException(recognizer, recognizer.InputStream, recognizer.Context);
+    private sealed class GoToNextDefinitionException(Parser recognizer)
+        : RecognitionException(recognizer, recognizer.InputStream, recognizer.Context);
+
+    private readonly record struct MarkAndIndex(int Mark, int Index);
 }

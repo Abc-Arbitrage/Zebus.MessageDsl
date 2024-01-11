@@ -703,8 +703,10 @@ public class ParsedContractsTests
     }
 
     [Test]
-    [TestCase("Foo")]
+    [TestCase("Foo")] // This one skips Bar :(
     [TestCase("Foo;")]
+    [TestCase("Foo then")]
+    [TestCase("Foo then other stuff")]
     [TestCase("Foo(")]
     [TestCase("Foo(;")]
     [TestCase("Foo(int")]
@@ -717,6 +719,12 @@ public class ParsedContractsTests
     [TestCase("Foo(int first, string;")]
     [TestCase("Foo(int first, string second")]
     [TestCase("Foo(int first, string second;")]
+    [TestCase("enum")]
+    [TestCase("enum Foo")]
+    [TestCase("enum Foo {")]
+    [TestCase("enum Foo { First")]
+    [TestCase("enum Foo { First,")]
+    [TestCase("enum Foo { First, Second")]
     public void should_split_on_incomplete_message(string firstLine)
     {
         var contracts = ParseInvalid(
@@ -728,8 +736,16 @@ public class ParsedContractsTests
         );
 
         contracts.Messages.Count.ShouldBeGreaterThan(1);
-        contracts.Messages[0].Name.ShouldEqual("Foo");
-        contracts.Messages[1].Name.ShouldEqualOneOf("Bar", "Baz");
+
+        if (firstLine.StartsWith("Foo"))
+        {
+            contracts.Messages[0].Name.ShouldEqual("Foo");
+            contracts.Messages[1].Name.ShouldEqual(firstLine != "Foo" ? "Bar" : "Baz");
+        }
+        else
+        {
+            contracts.Messages[0].Name.ShouldEqual("Bar");
+        }
     }
 
     [Test]
@@ -797,6 +813,9 @@ public class ParsedContractsTests
 
         foreach (var message in contracts.Messages)
             Console.WriteLine($"MESSAGE: {message}({string.Join(", ", message.Parameters.Select(p => $"[{p.Tag}] {p}"))})");
+
+        foreach (var member in contracts.Enums)
+            Console.WriteLine($"ENUM: {member}");
 
         return contracts;
     }
