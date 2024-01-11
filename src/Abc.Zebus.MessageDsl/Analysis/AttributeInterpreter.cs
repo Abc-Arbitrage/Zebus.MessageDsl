@@ -48,7 +48,7 @@ internal class AttributeInterpreter
                         if (int.TryParse(attr.Parameters, out var routingPosition))
                             param.RoutingPosition = routingPosition;
                         else
-                            _contracts.AddError(attr.ParseContext, "Invalid routing position: {0}", attr.Parameters);
+                            _contracts.AddError(attr.ParseContext, $"Invalid routing position: {attr.Parameters}");
                         break;
 
                     case [var first, ..]:
@@ -93,26 +93,26 @@ internal class AttributeInterpreter
 
         if (string.IsNullOrWhiteSpace(attr.Parameters))
         {
-            _contracts.AddError(attr.ParseContext, "The [{0}] attribute must have parameters", KnownTypes.ProtoMemberAttribute);
+            _contracts.AddError(attr.ParseContext, $"The [{KnownTypes.ProtoMemberAttribute}] attribute must have parameters");
             return;
         }
 
         var match = Regex.Match(attr.Parameters, @"^\s*(?<nb>[0-9]+)\s*(?:,|$)");
         if (!match.Success || !int.TryParse(match.Groups["nb"].Value, out var tagNb))
         {
-            _contracts.AddError(attr.ParseContext, "Invalid [{0}] parameters", KnownTypes.ProtoMemberAttribute);
+            _contracts.AddError(attr.ParseContext, $"Invalid [{KnownTypes.ProtoMemberAttribute}] parameters");
             return;
         }
 
         if (param.Tag != 0)
         {
-            _contracts.AddError(attr.ParseContext, "The parameter '{0}' already has an explicit tag ({1})", param.Name, param.Tag);
+            _contracts.AddError(attr.ParseContext, $"The parameter '{param.Name}' already has an explicit tag ({param.Tag})");
             return;
         }
 
         if (!AstValidator.IsValidTag(tagNb))
         {
-            _contracts.AddError(attr.ParseContext, "Tag for parameter '{0}' is not within the valid range ({1})", param.Name, tagNb);
+            _contracts.AddError(attr.ParseContext, $"Tag for parameter '{param.Name}' is not within the valid range ({tagNb})");
             return;
         }
 

@@ -44,12 +44,12 @@ internal class AstCreationVisitor : MessageContractsBaseVisitor<AstNode?>
         {
             if (!_definedContractOptions.Add(pragmaName))
             {
-                _contracts.AddError(context.name, "Duplicate file-level pragma: {0}", pragmaName);
+                _contracts.AddError(context.name, $"Duplicate file-level pragma: {pragmaName}");
                 return null;
             }
 
             if (_hasDefinitions)
-                _contracts.AddError(context, "File-level pragma {0} should be set at the top of the file", pragmaName);
+                _contracts.AddError(context, $"File-level pragma {pragmaName} should be set at the top of the file");
         }
         else
         {
@@ -58,7 +58,7 @@ internal class AstCreationVisitor : MessageContractsBaseVisitor<AstNode?>
 
             if (optionDescriptor == null)
             {
-                _contracts.AddError(context.name, "Unknown pragma: '{0}'", pragmaName);
+                _contracts.AddError(context.name, $"Unknown pragma: '{pragmaName}'");
                 return null;
             }
         }
@@ -77,13 +77,13 @@ internal class AstCreationVisitor : MessageContractsBaseVisitor<AstNode?>
             }
             else
             {
-                _contracts.AddError(context, "Pragma {0} expects a value", pragmaName);
+                _contracts.AddError(context, $"Pragma {pragmaName} expects a value");
                 return null;
             }
         }
 
         if (!optionDescriptor.SetValue(value))
-            _contracts.AddError(context, "Invalid option value: '{0}' for {1}", value, pragmaName);
+            _contracts.AddError(context, $"Invalid option value: '{value}' for {pragmaName}");
 
         return null;
     }
@@ -240,19 +240,19 @@ internal class AstCreationVisitor : MessageContractsBaseVisitor<AstNode?>
 
         if (!int.TryParse(context.tagNumber?.Text, out var tag))
         {
-            _contracts.AddError(context, "Invalid tag value for parameter '{0}': {1}", _currentParameter.Name, context.tagNumber?.Text);
+            _contracts.AddError(context, $"Invalid tag value for parameter '{_currentParameter.Name}': {context.tagNumber?.Text}");
             return null;
         }
 
         if (!AstValidator.IsValidTag(tag))
         {
-            _contracts.AddError(context, "Tag for parameter '{0}' is not within the valid range ({1})", _currentParameter.Name, context.tagNumber?.Text);
+            _contracts.AddError(context, $"Tag for parameter '{_currentParameter.Name}' is not within the valid range ({context.tagNumber?.Text})");
             return null;
         }
 
         if (_currentParameter.Tag != 0)
         {
-            _contracts.AddError(context, "The parameter '{0}' already has an explicit tag ({1})", _currentParameter.Name, _currentParameter.Tag);
+            _contracts.AddError(context, $"The parameter '{_currentParameter.Name}' already has an explicit tag ({_currentParameter.Tag})");
             return null;
         }
 
@@ -322,7 +322,7 @@ internal class AstCreationVisitor : MessageContractsBaseVisitor<AstNode?>
             {
                 var typeName = new TypeName(typeClause.typeName().GetText());
                 if (!constraint.Types.Add(typeName))
-                    _contracts.AddError(clause, "Duplicate type constraint: '{0}'", typeName);
+                    _contracts.AddError(clause, $"Duplicate type constraint: '{typeName}'");
             }
         }
 
@@ -352,7 +352,7 @@ internal class AstCreationVisitor : MessageContractsBaseVisitor<AstNode?>
                 var paramId = GetId(typeParamToken);
 
                 if (message.GenericParameters.Contains(paramId))
-                    _contracts.AddError(typeParamToken, "Duplicate generic parameter: '{0}'", paramId);
+                    _contracts.AddError(typeParamToken, $"Duplicate generic parameter: '{paramId}'");
 
                 message.GenericParameters.Add(paramId);
             }

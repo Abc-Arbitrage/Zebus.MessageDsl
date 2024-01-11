@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Abc.Zebus.MessageDsl.Analysis;
 using Abc.Zebus.MessageDsl.Dsl;
 using Antlr4.Runtime;
@@ -97,15 +98,15 @@ public class ParsedContracts
     public void AddError(ParserRuleContext? context, string message)
         => AddError(context?.Start, message);
 
-    [StringFormatMethod("format")]
+    [StringFormatMethod("format"), Obsolete("Use a string interpolation")]
     public void AddError(ParserRuleContext? context, string format, params object?[] args)
         => AddError(context, string.Format(format, args));
 
-    [StringFormatMethod("format")]
+    [StringFormatMethod("format"), Obsolete("Use a string interpolation")]
     public void AddError(IToken? token, string format, params object?[] args)
         => AddError(token, string.Format(format, args));
 
-    [StringFormatMethod("format")]
+    [StringFormatMethod("format"), Obsolete("Use a string interpolation")]
     public void AddError(string format, params object?[] args)
         => AddError(string.Format(format, args));
 }

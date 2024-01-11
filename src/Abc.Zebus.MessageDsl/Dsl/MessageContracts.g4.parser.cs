@@ -80,7 +80,7 @@ partial class MessageContractsParser
                 return string.Empty;
 
             if (CSharpSyntax.IsCSharpKeyword(id) && escape == null)
-                contracts.AddError(this, "'{0}' is a C# keyword and has to be escaped with '@'", id);
+                contracts.AddError(this, $"'{id}' is a C# keyword and has to be escaped with '@'");
 
             return id;
         }

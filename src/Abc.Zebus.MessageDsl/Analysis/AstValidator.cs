@@ -38,7 +38,7 @@ internal class AstValidator
         if (message.Options.Proto)
         {
             if (message.GenericParameters.Count > 0)
-                _contracts.AddError(message.ParseContext, "Cannot generate .proto for generic message {0}", message.Name);
+                _contracts.AddError(message.ParseContext, $"Cannot generate .proto for generic message {message.Name}");
         }
 
         ValidateAttributes(message.Attributes);
@@ -52,7 +52,7 @@ internal class AstValidator
             var errorContext = param.ParseContext ?? message.ParseContext;
 
             if (!paramNames.Add(param.Name))
-                _contracts.AddError(errorContext, "Duplicate parameter name: {0}", param.Name);
+                _contracts.AddError(errorContext, $"Duplicate parameter name: {param.Name}");
 
             ValidateType(param.Type, param.ParseContext);
             ValidateAttributes(param.Attributes);
@@ -71,7 +71,7 @@ internal class AstValidator
             if (string.IsNullOrEmpty(param.DefaultValue))
                 requiredParameterSeen = true;
             else if (requiredParameterSeen)
-                _contracts.AddError(errorContext, "Optional parameter {0} cannot appear before a required parameter", param.Name);
+                _contracts.AddError(errorContext, $"Optional parameter {param.Name} cannot appear before a required parameter");
         }
 
         foreach (var constraint in message.GenericConstraints)
@@ -79,13 +79,13 @@ internal class AstValidator
             var errorContext = constraint.ParseContext ?? message.ParseContext;
 
             if (!genericConstraints.Add(constraint.GenericParameterName))
-                _contracts.AddError(errorContext, "Duplicate generic constraint: '{0}'", constraint.GenericParameterName);
+                _contracts.AddError(errorContext, $"Duplicate generic constraint: '{constraint.GenericParameterName}'");
 
             if (!message.GenericParameters.Contains(constraint.GenericParameterName))
-                _contracts.AddError(errorContext, "Undefined generic parameter: '{0}'", constraint.GenericParameterName);
+                _contracts.AddError(errorContext, $"Undefined generic parameter: '{constraint.GenericParameterName}'");
 
             if (constraint.IsClass && constraint.IsStruct)
-                _contracts.AddError(errorContext, "Constraint on '{0}' cannot require both class and struct", constraint.GenericParameterName);
+                _contracts.AddError(errorContext, $"Constraint on '{constraint.GenericParameterName}' cannot require both class and struct");
 
             foreach (var constraintType in constraint.Types)
                 ValidateType(constraintType, message.ParseContext);
@@ -106,10 +106,10 @@ internal class AstValidator
             var errorContext = param.ParseContext ?? message.ParseContext;
 
             if (!IsValidTag(param.Tag))
-                _contracts.AddError(errorContext, "Tag for parameter '{0}' is not within the valid range ({1})", param.Name, param.Tag);
+                _contracts.AddError(errorContext, $"Tag for parameter '{param.Name}' is not within the valid range ({param.Tag})");
 
             if (!tags.Add(param.Tag))
-                _contracts.AddError(errorContext, "Duplicate tag {0} on parameter {1}", param.Tag, param.Name);
+                _contracts.AddError(errorContext, $"Duplicate tag {param.Tag} on parameter {param.Name}");
         }
 
         foreach (var attr in message.Attributes)
@@ -121,22 +121,22 @@ internal class AstValidator
 
             if (!AttributeInterpreter.TryParseProtoInclude(attr, out var tag, out _))
             {
-                _contracts.AddError(errorContext, "Invalid [{0}] parameters", KnownTypes.ProtoIncludeAttribute);
+                _contracts.AddError(errorContext, $"Invalid [{KnownTypes.ProtoIncludeAttribute}] parameters");
                 continue;
             }
 
             if (!IsValidTag(tag))
-                _contracts.AddError(errorContext, "Tag for [{0}] is not within the valid range ({1})", KnownTypes.ProtoIncludeAttribute, tag);
+                _contracts.AddError(errorContext, $"Tag for [{KnownTypes.ProtoIncludeAttribute}] is not within the valid range ({tag})");
 
             if (!tags.Add(tag))
-                _contracts.AddError(errorContext, "Duplicate tag {0} on [{1}]", tag, KnownTypes.ProtoIncludeAttribute);
+                _contracts.AddError(errorContext, $"Duplicate tag {tag} on [{KnownTypes.ProtoIncludeAttribute}]");
         }
     }
 
     private void ValidateEnum(EnumDefinition enumDef)
     {
         if (!enumDef.IsValidUnderlyingType())
-            _contracts.AddError(enumDef.ParseContext, "Invalid underlying type: {0}", enumDef.UnderlyingType);
+            _contracts.AddError(enumDef.ParseContext, $"Invalid underlying type: {enumDef.UnderlyingType}");
 
         if (enumDef.Options.Proto && enumDef.UnderlyingType.NetType != "int")
             _contracts.AddError(enumDef.ParseContext, "An enum used in a proto file must have an underlying type of int");
@@ -148,7 +148,7 @@ internal class AstValidator
         foreach (var member in enumDef.Members)
         {
             if (!definedMembers.Add(member.Name))
-                _contracts.AddError(member.ParseContext, "Duplicate enum member: {0}", member.Name);
+                _contracts.AddError(member.ParseContext, $"Duplicate enum member: {member.Name}");
 
             ValidateAttributes(member.Attributes);
         }
@@ -163,7 +163,7 @@ internal class AstValidator
     private void ValidateType(TypeName type, ParserRuleContext? context)
     {
         if (type.NetType.Contains("??"))
-            _contracts.AddError(context, "Invalid type: {0}", type.NetType);
+            _contracts.AddError(context, $"Invalid type: {type.NetType}");
     }
 
     private void ValidateInheritance(MessageDefinition message)
@@ -218,7 +218,7 @@ internal class AstValidator
             var nameWithGenericArity = GetNameWithGenericArity(typeNode);
 
             if (duplicates.Contains(nameWithGenericArity))
-                _contracts.AddError(typeNode.ParseContext, "Duplicate type name: {0}", nameWithGenericArity);
+                _contracts.AddError(typeNode.ParseContext, $"Duplicate type name: {nameWithGenericArity}");
         }
 
         static string GetNameWithGenericArity(AstNode node)
