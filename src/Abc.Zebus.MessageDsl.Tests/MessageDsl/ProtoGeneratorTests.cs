@@ -1,6 +1,8 @@
-﻿using Abc.Zebus.MessageDsl.Ast;
+﻿using System.Threading.Tasks;
+using Abc.Zebus.MessageDsl.Ast;
 using Abc.Zebus.MessageDsl.Generator;
 using Abc.Zebus.MessageDsl.Tests.TestTools;
+using EmptyFiles;
 using NUnit.Framework;
 
 namespace Abc.Zebus.MessageDsl.Tests.MessageDsl;
@@ -8,10 +10,13 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl;
 [TestFixture]
 public class ProtoGeneratorTests : GeneratorTests
 {
+    static ProtoGeneratorTests()
+        => FileExtensions.AddTextExtension("proto");
+
     [Test]
-    public void should_generate_code()
+    public async Task should_generate_code()
     {
-        var code = Generate(new MessageDefinition
+        var code = await Verify(new MessageDefinition
         {
             Name = "FooExecuted",
             Parameters =
@@ -32,9 +37,9 @@ public class ProtoGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_handle_deprecated_fields()
+    public async Task should_handle_deprecated_fields()
     {
-        var code = Generate(new MessageDefinition
+        var code = await Verify(new MessageDefinition
         {
             Name = "FooExecuted",
             Parameters =
@@ -54,9 +59,9 @@ public class ProtoGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_generate_packed_members()
+    public async Task should_generate_packed_members()
     {
-        var code = Generate(new MessageDefinition
+        var code = await Verify(new MessageDefinition
         {
             Name = "FooExecuted",
             Parameters =
@@ -79,9 +84,9 @@ public class ProtoGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_generate_simple_enums()
+    public async Task should_generate_simple_enums()
     {
-        var code = Generate(new ParsedContracts
+        var code = await Verify(new ParsedContracts
         {
             Enums =
             {
@@ -115,9 +120,9 @@ public class ProtoGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_generate_enums()
+    public async Task should_generate_enums()
     {
-        var code = Generate(new ParsedContracts
+        var code = await Verify(new ParsedContracts
         {
             Enums =
             {
@@ -165,9 +170,9 @@ public class ProtoGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_handle_message_inheritance()
+    public async Task should_handle_message_inheritance()
     {
-        var code = Generate(new MessageDefinition
+        var code = await Verify(new MessageDefinition
         {
             Name = "MsgA",
             Attributes =
@@ -184,6 +189,8 @@ public class ProtoGeneratorTests : GeneratorTests
         code.ShouldContain("optional MsgB _subTypeMsgB = 10;");
         code.ShouldContain("optional MsgC _subTypeMsgC = 11;");
     }
+
+    protected override string SnapshotExtension => "proto";
 
     protected override string GenerateRaw(ParsedContracts contracts)
         => ProtoGenerator.Generate(contracts);

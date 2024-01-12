@@ -1,1 +1,3 @@
 * text=auto
+*.verified.cs text eol=lf working-tree-encoding=UTF-8
+*.verified.proto text eol=lf working-tree-encoding=UTF-8

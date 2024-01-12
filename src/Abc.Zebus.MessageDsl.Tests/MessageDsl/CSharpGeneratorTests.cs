@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Abc.Zebus.MessageDsl.Ast;
 using Abc.Zebus.MessageDsl.Generator;
 using Abc.Zebus.MessageDsl.Tests.TestTools;
@@ -10,9 +11,9 @@ namespace Abc.Zebus.MessageDsl.Tests.MessageDsl;
 public class CSharpGeneratorTests : GeneratorTests
 {
     [Test]
-    public void should_generate_code()
+    public async Task should_generate_code()
     {
-        var code = Generate(new MessageDefinition
+        var code = await Verify(new MessageDefinition
         {
             Name = "FooExecuted",
             Parameters =
@@ -27,9 +28,9 @@ public class CSharpGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_generate_default_values()
+    public async Task should_generate_default_values()
     {
-        var code = Generate(new MessageDefinition
+        var code = await Verify(new MessageDefinition
         {
             Name = "FooExecuted",
             Parameters =
@@ -42,9 +43,9 @@ public class CSharpGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_generate_packed_members()
+    public async Task should_generate_packed_members()
     {
-        var code = Generate(new MessageDefinition
+        var code = await Verify(new MessageDefinition
         {
             Name = "FooExecuted",
             Parameters =
@@ -68,9 +69,9 @@ public class CSharpGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_call_constructor_for_Dictionary()
+    public async Task should_call_constructor_for_Dictionary()
     {
-        var code = Generate(new MessageDefinition
+        var code = await Verify(new MessageDefinition
         {
             Name = "FooExecuted",
             Parameters =
@@ -85,9 +86,9 @@ public class CSharpGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_call_constructor_for_HashSet()
+    public async Task should_call_constructor_for_HashSet()
     {
-        var code = Generate(new MessageDefinition
+        var code = await Verify(new MessageDefinition
         {
             Name = "FooExecuted",
             Parameters =
@@ -102,9 +103,9 @@ public class CSharpGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_generate_attributes()
+    public async Task should_generate_attributes()
     {
-        var code = Generate(new MessageDefinition
+        var code = await Verify(new MessageDefinition
         {
             Name = "FooExecuted",
             Attributes =
@@ -128,11 +129,9 @@ public class CSharpGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_generate_mutable_properties()
+    public async Task should_generate_mutable_properties()
     {
-        var contract = new ParsedContracts();
-
-        contract.Messages.Add(new MessageDefinition
+        var code = await Verify(new MessageDefinition
         {
             Name = "FooExecuted",
             Options = { Mutable = true },
@@ -142,17 +141,14 @@ public class CSharpGeneratorTests : GeneratorTests
                 new ParameterDefinition("string", "bar")
             }
         });
-        var code = Generate(contract);
 
         code.ShouldContain("public int Foo { get; set; }");
     }
 
     [Test]
-    public void should_generate_properties()
+    public async Task should_generate_properties()
     {
-        var contract = new ParsedContracts();
-
-        contract.Messages.Add(new MessageDefinition
+        var code = await Verify(new MessageDefinition
         {
             Name = "FooExecuted",
             Parameters =
@@ -161,32 +157,26 @@ public class CSharpGeneratorTests : GeneratorTests
                 new ParameterDefinition("string", "bar")
             }
         });
-        var code = Generate(contract);
 
         code.ShouldContain("public int Foo { get; private set; }");
     }
 
     [Test]
-    public void should_generate_generic_messages()
+    public async Task should_generate_generic_messages()
     {
-        var contract = new ParsedContracts();
-
-        contract.Messages.Add(new MessageDefinition
+        var code = await Verify(new MessageDefinition
         {
             Name = "FooExecuted",
             GenericParameters = { "TFoo", "TBar" }
         });
-        var code = Generate(contract);
 
         code.ShouldContain("class FooExecuted<TFoo, TBar> : IEvent");
     }
 
     [Test]
-    public void should_generate_generic_constraints()
+    public async Task should_generate_generic_constraints()
     {
-        var contract = new ParsedContracts();
-
-        contract.Messages.Add(new MessageDefinition
+        var code = await Verify(new MessageDefinition
         {
             Name = "FooExecuted",
             GenericParameters = { "TFoo", "TBar" },
@@ -208,16 +198,15 @@ public class CSharpGeneratorTests : GeneratorTests
                 },
             }
         });
-        var code = Generate(contract);
 
         code.ShouldContain("where TFoo : class, IDisposable, new()");
         code.ShouldContain("where TBar : struct, IDisposable");
     }
 
     [Test]
-    public void should_not_generate_constructor_when_there_are_no_parameters()
+    public async Task should_not_generate_constructor_when_there_are_no_parameters()
     {
-        var code = Generate(new MessageDefinition
+        var code = await Verify(new MessageDefinition
         {
             Name = "FooExecuted"
         });
@@ -226,9 +215,9 @@ public class CSharpGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_handle_escaped_keywords()
+    public async Task should_handle_escaped_keywords()
     {
-        var code = Generate(new MessageDefinition
+        var code = await Verify(new MessageDefinition
         {
             Name = "void",
             Parameters =
@@ -256,9 +245,9 @@ public class CSharpGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_generate_simple_enums()
+    public async Task should_generate_simple_enums()
     {
-        var code = Generate(new ParsedContracts
+        var code = await Verify(new ParsedContracts
         {
             Enums =
             {
@@ -293,9 +282,9 @@ public class CSharpGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_generate_enums()
+    public async Task should_generate_enums()
     {
-        var code = Generate(new ParsedContracts
+        var code = await Verify(new ParsedContracts
         {
             Enums =
             {
@@ -352,9 +341,9 @@ public class CSharpGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_handle_obsolete_attribute()
+    public async Task should_handle_obsolete_attribute_1()
     {
-        var code = Generate(new MessageDefinition
+        var code = await Verify(new MessageDefinition
         {
             Name = "FooExecuted",
             Parameters =
@@ -364,8 +353,12 @@ public class CSharpGeneratorTests : GeneratorTests
         });
 
         code.ShouldNotContain("#pragma warning disable 612");
+    }
 
-        code = Generate(new MessageDefinition
+    [Test]
+    public async Task should_handle_obsolete_attribute_2()
+    {
+        var code = await Verify(new MessageDefinition
         {
             Name = "FooExecuted",
             Parameters =
@@ -378,8 +371,12 @@ public class CSharpGeneratorTests : GeneratorTests
         });
 
         code.ShouldContain("#pragma warning disable 612");
+    }
 
-        code = Generate(new MessageDefinition
+    [Test]
+    public async Task should_handle_obsolete_attribute_3()
+    {
+        var code = await Verify(new MessageDefinition
         {
             Name = "FooExecuted",
             Attributes = { new AttributeDefinition("Obsolete") }
@@ -389,9 +386,9 @@ public class CSharpGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_handle_custom_contract_attribute()
+    public async Task should_handle_custom_contract_attribute()
     {
-        var code = Generate(new MessageDefinition
+        var code = await Verify(new MessageDefinition
         {
             Name = "FooExecuted",
             Attributes = { new AttributeDefinition("ProtoContract", "EnumPassthru = true") }
@@ -402,9 +399,9 @@ public class CSharpGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_handle_custom_member_attribute()
+    public async Task should_handle_custom_member_attribute()
     {
-        var code = Generate(new MessageDefinition
+        var code = await Verify(new MessageDefinition
         {
             Name = "FooExecuted",
             Parameters =
@@ -421,9 +418,9 @@ public class CSharpGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_handle_custom_contract_attribute_on_enums()
+    public async Task should_handle_custom_contract_attribute_on_enums()
     {
-        var code = Generate(new ParsedContracts
+        var code = await Verify(new ParsedContracts
         {
             Enums =
             {
@@ -450,9 +447,9 @@ public class CSharpGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_add_protomap_attribute_to_dictionaries()
+    public async Task should_add_protomap_attribute_to_dictionaries()
     {
-        var code = Generate(new MessageDefinition
+        var code = await Verify(new MessageDefinition
         {
             Name = "FooExecuted",
             Parameters =
@@ -465,9 +462,9 @@ public class CSharpGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_leave_supplied_protomap()
+    public async Task should_leave_supplied_protomap()
     {
-        var code = Generate(new MessageDefinition
+        var code = await Verify(new MessageDefinition
         {
             Name = "FooExecuted",
             Parameters =
@@ -487,9 +484,9 @@ public class CSharpGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_generate_two_classes_with_same_name_and_different_arity()
+    public async Task should_generate_two_classes_with_same_name_and_different_arity()
     {
-        var code = Generate(new ParsedContracts
+        var code = await Verify(new ParsedContracts
         {
             Messages =
             {
@@ -503,9 +500,9 @@ public class CSharpGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_generate_internal_messages()
+    public async Task should_generate_internal_messages()
     {
-        var code = Generate(new MessageDefinition
+        var code = await Verify(new MessageDefinition
         {
             Name = "FooExecuted",
             AccessModifier = AccessModifier.Internal
@@ -515,9 +512,9 @@ public class CSharpGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_generate_internal_enums()
+    public async Task should_generate_internal_enums()
     {
-        var code = Generate(new ParsedContracts
+        var code = await Verify(new ParsedContracts
         {
             Enums =
             {
@@ -540,9 +537,9 @@ public class CSharpGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_generate_unsealed_messages()
+    public async Task should_generate_unsealed_messages()
     {
-        var code = Generate(new MessageDefinition
+        var code = await Verify(new MessageDefinition
         {
             Name = "FooExecuted",
             InheritanceModifier = InheritanceModifier.None
@@ -552,9 +549,9 @@ public class CSharpGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_generate_sealed_messages()
+    public async Task should_generate_sealed_messages()
     {
-        var code = Generate(new MessageDefinition
+        var code = await Verify(new MessageDefinition
         {
             Name = "FooExecuted",
             InheritanceModifier = InheritanceModifier.Sealed
@@ -564,9 +561,9 @@ public class CSharpGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_generate_abstract_messages()
+    public async Task should_generate_abstract_messages()
     {
-        var code = Generate(new MessageDefinition
+        var code = await Verify(new MessageDefinition
         {
             Name = "FooExecuted",
             InheritanceModifier = InheritanceModifier.Abstract,
@@ -584,9 +581,9 @@ public class CSharpGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_handle_nullable_reference_types()
+    public async Task should_handle_nullable_reference_types()
     {
-        var code = Generate(new ParsedContracts
+        var code = await Verify(new ParsedContracts
         {
             Messages =
             {
@@ -611,9 +608,9 @@ public class CSharpGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_generate_initializers_for_nullable_reference_types()
+    public async Task should_generate_initializers_for_nullable_reference_types()
     {
-        var code = Generate(new MessageDefinition
+        var code = await Verify(new MessageDefinition
         {
             Name = "FooExecuted",
             Parameters =
@@ -633,9 +630,9 @@ public class CSharpGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_not_generate_initializers_for_known_nullable_value_types()
+    public async Task should_not_generate_initializers_for_known_nullable_value_types()
     {
-        var code = Generate(new MessageDefinition
+        var code = await Verify(new MessageDefinition
         {
             Name = "FooExecuted",
             Parameters =
@@ -655,9 +652,9 @@ public class CSharpGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_not_reorder_base_types()
+    public async Task should_not_reorder_base_types()
     {
-        var code = Generate(new MessageDefinition
+        var code = await Verify(new MessageDefinition
         {
             Name = "FooExecuted",
             BaseTypes = { "BType", "AType" }
@@ -667,9 +664,9 @@ public class CSharpGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_forward_base_type_parameters()
+    public async Task should_forward_base_type_parameters()
     {
-        var code = Generate(new ParsedContracts
+        var code = await Verify(new ParsedContracts
         {
             Messages =
             {
@@ -717,9 +714,9 @@ public class CSharpGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_not_forward_base_type_parameters_for_mutable_base_types_1()
+    public async Task should_not_forward_base_type_parameters_for_mutable_base_types_1()
     {
-        var code = Generate(new ParsedContracts
+        var code = await Verify(new ParsedContracts
         {
             Messages =
             {
@@ -763,9 +760,9 @@ public class CSharpGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_not_forward_base_type_parameters_for_mutable_base_types_2()
+    public async Task should_not_forward_base_type_parameters_for_mutable_base_types_2()
     {
-        var code = Generate(new ParsedContracts
+        var code = await Verify(new ParsedContracts
         {
             Messages =
             {
@@ -812,9 +809,9 @@ public class CSharpGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_not_forward_base_type_parameters_for_mutable_base_types_3()
+    public async Task should_not_forward_base_type_parameters_for_mutable_base_types_3()
     {
-        var code = Generate(new ParsedContracts
+        var code = await Verify(new ParsedContracts
         {
             Messages =
             {
@@ -858,9 +855,9 @@ public class CSharpGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_handle_nested_classes()
+    public async Task should_handle_nested_classes()
     {
-        var code = Generate(new MessageDefinition
+        var code = await Verify(new MessageDefinition
         {
             Name = "Baz",
             ContainingClasses = { "Foo", "Bar" }
@@ -870,9 +867,9 @@ public class CSharpGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_coalesce_array_to_non_null()
+    public async Task should_coalesce_array_to_non_null()
     {
-        var code = Generate(new MessageDefinition
+        var code = await Verify(new MessageDefinition
         {
             Name = "Foo",
             Parameters =
@@ -894,9 +891,9 @@ public class CSharpGeneratorTests : GeneratorTests
     [Test]
     [TestCase(AttributeTarget.Default)]
     [TestCase(AttributeTarget.Property)]
-    public void should_generate_attributes_on_properties(AttributeTarget target)
+    public async Task should_generate_attributes_on_properties(AttributeTarget target)
     {
-        var code = Generate(new MessageDefinition
+        var code = await Verify(new MessageDefinition
         {
             Name = "FooExecuted",
             Parameters =
@@ -916,9 +913,9 @@ public class CSharpGeneratorTests : GeneratorTests
     }
 
     [Test]
-    public void should_generate_attributes_on_parameters()
+    public async Task should_generate_attributes_on_parameters()
     {
-        var code = Generate(new MessageDefinition
+        var code = await Verify(new MessageDefinition
         {
             Name = "FooExecuted",
             Parameters =
@@ -936,6 +933,8 @@ public class CSharpGeneratorTests : GeneratorTests
         code.ShouldNotContainIgnoreIndent("[Target]\npublic int Foo { get; private set; }");
         code.ShouldContain("] int foo");
     }
+
+    protected override string SnapshotExtension => "cs";
 
     protected override string GenerateRaw(ParsedContracts contracts)
         => CSharpGenerator.Generate(contracts);

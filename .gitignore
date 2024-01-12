@@ -16,3 +16,5 @@ obj/
 Thumbs.db
 _NCrunch_*
 launchSettings.json
+
+*.received.*

@@ -9,7 +9,7 @@ namespace Abc.Zebus.MessageDsl.Generator;
 public abstract class GeneratorBase : IDisposable
 {
     protected static string GeneratorName { get; } = typeof(GeneratorBase).Assembly.GetName().Name!;
-    protected static Version GeneratorVersion { get; }= typeof(GeneratorBase).Assembly.GetName().Version!;
+    protected internal static Version GeneratorVersion { get; set; } = typeof(GeneratorBase).Assembly.GetName().Version!;
 
     private readonly StringBuilder _stringBuilder;
     protected IndentedTextWriter Writer { get; }
