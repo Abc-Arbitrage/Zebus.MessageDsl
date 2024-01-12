@@ -28,6 +28,7 @@
     <Copyright>Copyright © ABC arbitrage $([System.DateTime]::Now.ToString('yyyy'))</Copyright>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <PackageOutputPath>$(MSBuildThisFileDirectory)..\output</PackageOutputPath>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(NCrunch)' == '1'">
@@ -37,6 +38,10 @@
 
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)NuGetReadme.md" Pack="true" PackagePath="/README.md" Visible="false" />
   </ItemGroup>
 
 </Project>

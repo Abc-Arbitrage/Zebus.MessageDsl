@@ -29,6 +29,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{A8144077-4
 		..\docs\Syntax.md = ..\docs\Syntax.md
 		..\docs\BuildTimeCodeGen.md = ..\docs\BuildTimeCodeGen.md
 		..\README.md = ..\README.md
+		NuGetReadme.md = NuGetReadme.md
 	EndProjectSection
 EndProject
 Global
