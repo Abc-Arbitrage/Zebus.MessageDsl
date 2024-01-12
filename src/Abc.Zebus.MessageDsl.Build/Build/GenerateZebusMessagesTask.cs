@@ -38,7 +38,7 @@ public class GenerateZebusMessagesTask : Task
     private void TranslateFile(ITaskItem inputFile)
     {
         var fileContents = File.ReadAllText(inputFile.ItemSpec);
-        var defaultNamespace = inputFile.GetMetadata("CustomToolNamespace")?.Trim() ?? string.Empty;
+        var defaultNamespace = inputFile.GetMetadata("CustomToolNamespace")?.Trim();
         var contracts = ParsedContracts.Parse(fileContents, defaultNamespace);
 
         if (!contracts.IsValid)

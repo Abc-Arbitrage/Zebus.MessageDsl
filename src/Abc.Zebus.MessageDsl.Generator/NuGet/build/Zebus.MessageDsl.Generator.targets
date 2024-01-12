@@ -5,7 +5,7 @@
     <ZebusMessages Update="@(ZebusMessages->HasMetadata('CustomToolNamespace'))" ZebusMessageDslNamespace="%(CustomToolNamespace)" />
     <ZebusMessages Update="@(ZebusMessages)" ZebusMessageDslRelativePath="%(RelativeDir)%(Filename)%(Extension)" />
     <None Remove="**\*.msg" />
-    <AdditionalFiles Include="@(ZebusMessages)" />
+    <AdditionalFiles Include="@(ZebusMessages)" Condition="'$(ZebusMessagesEnabled)' == 'true'" />
     <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="ZebusMessageDslNamespace" />
     <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="ZebusMessageDslRelativePath" />
   </ItemGroup>

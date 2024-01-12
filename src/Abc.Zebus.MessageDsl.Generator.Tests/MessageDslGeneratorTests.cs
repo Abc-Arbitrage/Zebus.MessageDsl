@@ -77,7 +77,7 @@ public class MessageDslGeneratorTests
     }
 
     [Test]
-    public void Should_not_generate_message_class_if_ZebusMessageDslNamespace_option_is_not_set()
+    public void Should_generate_message_class_if_ZebusMessageDslNamespace_option_is_not_set()
     {
         // Arrange
         var additionalTextMock = CreateAdditionalTextMock(@"Dsl\Messages.msg", "DoSomethingCommand(int foo);");
@@ -89,7 +89,7 @@ public class MessageDslGeneratorTests
                                               .GetRunResult();
 
         // Assert
-        Assert.That(runResults.Results[0].GeneratedSources, Is.Empty);
+        Assert.That(runResults.Results[0].GeneratedSources, Does.Not.Contain("namespace"));
     }
 
     private static Mock<AnalyzerConfigOptionsProvider> CreateOptionProviderMock(Mock<AdditionalText>[] additionalTextMocks, params (string key, string value)[] options)

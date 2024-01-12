@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Abc.Zebus.MessageDsl.Ast;
@@ -17,79 +16,76 @@ public class MessageDslGenerator : IIncrementalGenerator
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        var additionalTextsWithNamespaces = context.AdditionalTextsProvider
-                                                   .Where(x => x.Path.EndsWith(".msg"))
-                                                   .Combine(context.AnalyzerConfigOptionsProvider)
-                                                   .Select((input, _) =>
-                                                   {
-                                                       var (additionalText, config) = input;
-                                                       var fileNamespace = config.GetOptions(additionalText).TryGetValue("build_metadata.AdditionalFiles.ZebusMessageDslNamespace", out var ns) ? ns : null;
-                                                       var relativePath = config.GetOptions(additionalText).TryGetValue("build_metadata.AdditionalFiles.ZebusMessageDslRelativePath", out var dir) ? dir : null;
-                                                       return new SourceGenerationInput(additionalText, fileNamespace, relativePath);
-                                                   })
-                                                   .Where(x => x.FileNamespace != null)
-                                                   .Select(GenerateCode)
-                                                   .Collect();
+        var input = context.AdditionalTextsProvider
+                           .Where(static file => file.Path.EndsWith(".msg", StringComparison.OrdinalIgnoreCase))
+                           .Combine(context.AnalyzerConfigOptionsProvider)
+                           .Select(static (input, _) =>
+                           {
+                               var (additionalText, config) = input;
+                               var defaultNamespace = config.GetOptions(additionalText).TryGetValue("build_metadata.AdditionalFiles.ZebusMessageDslNamespace", out var ns) ? ns : null;
+                               var relativePath = config.GetOptions(additionalText).TryGetValue("build_metadata.AdditionalFiles.ZebusMessageDslRelativePath", out var dir) ? dir : null;
+                               return new SourceGenerationInput(additionalText, defaultNamespace, relativePath);
+                           });
 
-        context.RegisterSourceOutput(additionalTextsWithNamespaces, GenerateFiles);
+        context.RegisterSourceOutput(input, GenerateOutput);
     }
 
     private static SourceGenerationResult GenerateCode(SourceGenerationInput input, CancellationToken cancellationToken)
     {
         var result = new SourceGenerationResult(input);
 
-        var fileContents = input.AdditionalText.GetText(cancellationToken)?.ToString();
-
-        if (fileContents is null)
+        if (input.InputFile.GetText(cancellationToken)?.ToString() is not { } inputText)
         {
-            result.AddDiagnostic(Diagnostic.Create(MessageDslDiagnostics.CouldNotReadFileContents, Location.Create(input.AdditionalText.Path, default, default)));
+            result.AddDiagnostic(Diagnostic.Create(MessageDslDiagnostics.CouldNotReadFileContents, Location.Create(input.InputFile.Path, default, default)));
             return result;
         }
 
         try
         {
-            var contracts = ParsedContracts.Parse(fileContents, input.FileNamespace?.Trim());
+            var contracts = ParsedContracts.Parse(inputText, input.DefaultNamespace?.Trim());
 
             foreach (var error in contracts.Errors)
             {
-                var location = Location.Create(input.AdditionalText.Path, default, error.ToLinePositionSpan());
+                var location = Location.Create(input.InputFile.Path, default, error.ToLinePositionSpan());
                 result.AddDiagnostic(Diagnostic.Create(MessageDslDiagnostics.MessageDslError, location, error.Message));
             }
 
             var output = CSharpGenerator.Generate(contracts);
             result.GeneratedSource = output;
-
-            return result;
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            result.AddDiagnostic(Diagnostic.Create(MessageDslDiagnostics.UnexpectedError, Location.None, ex.ToString()));
-            return result;
+            result.AddDiagnostic(Diagnostic.Create(MessageDslDiagnostics.UnexpectedError, Location.Create(input.InputFile.Path, default, default), ex.ToString()));
         }
+
+        return result;
     }
 
-    private static void GenerateFiles(SourceProductionContext context, ImmutableArray<SourceGenerationResult> results)
+    private static void GenerateOutput(SourceProductionContext context, SourceGenerationInput input)
     {
-        foreach (var result in results)
-        {
-            foreach (var diagnostic in result.Diagnostics)
-                context.ReportDiagnostic(diagnostic);
+        var result = GenerateCode(input, context.CancellationToken);
 
-            if (result.GeneratedSource == null)
-                continue;
+        foreach (var diagnostic in result.Diagnostics)
+            context.ReportDiagnostic(diagnostic);
 
-            var hintName = _sanitizePathRegex.Replace(result.RelativePath ?? result.AdditionalText.Path, "_") + ".g.cs";
-            context.AddSource(hintName, result.GeneratedSource);
-        }
+        if (result.GeneratedSource is null)
+            return;
+
+        var hintName = _sanitizePathRegex.Replace(result.RelativePath ?? result.InputFile.Path, "_") + ".g.cs";
+        context.AddSource(hintName, result.GeneratedSource);
     }
 
-    private record SourceGenerationInput(AdditionalText AdditionalText, string? FileNamespace, string? RelativePath);
+    private record SourceGenerationInput(
+        AdditionalText InputFile,
+        string? DefaultNamespace,
+        string? RelativePath
+    );
 
     private class SourceGenerationResult(SourceGenerationInput input)
     {
         private readonly List<Diagnostic> _diagnostics = new();
 
-        public AdditionalText AdditionalText { get; } = input.AdditionalText;
+        public AdditionalText InputFile { get; } = input.InputFile;
         public IReadOnlyList<Diagnostic> Diagnostics => _diagnostics;
         public string? GeneratedSource { get; set; }
         public string? RelativePath { get; } = input.RelativePath;

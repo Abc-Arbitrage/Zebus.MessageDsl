@@ -12,8 +12,8 @@
     <DevelopmentDependency>true</DevelopmentDependency>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <IsRoslynComponent>true</IsRoslynComponent>
   </PropertyGroup>
-
 
   <ItemGroup>
     <PackageReference Include="Antlr4.CodeGenerator" Version="4.6.6" PrivateAssets="all" />

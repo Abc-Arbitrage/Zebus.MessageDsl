@@ -13,6 +13,10 @@
     <DefineConstants>$(DefineConstants);INTEGRATION_TEST</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(IntegrationTestEnabled)' != 'true'">
+    <ZebusMessagesEnabled>false</ZebusMessagesEnabled>
+  </PropertyGroup>
+
   <Import Project="..\Abc.Zebus.MessageDsl.Generator\NuGet\build\Zebus.MessageDsl.Generator.props" />
 
   <ItemGroup>
