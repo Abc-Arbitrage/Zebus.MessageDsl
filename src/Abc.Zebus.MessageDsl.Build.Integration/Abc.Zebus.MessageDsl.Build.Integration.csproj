@@ -41,8 +41,7 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <ZebusMessagesBuildTaskPath Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)..\Abc.Zebus.MessageDsl.Build\bin\$(Configuration)\net46</ZebusMessagesBuildTaskPath>
-    <ZebusMessagesBuildTaskPath Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)..\Abc.Zebus.MessageDsl.Build\bin\$(Configuration)\netstandard2.0</ZebusMessagesBuildTaskPath>
+    <ZebusMessagesBuildTaskPath>$(MSBuildThisFileDirectory)..\Abc.Zebus.MessageDsl.Build\bin\$(Configuration)\netstandard2.0</ZebusMessagesBuildTaskPath>
   </PropertyGroup>
 
   <Import Project="..\Abc.Zebus.MessageDsl.Build\NuGet\build\Zebus.MessageDsl.Build.targets" />

@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net46</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <Nullable>annotations</Nullable>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\Abc.Zebus.MessageDsl\Abc.Zebus.MessageDsl.snk</AssemblyOriginatorKeyFile>
@@ -16,8 +16,8 @@
 
   <ItemGroup>
     <PackageReference Include="Antlr4.CodeGenerator" Version="4.6.6" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.Build.Framework" Version="15.9.20" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.9.20" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Build.Framework" Version="17.0.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.0.0" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,8 +33,7 @@
   <!-- Antlr4.Runtime -->
   <PropertyGroup>
     <NoWarn>$(NoWarn);0219;0162</NoWarn>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net46'">$(DefineConstants);NET45;NET45PLUS;NET40PLUS;NET35PLUS;NET30PLUS;NET20PLUS</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.0'">$(DefineConstants);PORTABLE;NETSTANDARD;NET45PLUS;NET40PLUS;NET35PLUS;NET30PLUS;NET20PLUS</DefineConstants>
+    <DefineConstants>$(DefineConstants);PORTABLE;NETSTANDARD;NET45PLUS;NET40PLUS;NET35PLUS;NET30PLUS;NET20PLUS</DefineConstants>
     <Antlr4RuntimeDir>..\..\lib\antlr4cs\runtime\CSharp\Antlr4.Runtime</Antlr4RuntimeDir>
   </PropertyGroup>
   <ItemGroup>
