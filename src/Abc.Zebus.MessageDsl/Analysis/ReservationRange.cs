@@ -1,10 +1,16 @@
-﻿using Abc.Zebus.MessageDsl.Ast;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Abc.Zebus.MessageDsl.Ast;
 
 namespace Abc.Zebus.MessageDsl.Analysis;
 
 internal readonly struct ReservationRange(int startTag, int endTag)
 {
     public static ReservationRange None => default;
+
+    public int StartTag => startTag;
+    public int EndTag => endTag;
 
     private bool IsValid => startTag > 0;
 
@@ -35,6 +41,32 @@ internal readonly struct ReservationRange(int startTag, int endTag)
 
         message.Attributes.Add(new AttributeDefinition(KnownTypes.ProtoReservedAttribute, startTag == endTag ? $"{startTag}" : $"{startTag}, {endTag}"));
         message.ReservedRanges.Add(this);
+    }
+
+    public static IEnumerable<ReservationRange> Compress(IEnumerable<ReservationRange> ranges)
+    {
+        var startTag = 0;
+        var endTag = 0;
+
+        foreach (var range in ranges.Where(i => i.IsValid).OrderBy(i => i.StartTag))
+        {
+            if (startTag == 0)
+            {
+                startTag = range.StartTag;
+                endTag = range.EndTag;
+            }
+
+            if (range.StartTag > endTag + 1)
+            {
+                yield return new ReservationRange(startTag, endTag);
+                startTag = range.StartTag;
+            }
+
+            endTag = Math.Max(endTag, range.EndTag);
+        }
+
+        if (startTag != 0)
+            yield return new ReservationRange(startTag, endTag);
     }
 
     public override string ToString()

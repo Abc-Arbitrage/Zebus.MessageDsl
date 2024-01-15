@@ -85,6 +85,7 @@ public sealed class ProtoGenerator : GeneratorBase
         using (Block())
         {
             WriteMessageOptions(message);
+            WriteReservedFields(message);
 
             foreach (var param in message.Parameters)
                 WriteField(param);
@@ -107,6 +108,30 @@ public sealed class ProtoGenerator : GeneratorBase
 
             Writer.WriteLine();
         }
+    }
+
+    private void WriteReservedFields(MessageDefinition message)
+    {
+        if (message.ReservedRanges.Count == 0)
+            return;
+
+        Writer.Write("reserved ");
+        var first = true;
+
+        foreach (var reservation in ReservationRange.Compress(message.ReservedRanges))
+        {
+            if (first)
+                first = false;
+            else
+                Writer.Write(", ");
+
+            if (reservation.StartTag == reservation.EndTag)
+                Writer.Write(reservation.StartTag);
+            else
+                Writer.Write("{0} to {1}", reservation.StartTag, reservation.EndTag);
+        }
+
+        Writer.WriteLine(";");
     }
 
     private void WriteField(ParameterDefinition param)

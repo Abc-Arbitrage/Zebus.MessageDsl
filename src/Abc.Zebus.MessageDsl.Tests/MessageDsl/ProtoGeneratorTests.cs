@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Abc.Zebus.MessageDsl.Analysis;
 using Abc.Zebus.MessageDsl.Ast;
 using Abc.Zebus.MessageDsl.Generator;
 using Abc.Zebus.MessageDsl.Tests.TestTools;
@@ -188,6 +189,31 @@ public class ProtoGeneratorTests : GeneratorTests
 
         code.ShouldContain("optional MsgB _subTypeMsgB = 10;");
         code.ShouldContain("optional MsgC _subTypeMsgC = 11;");
+    }
+
+    [Test]
+    public async Task should_generate_reservations()
+    {
+        await Verify(new MessageDefinition
+        {
+            Name = "MsgA",
+            Parameters =
+            {
+                new ParameterDefinition("int?", "foo"),
+            },
+            ReservedRanges =
+            {
+                new ReservationRange(2),
+                new ReservationRange(10, 15),
+                new ReservationRange(8, 14),
+                new ReservationRange(16),
+                new ReservationRange(42)
+            },
+            Options =
+            {
+                Proto = true
+            }
+        });
     }
 
     protected override string SnapshotExtension => "proto";

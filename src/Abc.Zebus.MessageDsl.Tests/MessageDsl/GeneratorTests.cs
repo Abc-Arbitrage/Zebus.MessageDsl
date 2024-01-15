@@ -19,6 +19,7 @@ public abstract class GeneratorTests
     protected abstract string SnapshotExtension { get; }
     protected abstract string GenerateRaw(ParsedContracts contracts);
 
+    [MustUseReturnValue]
     protected string Generate(MessageDefinition message)
     {
         var contracts = new ParsedContracts();
@@ -26,6 +27,7 @@ public abstract class GeneratorTests
         return Generate(contracts);
     }
 
+    [MustUseReturnValue]
     protected string Generate(ParsedContracts contracts)
     {
         PreProcess(contracts);
@@ -40,7 +42,6 @@ public abstract class GeneratorTests
         return result;
     }
 
-    [MustUseReturnValue]
     protected Task<string> Verify(MessageDefinition message)
     {
         var contracts = new ParsedContracts();
@@ -48,7 +49,6 @@ public abstract class GeneratorTests
         return Verify(contracts);
     }
 
-    [MustUseReturnValue]
     protected async Task<string> Verify(ParsedContracts contracts)
     {
         PreProcess(contracts);
