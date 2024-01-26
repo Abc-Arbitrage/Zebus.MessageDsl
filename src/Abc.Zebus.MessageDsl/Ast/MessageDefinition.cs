@@ -7,7 +7,7 @@ public class MessageDefinition : AstNode, IClassNode
 {
     private MemberOptions? _options;
 
-    public string Name { get; set; } = default!;
+    public string Name { get; set; } = string.Empty;
     public AccessModifier AccessModifier { get; set; }
     public InheritanceModifier InheritanceModifier { get; set; }
     public IList<string> GenericParameters { get; } = new List<string>();

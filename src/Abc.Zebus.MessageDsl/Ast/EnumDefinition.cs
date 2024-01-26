@@ -9,7 +9,7 @@ public class EnumDefinition : AstNode, IMemberNode
 {
     private MemberOptions? _options;
 
-    public string Name { get; set; } = default!;
+    public string Name { get; set; } = string.Empty;
     public TypeName UnderlyingType { get; set; } = "int";
     public AccessModifier AccessModifier { get; set; }
     public AttributeSet Attributes { get; } = new();

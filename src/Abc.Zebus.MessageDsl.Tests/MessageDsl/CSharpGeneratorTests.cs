@@ -934,6 +934,13 @@ public class CSharpGeneratorTests : GeneratorTests
         code.ShouldContain("] int foo");
     }
 
+    [Test]
+    public void should_handle_missing_data()
+    {
+        _ = Generate(new MessageDefinition());
+        _ = Generate(new MessageDefinition { Parameters = { new ParameterDefinition() } });
+    }
+
     protected override string SnapshotExtension => "cs";
 
     protected override string GenerateRaw(ParsedContracts contracts)

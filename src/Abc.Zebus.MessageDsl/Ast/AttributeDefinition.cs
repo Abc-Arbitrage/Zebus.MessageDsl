@@ -2,7 +2,7 @@
 
 public class AttributeDefinition : AstNode
 {
-    private TypeName _typeName = default!;
+    private TypeName _typeName = TypeName.Empty;
 
     public TypeName TypeName
     {

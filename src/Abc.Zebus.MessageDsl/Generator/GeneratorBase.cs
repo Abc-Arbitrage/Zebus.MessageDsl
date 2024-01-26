@@ -51,10 +51,14 @@ public abstract class GeneratorBase : IDisposable
         => _stringBuilder.ToString();
 
     protected static string ParameterCase(string s)
-        => char.ToLowerInvariant(s[0]) + s.Substring(1);
+        => !string.IsNullOrEmpty(s)
+            ? char.ToLowerInvariant(s[0]) + s.Substring(1)
+            : string.Empty;
 
     protected static string MemberCase(string s)
-        => char.ToUpperInvariant(s[0]) + s.Substring(1);
+        => !string.IsNullOrEmpty(s)
+            ? char.ToUpperInvariant(s[0]) + s.Substring(1)
+            : string.Empty;
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly")]
     public void Dispose()

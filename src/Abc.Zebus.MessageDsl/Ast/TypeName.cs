@@ -69,6 +69,8 @@ public sealed class TypeName : IEquatable<TypeName>
 
     private static readonly HashSet<string> _csharpNonTypeKeywords = CSharpSyntax.EnumerateCSharpKeywords().Except(_aliasTypeMap.Keys).ToHashSet();
 
+    internal static TypeName Empty { get; } = new(null);
+
     static TypeName()
     {
         _clrTypeToAlias = new Dictionary<string, string>();
