@@ -94,8 +94,11 @@ internal class AstCreationVisitor : MessageContractsBaseVisitor<AstNode?>
         if (_hasDefinitions)
             _contracts.AddError(context, "using clauses should be set at the top of the file");
 
-        var ns = context.@namespace().GetText();
-        _contracts.ImportedNamespaces.Add(ns);
+        var ns = context.@namespace()?.GetText();
+
+        if (!string.IsNullOrEmpty(ns))
+            _contracts.ImportedNamespaces.Add(ns);
+
         return null;
     }
 
@@ -198,7 +201,7 @@ internal class AstCreationVisitor : MessageContractsBaseVisitor<AstNode?>
             _currentParameter = new ParameterDefinition
             {
                 Name = GetId(context.paramName),
-                Type = context.typeName().GetText(),
+                Type = context.typeName()?.GetText(),
                 IsMarkedOptional = context.optionalModifier != null,
                 DefaultValue = context.defaultValue?.GetText(),
                 ParseContext = context
@@ -245,10 +248,9 @@ internal class AstCreationVisitor : MessageContractsBaseVisitor<AstNode?>
         if (_currentAttributeSet == null)
             return null;
 
-        var attrParameters = context.attributeParameters();
-        var attrParametersText = attrParameters?.GetFullText();
+        var attrParametersText = context.attributeParameters()?.GetFullText();
 
-        var attr = new AttributeDefinition(context.attributeType.GetText(), attrParametersText)
+        var attr = new AttributeDefinition(context.attributeType?.GetText(), attrParametersText)
         {
             Target = _currentAttributeTarget,
             ParseContext = context
@@ -319,38 +321,42 @@ internal class AstCreationVisitor : MessageContractsBaseVisitor<AstNode?>
 
         foreach (var clause in context.typeParamConstraintClause())
         {
-            if (clause is TypeParamConstraintClauseClassContext)
+            switch (clause)
             {
-                if (constraint.IsClass)
-                    _contracts.AddError(clause, "Duplicate class constraint");
+                case TypeParamConstraintClauseClassContext:
+                {
+                    if (constraint.IsClass)
+                        _contracts.AddError(clause, "Duplicate class constraint");
 
-                constraint.IsClass = true;
-                continue;
-            }
+                    constraint.IsClass = true;
+                    break;
+                }
 
-            if (clause is TypeParamConstraintClauseStructContext)
-            {
-                if (constraint.IsStruct)
-                    _contracts.AddError(clause, "Duplicate struct constraint");
+                case TypeParamConstraintClauseStructContext:
+                {
+                    if (constraint.IsStruct)
+                        _contracts.AddError(clause, "Duplicate struct constraint");
 
-                constraint.IsStruct = true;
-                continue;
-            }
+                    constraint.IsStruct = true;
+                    break;
+                }
 
-            if (clause is TypeParamConstraintClauseNewContext)
-            {
-                if (constraint.HasDefaultConstructor)
-                    _contracts.AddError(clause, "Duplicate new() constraint");
+                case TypeParamConstraintClauseNewContext:
+                {
+                    if (constraint.HasDefaultConstructor)
+                        _contracts.AddError(clause, "Duplicate new() constraint");
 
-                constraint.HasDefaultConstructor = true;
-                continue;
-            }
+                    constraint.HasDefaultConstructor = true;
+                    break;
+                }
 
-            if (clause is TypeParamConstraintClauseTypeContext typeClause)
-            {
-                var typeName = new TypeName(typeClause.typeName().GetText());
-                if (!constraint.Types.Add(typeName))
-                    _contracts.AddError(clause, $"Duplicate type constraint: '{typeName}'");
+                case TypeParamConstraintClauseTypeContext typeClause:
+                {
+                    var typeName = new TypeName(typeClause.typeName()?.GetText());
+                    if (!constraint.Types.Add(typeName))
+                        _contracts.AddError(clause, $"Duplicate type constraint: '{typeName}'");
+                    break;
+                }
             }
         }
 
@@ -367,15 +373,15 @@ internal class AstCreationVisitor : MessageContractsBaseVisitor<AstNode?>
             _currentMessage.Options = _currentMemberOptions;
 
             var nameContext = context.GetRuleContext<MessageNameContext>(0);
-            message.Name = GetId(nameContext.name);
+            message.Name = GetId(nameContext?.name);
 
             message.ContainingClasses.AddRange(
-                nameContext._containingTypes.Select(name => new TypeName(name.GetText()))
+                nameContext?._containingTypes.Select(name => new TypeName(name.GetText())) ?? []
             );
 
             ProcessTypeModifiers(message, context.typeModifier().Select(i => i.type));
 
-            foreach (var typeParamToken in nameContext._typeParams)
+            foreach (var typeParamToken in nameContext?._typeParams ?? [])
             {
                 var paramId = GetId(typeParamToken);
 

@@ -844,6 +844,19 @@ public class ParsedContractsTests
     public bool should_validate_attribute_targets(string definitionText)
         => Parse(definitionText).IsValid;
 
+    [Test]
+    [TestCase("Foo(int a,,")]
+    [TestCase("using;")]
+    [TestCase("[] Foo()")]
+    [TestCase("[")]
+    [TestCase("Foo() :")]
+    [TestCase("Foo() where")]
+    [TestCase("Foo<T>() where T :")]
+    [TestCase("(")]
+    [TestCase("[Foo]")]
+    public void should_handle_errors(string definitionText)
+        => Parse(definitionText);
+
     private static ParsedContracts ParseValid(string definitionText)
     {
         var contracts = Parse(definitionText);

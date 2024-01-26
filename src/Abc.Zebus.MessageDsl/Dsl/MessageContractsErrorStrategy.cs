@@ -39,7 +39,7 @@ internal class MessageContractsErrorStrategy : DefaultErrorStrategy
         if (e is GoToNextDefinitionException)
         {
             // Unwind the stack to the end of the current definition rule
-            if (recognizer.Context.RuleIndex != MessageContractsParser.RULE_definition)
+            if (recognizer.Context.RuleIndex is not (MessageContractsParser.RULE_definition or MessageContractsParser.RULE_compileUnit))
                 throw e;
 
             // Rewind the input to the start of the definition, then skip a single token
