@@ -71,7 +71,7 @@ public class MessageDslGenerator : IIncrementalGenerator
         if (result.GeneratedSource is null)
             return;
 
-        var hintName = _sanitizePathRegex.Replace(result.RelativePath ?? result.InputFile.Path, "_") + ".g.cs";
+        var hintName = _sanitizePathRegex.Replace(result.RelativePath ?? result.InputFile.Path, "_") + ".cs";
         context.AddSource(hintName, result.GeneratedSource);
     }
 

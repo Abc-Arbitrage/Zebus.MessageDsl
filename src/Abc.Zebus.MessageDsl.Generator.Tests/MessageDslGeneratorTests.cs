@@ -29,7 +29,7 @@ public class MessageDslGeneratorTests
 
         // Assert
         var generatedSource = runResults.Results[0].GeneratedSources[0];
-        Assert.That(generatedSource.HintName, Is.EqualTo("Dsl_Messages.msg.g.cs"));
+        Assert.That(generatedSource.HintName, Is.EqualTo("Dsl_Messages.msg.cs"));
         var sourceText = generatedSource.SourceText.ToString();
         Assert.That(sourceText, Does.Contain("public sealed partial class DoSomethingCommand : ICommand"));
     }
@@ -52,10 +52,10 @@ public class MessageDslGeneratorTests
                                               .GetRunResult();
 
         // Assert
-        var generatedSource1 = runResults.Results[0].GeneratedSources.Single(x => x.HintName == "Dsl_Messages1.msg.g.cs");
-        AssertMessageSourceIsCorrect(generatedSource1, "Dsl_Messages1.msg.g.cs", "public sealed partial class DoSomethingCommand : ICommand");
-        var generatedSource2 = runResults.Results[0].GeneratedSources.Single(x => x.HintName == "Dsl_Messages2.msg.g.cs");
-        AssertMessageSourceIsCorrect(generatedSource2, "Dsl_Messages2.msg.g.cs", "public sealed partial class DoSomethingCommand : ICommand");
+        var generatedSource1 = runResults.Results[0].GeneratedSources.Single(x => x.HintName == "Dsl_Messages1.msg.cs");
+        AssertMessageSourceIsCorrect(generatedSource1, "Dsl_Messages1.msg.cs", "public sealed partial class DoSomethingCommand : ICommand");
+        var generatedSource2 = runResults.Results[0].GeneratedSources.Single(x => x.HintName == "Dsl_Messages2.msg.cs");
+        AssertMessageSourceIsCorrect(generatedSource2, "Dsl_Messages2.msg.cs", "public sealed partial class DoSomethingCommand : ICommand");
     }
 
     [Test]
