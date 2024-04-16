@@ -4,6 +4,7 @@ using System.Linq;
 using Abc.Zebus.MessageDsl.Analysis;
 using Abc.Zebus.MessageDsl.Ast;
 using Abc.Zebus.MessageDsl.Tests.TestTools;
+using JetBrains.Annotations;
 using NUnit.Framework;
 
 namespace Abc.Zebus.MessageDsl.Tests.MessageDsl;
@@ -223,6 +224,7 @@ public class ParsedContractsTests
     [Test]
     public void should_detect_invalid_parameters()
     {
+        ParseInvalid("FooExecuted(int a,)");
         ParseInvalid("FooExecuted(int a, int a)");
         ParseInvalid("FooExecuted([0] int a)");
         ParseInvalid("FooExecuted([ProtoMember(0)] int a)");
@@ -712,6 +714,7 @@ public class ParsedContractsTests
     [TestCase("Foo(int")]
     [TestCase("Foo(int;")]
     [TestCase("Foo(int first")]
+    [TestCase("Foo(int first,)")]
     [TestCase("Foo(int first;")]
     [TestCase("Foo(int first,")]
     [TestCase("Foo(int first,;")]
@@ -857,7 +860,7 @@ public class ParsedContractsTests
     public void should_handle_errors(string definitionText)
         => Parse(definitionText);
 
-    private static ParsedContracts ParseValid(string definitionText)
+    private static ParsedContracts ParseValid([LanguageInjection("csharp")] string definitionText)
     {
         var contracts = Parse(definitionText);
 
@@ -867,7 +870,7 @@ public class ParsedContractsTests
         return contracts;
     }
 
-    private static ParsedContracts ParseInvalid(string definitionText)
+    private static ParsedContracts ParseInvalid([LanguageInjection("csharp")] string definitionText)
     {
         var contracts = Parse(definitionText);
 
@@ -877,7 +880,7 @@ public class ParsedContractsTests
         return contracts;
     }
 
-    private static ParsedContracts Parse(string definitionText)
+    private static ParsedContracts Parse([LanguageInjection("csharp")] string definitionText)
     {
         Console.WriteLine();
         Console.WriteLine("PARSE: {0}", definitionText);
