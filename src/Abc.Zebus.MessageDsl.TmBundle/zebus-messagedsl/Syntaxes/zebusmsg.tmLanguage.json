@@ -1,0 +1,161 @@
+{
+    "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+    "name": "Zebus Messages",
+    "uuid": "86FA8B6A-FA5E-4139-904B-91C75675BC6B",
+    "scopeName": "source.zebusmsg",
+    "fileTypes": [
+        "msg"
+    ],
+    "patterns": [
+        {
+            "include": "#messages"
+        }
+    ],
+    "repository": {
+        "messages": {
+            "patterns": [
+                {
+                    "include": "#comments"
+                },
+                {
+                    "include": "#pragma"
+                },
+                {
+                    "include": "#attributes"
+                },
+                {
+                    "include": "#messageName"
+                },
+                {
+                    "include": "#keywords"
+                },
+                {
+                    "include": "#literals"
+                }
+            ]
+        },
+        "comments": {
+            "patterns": [
+                {
+                    "name": "comment.block.zebusmsg",
+                    "begin": "/\\*",
+                    "end": "\\*/",
+                    "patterns": [
+                        {
+                            "include": "#commentContent"
+                        }
+                    ]
+                },
+                {
+                    "name": "comment.line",
+                    "begin": "//",
+                    "end": "$",
+                    "patterns": [
+                        {
+                            "include": "#commentContent"
+                        }
+                    ]
+                }
+            ]
+        },
+        "commentContent": {
+            "patterns": [
+                {
+                    "name": "keyword.control",
+                    "match": "(?i)\\b(TODO|FIXME|HACK|ISSUE)\\b"
+                }
+            ]
+        },
+        "pragma": {
+            "patterns": [
+                {
+                    "name": "meta.preprocessor.zebusmsg",
+                    "begin": "^\\s*#\\s*\\pragma\\b",
+                    "end": "$",
+                    "patterns": [
+                        {
+                            "include": "#comments"
+                        }
+                    ]
+                }
+            ]
+        },
+        "attributes": {
+            "patterns": [
+                {
+                    "name": "emphasis",
+                    "begin": "\\[",
+                    "end": "\\]",
+                    "patterns": [
+                        {
+                            "include": "#attributes"
+                        },
+                        {
+                            "include": "#comments"
+                        },
+                        {
+                            "include": "#keywords"
+                        },
+                        {
+                            "include": "#literals"
+                        }
+                    ]
+                }
+            ]
+        },
+        "messageName": {
+            "patterns": [
+                {
+                    "name": "entity.name.class.zebusmsg",
+                    "match": "\\w+(?=\\s*[(<])"
+                },
+                {
+                    "name": "entity.name.type.zebusmsg",
+                    "match": "\\w+(?=\\s*!\\s*\\()"
+                }
+            ]
+        },
+        "keywords": {
+            "patterns": [
+                {
+                    "name": "keyword.control.zebusmsg",
+                    "match": "\\b(this|base|as|is|new|sizeof|typeof|stackalloc|true|false|else|if|switch|case|default|do|for|foreach|in|while|lock|break|continue|goto|return|try|throw|catch|finally|checked|unchecked|fixed|unsafe|class|interface|delegate|explicit|implicit|operator|params|ref|out|abstract|const|event|extern|override|readonly|sealed|static|virtual|volatile|public|protected|private|internal|namespace|using|get|set|add|remove|null|bool|byte|char|decimal|double|enum|float|int|long|sbyte|short|struct|uint|ushort|ulong|object|string|void|DateTime|Guid)\\b"
+                }
+            ]
+        },
+        "literals": {
+            "patterns": [
+                {
+                    "name": "string.quoted.double.zebusmsg",
+                    "begin": "\"",
+                    "end": "\"",
+                    "patterns": [
+                        {
+                            "name": "constant.character.escape.zebusmsg",
+                            "match": "\\\\."
+                        }
+                    ]
+                },
+                {
+                    "name": "string.quoted.double.zebusmsg",
+                    "begin": "@\"",
+                    "end": "\"(?!\")",
+                    "patterns": [
+                        {
+                            "name": "constant.character.escape.zebusmsg",
+                            "match": "\"\""
+                        }
+                    ]
+                },
+                {
+                    "name": "string.quoted.single.zebusmsg",
+                    "match": "'(\\\\.|.)'"
+                },
+                {
+                    "name": "constant.numeric",
+                    "match": "\\b0[xX][0-9a-fA-F]+|(\\b\\d+(\\.[0-9]+)?|\\.[0-9]+)([eE][+-]?[0-9]+)?"
+                }
+            ]
+        }
+    }
+}

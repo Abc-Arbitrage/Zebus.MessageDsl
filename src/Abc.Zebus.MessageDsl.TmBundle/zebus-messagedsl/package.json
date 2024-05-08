@@ -1,0 +1,26 @@
+{
+    "name": "zebus-messagedsl",
+    "displayName": "Zebus.MessageDsl",
+    "description": "Zebus Message DSL",
+    "version": "0.0.1",
+    "publisher": "ABC arbitrage",
+    "engines": {
+        "vscode": "^1.23.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "zebusmsg",
+            "aliases": ["Zebus Messages", "zebusmsg"],
+            "extensions": [".msg"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "zebusmsg",
+            "scopeName": "source.zebusmsg",
+            "path": "./syntaxes/zebusmsg.tmLanguage.json"
+        }]
+    }
+}
