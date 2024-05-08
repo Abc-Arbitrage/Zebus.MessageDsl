@@ -21,13 +21,13 @@
                     "include": "#pragma"
                 },
                 {
+                    "include": "#keywords"
+                },
+                {
                     "include": "#attributes"
                 },
                 {
                     "include": "#messageName"
-                },
-                {
-                    "include": "#keywords"
                 },
                 {
                     "include": "#literals"
@@ -70,7 +70,7 @@
             "patterns": [
                 {
                     "name": "meta.preprocessor.zebusmsg",
-                    "begin": "^\\s*#\\s*\\pragma\\b",
+                    "begin": "^\\s*#\\s*pragma\\b",
                     "end": "$",
                     "patterns": [
                         {
@@ -107,7 +107,7 @@
             "patterns": [
                 {
                     "name": "entity.name.class.zebusmsg",
-                    "match": "\\w+(?=\\s*[(<])"
+                    "match": "\\w+(?=\\s*([\\[(<?]|\\b\\w))"
                 },
                 {
                     "name": "entity.name.type.zebusmsg",
@@ -119,7 +119,7 @@
             "patterns": [
                 {
                     "name": "keyword.control.zebusmsg",
-                    "match": "\\b(this|base|as|is|new|sizeof|typeof|stackalloc|true|false|else|if|switch|case|default|do|for|foreach|in|while|lock|break|continue|goto|return|try|throw|catch|finally|checked|unchecked|fixed|unsafe|class|interface|delegate|explicit|implicit|operator|params|ref|out|abstract|const|event|extern|override|readonly|sealed|static|virtual|volatile|public|protected|private|internal|namespace|using|get|set|add|remove|null|bool|byte|char|decimal|double|enum|float|int|long|sbyte|short|struct|uint|ushort|ulong|object|string|void|DateTime|Guid)\\b"
+                    "match": "\\b(abstract|add|alias|as|ascending|async|await|base|bool|break|by|byte|case|catch|char|checked|class|const|continue|decimal|default|delegate|descending|do|double|dynamic|else|enum|equals|event|explicit|extern|false|finally|fixed|float|for|foreach|from|get|global|goto|group|if|implicit|in|int|interface|internal|into|is|join|let|lock|long|nameof|namespace|new|null|object|on|operator|orderby|out|override|params|partial|private|protected|public|readonly|ref|remove|return|sbyte|sealed|select|set|short|sizeof|stackalloc|static|string|struct|switch|this|throw|true|try|typeof|uint|ulong|unchecked|unsafe|ushort|using|value|var|virtual|void|volatile|when|where|while|yield)\\b"
                 }
             ]
         },
