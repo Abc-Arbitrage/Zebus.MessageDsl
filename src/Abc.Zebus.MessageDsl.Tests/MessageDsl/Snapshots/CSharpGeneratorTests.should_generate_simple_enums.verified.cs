@@ -13,7 +13,7 @@ using ProtoBuf;
 [EnumAttr]
 public enum Foo
 {
-    Default,
+    Default = 0,
     Bar = -2,
-    Baz
+    Baz = -1
 }

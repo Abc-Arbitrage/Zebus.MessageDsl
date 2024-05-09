@@ -13,7 +13,7 @@ using ProtoBuf;
 [EnumAttr]
 public enum Foo : short
 {
-    Default,
+    Default = 0,
     
     [Description("Beer!")]
     Bar = -2,

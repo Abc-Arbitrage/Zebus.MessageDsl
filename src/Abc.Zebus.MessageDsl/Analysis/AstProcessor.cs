@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using Abc.Zebus.MessageDsl.Ast;
 
@@ -87,21 +89,71 @@ internal class AstProcessor
 
     private static void ResolveEnumValues(EnumDefinition enumDef)
     {
-        if (!enumDef.Options.Proto)
-            return;
+        ResolveCSharpValues();
+        ResolveProtoValues();
 
-        if (enumDef.UnderlyingType.NetType != "int")
-            return;
-
-        var nextValue = (int?)0;
-
-        foreach (var member in enumDef.Members)
+        void ResolveCSharpValues()
         {
-            member.ProtoValue = string.IsNullOrEmpty(member.Value)
-                ? nextValue
-                : enumDef.GetValidUnderlyingValue(member.Value) as int?;
+            var lastValue = (string?)null;
+            var lastValueAsNumber = (long?)null;
+            var lastValueIsParsed = false;
+            var lastOffset = 0L;
 
-            nextValue = member.ProtoValue + 1;
+            foreach (var member in enumDef.Members)
+            {
+                if (!string.IsNullOrEmpty(member.Value))
+                {
+                    lastValue = member.CSharpValue = member.Value;
+                    lastValueAsNumber = null;
+                    lastValueIsParsed = false;
+                    lastOffset = 0;
+                }
+                else if (lastValue is null)
+                {
+                    lastValue = member.CSharpValue = "0";
+                    lastValueAsNumber = 0;
+                    lastValueIsParsed = true;
+                    lastOffset = 0;
+                }
+                else
+                {
+                    if (lastValueAsNumber is null && !lastValueIsParsed)
+                    {
+                        if (long.TryParse(lastValue, NumberStyles.Any, CultureInfo.InvariantCulture, out var lastValueParsed))
+                            lastValueAsNumber = lastValueParsed;
+                        else if (lastValue.StartsWith("0x", StringComparison.OrdinalIgnoreCase) && long.TryParse(lastValue.Substring(2), NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out lastValueParsed))
+                            lastValueAsNumber = lastValueParsed;
+
+                        lastValueIsParsed = true;
+                    }
+
+                    ++lastOffset;
+
+                    member.CSharpValue = lastValueAsNumber is { } lastBaseValue
+                        ? checked(lastBaseValue + lastOffset).ToString(CultureInfo.InvariantCulture)
+                        : $"({lastValue}) + {lastOffset}";
+                }
+            }
+        }
+
+        void ResolveProtoValues()
+        {
+            if (!enumDef.Options.Proto)
+                return;
+
+            if (enumDef.UnderlyingType.NetType != "int")
+                return;
+
+            var nextValue = (int?)0;
+
+            foreach (var member in enumDef.Members)
+            {
+                member.ProtoValue = string.IsNullOrEmpty(member.Value)
+                    ? nextValue
+                    : enumDef.GetValidUnderlyingValue(member.Value) as int?;
+
+                nextValue = member.ProtoValue + 1;
+            }
         }
     }
 

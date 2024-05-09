@@ -152,7 +152,9 @@ public sealed class CSharpGenerator : GeneratorBase
 
                 Writer.Write(Identifier(member.Name));
 
-                if (!string.IsNullOrEmpty(member.Value))
+                if (!string.IsNullOrEmpty(member.CSharpValue))
+                    Writer.Write(" = {0}", member.CSharpValue);
+                else if (!string.IsNullOrEmpty(member.Value))
                     Writer.Write(" = {0}", member.Value);
 
                 if (member != lastMember)

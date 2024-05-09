@@ -558,6 +558,59 @@ public class ParsedContractsTests
     }
 
     [Test]
+    public void should_compute_enum_member_values()
+    {
+        var msg = ParseValid(
+            """
+            enum Counter
+            {
+                Zero,
+                One,
+                Two,
+                _,
+                _,
+                Five,
+                Six,
+                Seven,
+                Eight = 2 << 2,
+                Nine,
+                Ten,
+                Eleven,
+                _,
+                AnotherOne = One,
+                AnotherTwo,
+                AnotherThree,
+                _,
+                Twenty = 0x14,
+                TwentyOne,
+                TwentyTwo,
+                _
+            }
+            """
+        );
+
+        var enumDef = msg.Enums.ExpectedSingle();
+        enumDef.Members.Select(m => m.CSharpValue).ShouldEqual([
+            "0",
+            "1",
+            "2",
+            "5",
+            "6",
+            "7",
+            "2 << 2",
+            "(2 << 2) + 1",
+            "(2 << 2) + 2",
+            "(2 << 2) + 3",
+            "One",
+            "(One) + 1",
+            "(One) + 2",
+            "0x14",
+            "21",
+            "22"
+        ]);
+    }
+
+    [Test]
     public void should_handle_double_angled_brackets()
     {
         ParseValid("enum Foo { Bar = 1 << 4 };");
