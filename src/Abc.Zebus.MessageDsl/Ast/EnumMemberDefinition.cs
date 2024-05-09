@@ -6,4 +6,8 @@ public class EnumMemberDefinition : AstNode, INamedNode
     public string? Value { get; set; }
     public AttributeSet Attributes { get; } = new();
     internal int? ProtoValue { get; set; }
+    internal bool IsDiscarded { get; set; }
+
+    public override string ToString()
+        => Name;
 }

@@ -46,6 +46,9 @@ internal class AstProcessor
     {
         foreach (var message in _contracts.Messages)
             RemoveDiscardedParameters(message);
+
+        foreach (var enumDef in _contracts.Enums)
+            RemoveDiscardedMembers(enumDef);
     }
 
     private static void AddInterfaces(MessageDefinition message)
@@ -143,6 +146,15 @@ internal class AstProcessor
         {
             if (message.Parameters[i].IsDiscarded)
                 message.Parameters.RemoveAt(i);
+        }
+    }
+
+    private static void RemoveDiscardedMembers(EnumDefinition enumDef)
+    {
+        for (var i = enumDef.Members.Count - 1; i >= 0; --i)
+        {
+            if (enumDef.Members[i].IsDiscarded)
+                enumDef.Members.RemoveAt(i);
         }
     }
 

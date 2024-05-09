@@ -148,6 +148,20 @@ internal class AstCreationVisitor : MessageContractsBaseVisitor<AstNode?>
 
         foreach (var enumMemberContext in context.enumMember())
         {
+            if (enumMemberContext.discard is not null)
+            {
+                enumDef.Members.Add(
+                    new EnumMemberDefinition
+                    {
+                        ParseContext = enumMemberContext,
+                        Name = "_",
+                        IsDiscarded = true
+                    }
+                );
+
+                continue;
+            }
+
             var memberDef = new EnumMemberDefinition
             {
                 ParseContext = enumMemberContext,

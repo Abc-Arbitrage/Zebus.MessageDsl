@@ -158,6 +158,9 @@ internal class AstValidator
 
         foreach (var member in enumDef.Members)
         {
+            if (member.IsDiscarded)
+                continue;
+
             if (!definedMembers.Add(member.Name))
                 _contracts.AddError(member.ParseContext, $"Duplicate enum member: {member.Name}");
 

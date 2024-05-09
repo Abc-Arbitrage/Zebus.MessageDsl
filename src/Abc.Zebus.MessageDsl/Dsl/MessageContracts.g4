@@ -44,6 +44,7 @@ enumDefinition
 
 enumMember
 	:	attributes name=id ('=' value=enumValue)?
+	|	discard=DISCARD
 	;
 
 enumValue
