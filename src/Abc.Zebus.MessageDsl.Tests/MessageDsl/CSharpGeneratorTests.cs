@@ -333,7 +333,7 @@ public class CSharpGeneratorTests : GeneratorTests
         });
 
         code.ShouldContain("public enum Foo : short");
-        code.ShouldContain("Default = 0,");
+        code.ShouldContain("Default,");
         code.ShouldContain("Bar = -2,");
         code.ShouldContain("Baz = Bar");
         code.ShouldContain("[EnumAttr]");

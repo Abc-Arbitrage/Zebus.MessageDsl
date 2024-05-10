@@ -6,8 +6,8 @@ public class EnumMemberDefinition : AstNode, INamedNode
     public string? Value { get; set; }
     public AttributeSet Attributes { get; } = new();
 
-    internal string? CSharpValue { get; set; }
-    internal int? ProtoValue { get; set; }
+    internal string? InferredValueAsCSharpString { get; set; }
+    internal object? InferredValueAsNumber { get; set; }
     internal bool IsDiscarded { get; set; }
 
     public override string ToString()

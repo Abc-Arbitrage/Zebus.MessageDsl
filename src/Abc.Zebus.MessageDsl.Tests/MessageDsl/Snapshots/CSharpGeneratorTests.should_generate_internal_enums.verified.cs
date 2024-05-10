@@ -12,5 +12,5 @@ using ProtoBuf;
 [System.CodeDom.Compiler.GeneratedCode("Abc.Zebus.MessageDsl", "1.2.3.4")]
 internal enum Foo
 {
-    Default = 0
+    Default
 }

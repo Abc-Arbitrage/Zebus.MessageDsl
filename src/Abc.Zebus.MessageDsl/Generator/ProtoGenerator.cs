@@ -69,11 +69,11 @@ public sealed class ProtoGenerator : GeneratorBase
 
         using (Block())
         {
-            if (enumDef.Members.Where(i => i.ProtoValue != null).GroupBy(i => i.ProtoValue.GetValueOrDefault()).Any(g => g.Count() > 1))
+            if (enumDef.Members.Where(i => i.InferredValueAsNumber != null).GroupBy(i => i.InferredValueAsNumber).Any(g => g.Count() > 1))
                 Writer.WriteLine("option allow_alias = true;");
 
             foreach (var member in enumDef.Members)
-                Writer.WriteLine("{0} = {1};", member.Name, member.ProtoValue ?? (object)"TODO");
+                Writer.WriteLine("{0} = {1};", member.Name, member.InferredValueAsNumber ?? "TODO");
         }
     }
 

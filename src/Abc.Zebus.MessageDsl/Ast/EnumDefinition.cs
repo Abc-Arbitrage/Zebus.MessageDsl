@@ -15,6 +15,8 @@ public class EnumDefinition : AstNode, IMemberNode
     public AttributeSet Attributes { get; } = new();
     public IList<EnumMemberDefinition> Members { get; } = new List<EnumMemberDefinition>();
 
+    internal bool UseInferredValues { get; set; }
+
     public MemberOptions Options
     {
         get => _options ??= new MemberOptions();

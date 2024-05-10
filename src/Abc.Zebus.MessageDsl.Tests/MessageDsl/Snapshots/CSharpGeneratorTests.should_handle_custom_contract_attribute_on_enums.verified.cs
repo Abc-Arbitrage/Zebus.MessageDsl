@@ -12,5 +12,5 @@ using ProtoBuf;
 [ProtoContract(EnumPassthru = true)]
 public enum Foo
 {
-    Default = 0
+    Default
 }

@@ -590,7 +590,9 @@ public class ParsedContractsTests
         );
 
         var enumDef = msg.Enums.ExpectedSingle();
-        enumDef.Members.Select(m => m.CSharpValue).ShouldEqual([
+
+        enumDef.UseInferredValues.ShouldBeTrue();
+        enumDef.Members.Select(m => m.InferredValueAsCSharpString).ShouldEqual([
             "0",
             "1",
             "2",
