@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Abc.Zebus.MessageDsl.Ast;
 
 namespace Abc.Zebus.MessageDsl.Analysis;
 
 internal class AstProcessor
 {
+    private static readonly Regex _simpleValueRe = new(@"^\s*(?:-\s*)?(?:0[xX])?\w+\s*$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
     private readonly ParsedContracts _contracts;
 
     public AstProcessor(ParsedContracts contracts)
@@ -89,49 +91,51 @@ internal class AstProcessor
 
     private static void ResolveEnumValues(EnumDefinition enumDef)
     {
-        var lastValue = (string?)null;
-        var lastValueAsNumber = (long?)null;
-        var lastValueIsParsed = false;
-        var lastOffset = 0L;
+        var lastValueAsString = (string?)null;
+        var lastValueAsNumber = (object?)null;
+        var lastValueOffset = 0L;
 
         enumDef.UseInferredValues = enumDef.Members.Any(i => i.IsDiscarded);
 
         foreach (var member in enumDef.Members)
         {
-            if (!string.IsNullOrEmpty(member.Value))
+            if (!string.IsNullOrEmpty(member.Value) || lastValueAsString is null)
             {
-                lastValue = member.InferredValueAsCSharpString = member.Value;
-                lastValueAsNumber = null;
-                lastValueIsParsed = false;
-                lastOffset = 0;
-            }
-            else if (lastValue is null)
-            {
-                lastValue = member.InferredValueAsCSharpString = "0";
-                lastValueAsNumber = 0;
-                lastValueIsParsed = true;
-                lastOffset = 0;
+                lastValueAsString = member.InferredValueAsString = !string.IsNullOrEmpty(member.Value) ? member.Value : "0";
+                lastValueAsNumber = member.InferredValueAsNumber = enumDef.GetValidUnderlyingValue(member.InferredValueAsString);
+                lastValueOffset = 0;
             }
             else
             {
-                if (lastValueAsNumber is null && !lastValueIsParsed)
+                if (lastValueAsNumber is not null)
                 {
-                    if (long.TryParse(lastValue, NumberStyles.Any, CultureInfo.InvariantCulture, out var lastValueParsed))
-                        lastValueAsNumber = lastValueParsed;
-                    else if (lastValue.StartsWith("0x", StringComparison.OrdinalIgnoreCase) && long.TryParse(lastValue.Substring(2), NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out lastValueParsed))
-                        lastValueAsNumber = lastValueParsed;
+                    lastValueAsNumber = checked(lastValueAsNumber switch
+                    {
+                        byte value   => value + 1,
+                        sbyte value  => value + 1,
+                        short value  => value + 1,
+                        ushort value => value + 1,
+                        int value    => value + 1,
+                        uint value   => value + 1,
+                        long value   => value + 1,
+                        ulong value  => value + 1,
+                        _            => throw new InvalidOperationException("Unexpected enum underlying value type")
+                    });
 
-                    lastValueIsParsed = true;
+                    member.InferredValueAsString = lastValueAsNumber.ToString();
+                    member.InferredValueAsNumber = lastValueAsNumber;
                 }
+                else
+                {
+                    ++lastValueOffset;
 
-                ++lastOffset;
+                    member.InferredValueAsString = _simpleValueRe.IsMatch(lastValueAsString)
+                        ? $"{lastValueAsString} + {lastValueOffset}"
+                        : $"({lastValueAsString}) + {lastValueOffset}";
 
-                member.InferredValueAsCSharpString = lastValueAsNumber is { } lastBaseValue
-                    ? checked(lastBaseValue + lastOffset).ToString(CultureInfo.InvariantCulture)
-                    : $"({lastValue}) + {lastOffset}";
+                    member.InferredValueAsNumber = null;
+                }
             }
-
-            member.InferredValueAsNumber = enumDef.GetValidUnderlyingValue(member.InferredValueAsCSharpString);
         }
     }
 

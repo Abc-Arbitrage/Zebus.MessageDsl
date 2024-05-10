@@ -577,9 +577,14 @@ public class ParsedContractsTests
                 Ten,
                 Eleven,
                 _,
+                _,
+                Fourteen,
+                _,
                 AnotherOne = One,
                 AnotherTwo,
                 AnotherThree,
+                _,
+                AnotherFive,
                 _,
                 Twenty = 0x14,
                 TwentyOne,
@@ -592,7 +597,7 @@ public class ParsedContractsTests
         var enumDef = msg.Enums.ExpectedSingle();
 
         enumDef.UseInferredValues.ShouldBeTrue();
-        enumDef.Members.Select(m => m.InferredValueAsCSharpString).ShouldEqual([
+        enumDef.Members.Select(m => m.InferredValueAsString).ShouldEqual([
             "0",
             "1",
             "2",
@@ -603,9 +608,11 @@ public class ParsedContractsTests
             "(2 << 2) + 1",
             "(2 << 2) + 2",
             "(2 << 2) + 3",
+            "(2 << 2) + 6",
             "One",
-            "(One) + 1",
-            "(One) + 2",
+            "One + 1",
+            "One + 2",
+            "One + 4",
             "0x14",
             "21",
             "22"

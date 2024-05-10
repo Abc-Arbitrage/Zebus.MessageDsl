@@ -154,8 +154,8 @@ public sealed class CSharpGenerator : GeneratorBase
 
                 if (!string.IsNullOrEmpty(member.Value))
                     Writer.Write(" = {0}", member.Value);
-                else if (enumDef.UseInferredValues && !string.IsNullOrEmpty(member.InferredValueAsCSharpString))
-                    Writer.Write(" = {0}", member.InferredValueAsCSharpString);
+                else if (enumDef.UseInferredValues && !string.IsNullOrEmpty(member.InferredValueAsString))
+                    Writer.Write(" = {0}", member.InferredValueAsString);
 
                 if (member != lastMember)
                 {
