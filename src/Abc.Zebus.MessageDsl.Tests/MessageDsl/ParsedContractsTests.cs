@@ -620,6 +620,40 @@ public class ParsedContractsTests
     }
 
     [Test]
+    public void should_handle_discard_as_first_enum_value()
+    {
+        var msg = ParseValid(
+            """
+            enum Counter
+            {
+                _,
+                One
+            }
+            """
+        );
+
+        var enumDef = msg.Enums.ExpectedSingle();
+        enumDef.Members.Select(m => m.InferredValueAsString).ShouldEqual(["1"]);
+    }
+
+    [Test]
+    public void should_handle_explicit_first_enum_value()
+    {
+        var msg = ParseValid(
+            """
+            enum Counter
+            {
+                One = 1,
+                Two
+            }
+            """
+        );
+
+        var enumDef = msg.Enums.ExpectedSingle();
+        enumDef.Members.Select(m => m.InferredValueAsString).ShouldEqual(["1", "2"]);
+    }
+
+    [Test]
     public void should_handle_double_angled_brackets()
     {
         ParseValid("enum Foo { Bar = 1 << 4 };");
@@ -956,7 +990,7 @@ public class ParsedContractsTests
             Console.WriteLine($"MESSAGE: {message}({string.Join(", ", message.Parameters.Select(p => $"[{p.Tag}] {p}"))})");
 
         foreach (var member in contracts.Enums)
-            Console.WriteLine($"ENUM: {member}");
+            Console.WriteLine($"ENUM: {member} {{ {string.Join(", ", member.Members.Select(m => $"{m.Name} = {m.InferredValueAsNumber ?? m.InferredValueAsString ?? "(unknown)"}"))} }}");
 
         return contracts;
     }
