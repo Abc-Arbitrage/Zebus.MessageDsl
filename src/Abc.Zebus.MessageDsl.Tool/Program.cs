@@ -6,7 +6,7 @@ namespace Abc.Zebus.MessageDsl.Tool;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static int Main(string[] args)
     {
         var mainCommand = new RootCommand();
         var path = new Argument<string?>(".msg file", "The .msg file to process.")
@@ -22,40 +22,50 @@ public class Program
         mainCommand.AddOption(outputType);
 
         mainCommand.SetHandler(
-            (path, defaultNamespace, outputType) =>
+            context =>
             {
+                var parse = context.ParseResult;
+                var parsedPath = parse.GetValueForArgument(path);
+                var parsedNamespace = parse.GetValueForOption(defaultNamespace);
+                var parsedFormat = parse.GetValueForOption(outputType);
                 string? txt = null;
                 try
                 {
-                    if (path != null)
-                        txt = File.ReadAllText(path);
+                    if (parsedPath != null)
+                        txt = File.ReadAllText(parsedPath);
                 }
                 catch (FileNotFoundException)
                 {
-                    Console.Error.WriteLine($"File {path} does not exists.");
-                    Environment.Exit(1);
+                    Console.Error.WriteLine($"File {parsedPath} does not exist.");
+                    context.ExitCode = 1;
+                    return;
                 }
-                catch (DirectoryNotFoundException)
+                catch (Exception ex)
                 {
-                    Console.Error.WriteLine($"{path} is a directory.");
-                    Environment.Exit(1);
+                    Console.Error.WriteLine($"Error reading file {parsedPath}: {ex.Message}");
+                    context.ExitCode = 1;
+                    return;
                 }
+
                 txt ??= Console.In.ReadToEnd();
-                var parsed = ParsedContracts.Parse(txt, defaultNamespace);
+                var parsed = ParsedContracts.Parse(txt, parsedNamespace);
                 foreach (var error in parsed.Errors)
                 {
                     Console.Error.WriteLine(error);
                 }
 
                 if (parsed.Errors.Count != 0)
-                    Environment.Exit(2);
+                {
+                    context.ExitCode = 1;
+                    return;
+                }
 
                 foreach (var message in parsed.Messages)
                 {
                     message.Options.Proto = true;
                 }
 
-                switch (outputType)
+                switch (parsedFormat)
                 {
                     case Format.CSharp:
                     {
@@ -72,13 +82,10 @@ public class Program
                     default:
                         throw new InvalidOperationException();
                 }
-            },
-            path,
-            defaultNamespace,
-            outputType
+            }
         );
 
-        mainCommand.Invoke(args);
+        return mainCommand.Invoke(args);
     }
 }
 

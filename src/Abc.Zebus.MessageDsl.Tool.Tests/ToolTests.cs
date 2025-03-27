@@ -7,12 +7,15 @@ public class ToolTests
 {
     private TextWriter _originalOut = null!;
     private TextReader _originalIn = null!;
+    private StringWriter _output = null!;
 
     [SetUp]
     public void Setup()
     {
         _originalOut = Console.Out;
         _originalIn = Console.In;
+        _output = new StringWriter();
+        Console.SetOut(_output);
     }
 
     [TearDown]
@@ -25,37 +28,54 @@ public class ToolTests
     [Test]
     public void should_generate_csharp_with_namespace()
     {
-        string inputContent = "TestMessage()";
-        string[] args = new[] { "--namespace", "TestNS", "--format", "CSharp" };
-        var output = new StringWriter();
-        Console.SetOut(output);
-        Console.SetIn(new StringReader(inputContent));
+        Console.SetIn(new StringReader("TestMessage()"));
 
-        Program.Main(args);
-        var outputString = output.ToString();
-        Assert.That(outputString.Contains("namespace TestNS"));
-        Assert.That(outputString.Contains("class TestMessage"));
+        var exitCode = Program.Main(["--namespace", "TestNS", "--format", "CSharp"]);
+        Assert.That(exitCode, Is.EqualTo(0));
+        var outputString = _output.ToString();
+        Assert.That(outputString, Does.Contain("namespace TestNS"));
+        Assert.That(outputString, Does.Contain("class TestMessage"));
     }
 
     [Test]
     public void should_generate_proto_output_with_empty_namespace_when_not_provided()
     {
-        string fileContent = "TestMessage()";
-        string tempFile = Path.GetTempFileName();
+        var tempFile = Path.GetTempFileName();
         try
         {
-            File.WriteAllText(tempFile, fileContent);
-            string[] args = new[] { tempFile, "--format", "Proto" };
-            var output = new StringWriter();
-            Console.SetOut(output);
+            File.WriteAllText(tempFile, "TestMessage()");
 
-            Program.Main(args);
-            var outputString = output.ToString();
+            var exitCode = Program.Main([tempFile, "--format", "Proto"]);
+            Assert.That(exitCode, Is.EqualTo(0));
+            var outputString = _output.ToString();
             Assert.That(outputString.Contains("message TestMessage"));
         }
         finally
         {
             File.Delete(tempFile);
         }
+    }
+
+    [Test]
+    public void should_error_on_file_not_found()
+    {
+        var exitCode = Program.Main(["invalid_file.msg"]);
+        Assert.That(exitCode, Is.EqualTo(1));
+    }
+
+    [Test]
+    public void should_error_on_directory()
+    {
+        var aDirectory = Environment.CurrentDirectory;
+        var exitCode = Program.Main([aDirectory]);
+        Assert.That(exitCode, Is.EqualTo(1));
+    }
+
+    [Test]
+    public void should_error_on_invalid_msg()
+    {
+        Console.SetIn(new StringReader("InvalidSyntax"));
+        var exitCode = Program.Main([]);
+        Assert.That(exitCode, Is.EqualTo(1));
     }
 }
