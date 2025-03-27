@@ -7,35 +7,28 @@ namespace Abc.Zebus.MessageDsl.Tool.Tests;
 [TestFixture]
 public class ToolTests
 {
-    private TextWriter _originalOut = null!;
-    private TextReader _originalIn = null!;
+#pragma warning disable NUnit1032
+    private StringReader _input = null!;
     private StringWriter _output = null!;
+    private StringWriter _errorOutput = null!;
+#pragma warning restore NUnit1032
 
     [SetUp]
-    public void Setup()
+    public void SetUp()
     {
-        _originalOut = Console.Out;
-        _originalIn = Console.In;
+        _input = new StringReader("");
         _output = new StringWriter();
-        Console.SetOut(_output);
-    }
-
-    [TearDown]
-    public void TearDown()
-    {
-        Console.SetOut(_originalOut);
-        Console.SetIn(_originalIn);
-
-        _output?.Dispose();
+        _errorOutput = new StringWriter();
     }
 
     [Test]
     public void should_generate_csharp_with_namespace()
     {
-        Console.SetIn(new StringReader("TestMessage()"));
+        _input = new StringReader("TestMessage()");
 
-        var exitCode = Program.Main(["--namespace", "TestNS", "--format", "CSharp"]);
+        var exitCode = Run(["--namespace", "TestNS", "--format", "CSharp"]);
         Assert.That(exitCode, Is.EqualTo(0));
+
         var outputString = _output.ToString();
         Assert.That(outputString, Does.Contain("namespace TestNS"));
         Assert.That(outputString, Does.Contain("class TestMessage"));
@@ -49,8 +42,9 @@ public class ToolTests
         {
             File.WriteAllText(tempFile, "TestMessage()");
 
-            var exitCode = Program.Main([tempFile, "--format", "Proto"]);
+            var exitCode = Run([tempFile, "--format", "Proto"]);
             Assert.That(exitCode, Is.EqualTo(0));
+
             var outputString = _output.ToString();
             Assert.That(outputString.Contains("message TestMessage"));
         }
@@ -63,7 +57,7 @@ public class ToolTests
     [Test]
     public void should_error_on_file_not_found()
     {
-        var exitCode = Program.Main(["invalid_file.msg"]);
+        var exitCode = Run(["invalid_file.msg"]);
         Assert.That(exitCode, Is.EqualTo(1));
     }
 
@@ -71,15 +65,18 @@ public class ToolTests
     public void should_error_on_directory()
     {
         var aDirectory = Environment.CurrentDirectory;
-        var exitCode = Program.Main([aDirectory]);
+        var exitCode = Run([aDirectory]);
         Assert.That(exitCode, Is.EqualTo(1));
     }
 
     [Test]
     public void should_error_on_invalid_msg()
     {
-        Console.SetIn(new StringReader("InvalidSyntax"));
-        var exitCode = Program.Main([]);
+        _input = new StringReader("InvalidSyntax");
+        var exitCode = Run([]);
         Assert.That(exitCode, Is.EqualTo(1));
     }
+
+    private int Run(string[] args)
+        => Program.Run(args, _input, _output, _errorOutput);
 }

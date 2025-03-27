@@ -9,6 +9,9 @@ namespace Abc.Zebus.MessageDsl.Tool;
 public static class Program
 {
     public static int Main(string[] args)
+        => Run(args, Console.In, Console.Out, Console.Error);
+
+    public static int Run(string[] args, TextReader input, TextWriter output, TextWriter errorOutput)
     {
         var mainCommand = new RootCommand();
         var path = new Argument<string?>(".msg file", "The .msg file to process.")
@@ -23,14 +26,15 @@ public static class Program
         mainCommand.AddOption(defaultNamespace);
         mainCommand.AddOption(outputType);
 
-        mainCommand.SetHandler(
-            context =>
+        mainCommand.SetHandler(context =>
             {
                 var parse = context.ParseResult;
                 var parsedPath = parse.GetValueForArgument(path);
                 var parsedNamespace = parse.GetValueForOption(defaultNamespace);
                 var parsedFormat = parse.GetValueForOption(outputType);
+
                 string? txt = null;
+
                 try
                 {
                     if (parsedPath != null)
@@ -38,23 +42,22 @@ public static class Program
                 }
                 catch (FileNotFoundException)
                 {
-                    Console.Error.WriteLine($"File {parsedPath} does not exist.");
+                    errorOutput.WriteLine($"File {parsedPath} does not exist.");
                     context.ExitCode = 1;
                     return;
                 }
                 catch (Exception ex)
                 {
-                    Console.Error.WriteLine($"Error reading file {parsedPath}: {ex.Message}");
+                    errorOutput.WriteLine($"Error reading file {parsedPath}: {ex.Message}");
                     context.ExitCode = 1;
                     return;
                 }
 
-                txt ??= Console.In.ReadToEnd();
+                txt ??= input.ReadToEnd();
                 var parsed = ParsedContracts.Parse(txt, parsedNamespace);
+
                 foreach (var error in parsed.Errors)
-                {
-                    Console.Error.WriteLine(error);
-                }
+                    errorOutput.WriteLine(error);
 
                 if (parsed.Errors.Count != 0)
                 {
@@ -63,24 +66,24 @@ public static class Program
                 }
 
                 foreach (var message in parsed.Messages)
-                {
                     message.Options.Proto = true;
-                }
 
                 switch (parsedFormat)
                 {
                     case Format.CSharp:
                     {
                         var cs = CSharpGenerator.Generate(parsed);
-                        Console.Write(cs);
+                        output.Write(cs);
                         return;
                     }
+
                     case Format.Proto:
                     {
                         var proto = ProtoGenerator.Generate(parsed);
-                        Console.Write(proto);
+                        output.Write(proto);
                         return;
                     }
+
                     default:
                         throw new InvalidOperationException();
                 }
