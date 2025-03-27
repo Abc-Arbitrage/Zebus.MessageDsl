@@ -24,8 +24,32 @@ public class Program
         mainCommand.SetHandler(
             (path, defaultNamespace, outputType) =>
             {
-                var txt = path != null ? File.ReadAllText(path) : Console.In.ReadToEnd();
+                string? txt = null;
+                try
+                {
+                    if (path != null)
+                        txt = File.ReadAllText(path);
+                }
+                catch (FileNotFoundException)
+                {
+                    Console.Error.WriteLine($"File {path} does not exists.");
+                    Environment.Exit(1);
+                }
+                catch (DirectoryNotFoundException)
+                {
+                    Console.Error.WriteLine($"{path} is a directory.");
+                    Environment.Exit(1);
+                }
+                txt ??= Console.In.ReadToEnd();
                 var parsed = ParsedContracts.Parse(txt, defaultNamespace);
+                foreach (var error in parsed.Errors)
+                {
+                    Console.Error.WriteLine(error);
+                }
+
+                if (parsed.Errors.Count != 0)
+                    Environment.Exit(2);
+
                 foreach (var message in parsed.Messages)
                 {
                     message.Options.Proto = true;
@@ -37,14 +61,16 @@ public class Program
                     {
                         var cs = CSharpGenerator.Generate(parsed);
                         Console.Write(cs);
-                        break;
+                        return;
                     }
                     case Format.Proto:
                     {
                         var proto = ProtoGenerator.Generate(parsed);
                         Console.Write(proto);
-                        break;
+                        return;
                     }
+                    default:
+                        throw new InvalidOperationException();
                 }
             },
             path,
