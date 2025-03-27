@@ -3,8 +3,13 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\Abc.Zebus.MessageDsl\Abc.Zebus.MessageDsl.snk</AssemblyOriginatorKeyFile>
+    <IsPackable>true</IsPackable>
+    <PackageId>Zebus.MessageDsl.Tool</PackageId>
+    <Version>$(ZebusDslToolVersion)</Version>
+    <Description>A message DSL for Zebus (CLI tool for .msg files)</Description>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>messagedsl</ToolCommandName>
     <RollForward>major</RollForward>

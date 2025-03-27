@@ -1,10 +1,12 @@
-﻿using System.CommandLine;
+﻿using System;
+using System.CommandLine;
+using System.IO;
 using Abc.Zebus.MessageDsl.Ast;
 using Abc.Zebus.MessageDsl.Generator;
 
 namespace Abc.Zebus.MessageDsl.Tool;
 
-public class Program
+public static class Program
 {
     public static int Main(string[] args)
     {
