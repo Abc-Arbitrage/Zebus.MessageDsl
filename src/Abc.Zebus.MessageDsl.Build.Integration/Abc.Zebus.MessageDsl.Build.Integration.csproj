@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="protobuf-net" Version="3.2.30" />
+    <PackageReference Include="protobuf-net" Version="3.2.46" />
     <PackageReference Include="Zebus.Contracts" Version="3.1.0" />
   </ItemGroup>
 

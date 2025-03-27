@@ -25,6 +25,8 @@ public class ToolTests
     {
         Console.SetOut(_originalOut);
         Console.SetIn(_originalIn);
+
+        _output?.Dispose();
     }
 
     [Test]
