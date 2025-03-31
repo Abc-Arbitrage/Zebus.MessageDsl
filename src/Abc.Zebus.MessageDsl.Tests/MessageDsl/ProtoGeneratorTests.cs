@@ -216,6 +216,20 @@ public class ProtoGeneratorTests : GeneratorTests
         });
     }
 
+    [Test]
+    public async Task should_generate_nested_message_with_prefix()
+    {
+        await Verify(new MessageDefinition
+        {
+            Name = "MsgA",
+            ContainingClasses = {new TypeName("Abc")},
+            Options =
+            {
+                Proto = true
+            }
+        });
+    }
+
     protected override string SnapshotExtension => "proto";
 
     protected override string GenerateRaw(ParsedContracts contracts)

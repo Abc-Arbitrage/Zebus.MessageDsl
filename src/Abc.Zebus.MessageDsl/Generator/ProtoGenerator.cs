@@ -80,7 +80,8 @@ public sealed class ProtoGenerator : GeneratorBase
     private void WriteMessage(MessageDefinition message)
     {
         Writer.WriteLine();
-        Writer.Write("message {0} ", message.Name);
+        var name = string.Join("_", message.ContainingClasses.Select(x => x.NetType).Append(message.Name));
+        Writer.Write("message {0} ", name);
 
         using (Block())
         {
