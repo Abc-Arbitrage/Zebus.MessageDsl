@@ -5,5 +5,5 @@ import "servicebus.proto";
 
 message Abc_MsgA {
     option (servicebus.message).type = Event;
-
+    
 }
