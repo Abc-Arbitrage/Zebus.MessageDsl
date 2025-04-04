@@ -230,6 +230,56 @@ public class ProtoGeneratorTests : GeneratorTests
         });
     }
 
+    [Test]
+    public async Task should_generate_nested_name_with_correct_order()
+    {
+        await Verify(new MessageDefinition
+        {
+            Name = "MsgA",
+            ContainingClasses =
+            {
+                new TypeName("Abc"),
+                new TypeName("Def")
+            },
+            Options =
+            {
+                Proto = true
+            }
+        });
+    }
+
+    [Test]
+    public async Task should_reference_sub_type_with_correct_name()
+    {
+        await Verify(new ParsedContracts
+            {
+                Messages =
+                {
+                    new MessageDefinition
+                    {
+                        Name = "Msg",
+                        Attributes =
+                        {
+                            new AttributeDefinition("ProtoInclude", "1, typeof(SubMsg)")
+                        },
+                        Options =
+                        {
+                            Proto = true
+                        }
+                    },
+                    new MessageDefinition
+                    {
+                        Name = "SubMsg",
+                        ContainingClasses = {new TypeName("Msg")},
+                        Options =
+                        {
+                            Proto = true
+                        }
+                    }
+                }
+            }
+        );
+    }
     protected override string SnapshotExtension => "proto";
 
     protected override string GenerateRaw(ParsedContracts contracts)

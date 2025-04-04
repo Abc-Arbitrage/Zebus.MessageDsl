@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Abc.Zebus.MessageDsl.Analysis;
 using Abc.Zebus.MessageDsl.Ast;
+using Abc.Zebus.MessageDsl.SymbolTree;
 
 namespace Abc.Zebus.MessageDsl.Generator;
 
@@ -30,11 +31,12 @@ public sealed class ProtoGenerator : GeneratorBase
         Reset();
 
         WriteHeader();
+        var messageTree = SymbolNode.Create(Contracts);
 
         foreach (var enumDef in Contracts.Enums.Where(msg => msg.Options.Proto))
             WriteEnum(enumDef);
 
-        foreach (var message in Contracts.Messages.Where(msg => msg.Options.Proto))
+        foreach (var message in messageTree.Children.Values)
             WriteMessage(message);
 
         return GeneratedOutput();
@@ -77,21 +79,29 @@ public sealed class ProtoGenerator : GeneratorBase
         }
     }
 
-    private void WriteMessage(MessageDefinition message)
+    private void WriteMessage(SymbolNode node)
     {
         Writer.WriteLine();
-        var name = string.Join("_", message.ContainingClasses.Select(x => x.NetType).Append(message.Name));
-        Writer.Write("message {0} ", name);
 
+        Writer.Write("message {0} ", node.Name);
         using (Block())
         {
-            WriteMessageOptions(message);
-            WriteReservedFields(message);
+            if (node.Definition is not null)
+            {
+                var message = node.Definition;
+                WriteMessageOptions(message);
+                WriteReservedFields(message);
 
-            foreach (var param in message.Parameters)
-                WriteField(param);
+                foreach (var param in message.Parameters)
+                    WriteField(param);
 
-            WriteIncludedMessages(message);
+                WriteIncludedMessages(message);
+            }
+
+            foreach (var child in node.Children.Values)
+            {
+                WriteMessage(child);
+            }
         }
     }
 

@@ -3,9 +3,12 @@
 
 import "servicebus.proto";
 
-message Abc {
+message Msg {
+    option (servicebus.message).type = Event;
     
-    message MsgA {
+    optional SubMsg _subTypeSubMsg = 1;
+    
+    message SubMsg {
         option (servicebus.message).type = Event;
         
     }
