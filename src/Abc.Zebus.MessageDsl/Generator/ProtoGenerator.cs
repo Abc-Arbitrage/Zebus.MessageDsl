@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using Abc.Zebus.MessageDsl.Analysis;
 using Abc.Zebus.MessageDsl.Ast;
-using Abc.Zebus.MessageDsl.SymbolTree;
 
 namespace Abc.Zebus.MessageDsl.Generator;
 
