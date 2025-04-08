@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Abc.Zebus.MessageDsl.Analysis;
 using Abc.Zebus.MessageDsl.Ast;
 
@@ -30,11 +31,12 @@ public sealed class ProtoGenerator : GeneratorBase
         Reset();
 
         WriteHeader();
+        var messageTree = SymbolNode.Create(Contracts.Messages.Where(msg => msg.Options.Proto));
 
         foreach (var enumDef in Contracts.Enums.Where(msg => msg.Options.Proto))
             WriteEnum(enumDef);
 
-        foreach (var message in Contracts.Messages.Where(msg => msg.Options.Proto))
+        foreach (var message in messageTree.Children.Values)
             WriteMessage(message);
 
         return GeneratedOutput();
@@ -77,20 +79,28 @@ public sealed class ProtoGenerator : GeneratorBase
         }
     }
 
-    private void WriteMessage(MessageDefinition message)
+    private void WriteMessage(SymbolNode node)
     {
         Writer.WriteLine();
-        Writer.Write("message {0} ", message.Name);
+        Writer.Write("message {0} ", node.Name);
 
         using (Block())
         {
-            WriteMessageOptions(message);
-            WriteReservedFields(message);
+            if (node.Definition is { } message)
+            {
+                WriteMessageOptions(message);
+                WriteReservedFields(message);
 
-            foreach (var param in message.Parameters)
-                WriteField(param);
+                foreach (var param in message.Parameters)
+                    WriteField(param);
 
-            WriteIncludedMessages(message);
+                WriteIncludedMessages(message);
+            }
+
+            foreach (var child in node.Children.Values)
+            {
+                WriteMessage(child);
+            }
         }
     }
 
@@ -200,6 +210,41 @@ public sealed class ProtoGenerator : GeneratorBase
             Writer.Write(" = ");
             Writer.Write(tag);
             Writer.WriteLine(";");
+        }
+    }
+
+    private class SymbolNode(string name)
+    {
+        public string Name { get; } = name;
+        public MessageDefinition? Definition { get; private set; }
+        public Dictionary<string, SymbolNode> Children { get; } = [];
+
+        public static SymbolNode Create(IEnumerable<MessageDefinition> messages)
+        {
+            var rootNode = new SymbolNode(string.Empty);
+
+            foreach (var message in messages)
+            {
+                var parent = rootNode;
+
+                foreach (var containingClass in message.ContainingClasses)
+                    parent = parent.GetOrCreateChild(containingClass.ProtoBufType);
+
+                parent.GetOrCreateChild(message.Name).Definition = message;
+            }
+
+            return rootNode;
+        }
+
+        private SymbolNode GetOrCreateChild(string name)
+        {
+            if (!Children.TryGetValue(name, out var childNode))
+            {
+                childNode = new SymbolNode(name);
+                Children.Add(name, childNode);
+            }
+
+            return childNode;
         }
     }
 }
