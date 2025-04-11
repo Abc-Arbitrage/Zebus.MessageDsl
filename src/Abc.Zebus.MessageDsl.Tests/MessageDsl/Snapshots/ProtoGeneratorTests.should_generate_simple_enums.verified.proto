@@ -4,6 +4,6 @@
 import "servicebus.proto";
 
 enum Foo {
-    Default = 0;
-    Bar = -2;
+    Foo_Default = 0;
+    Foo_Bar = -2;
 }

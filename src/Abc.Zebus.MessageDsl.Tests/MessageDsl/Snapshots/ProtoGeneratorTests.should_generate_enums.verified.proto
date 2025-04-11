@@ -5,8 +5,8 @@ import "servicebus.proto";
 
 enum Foo {
     option allow_alias = true;
-    Default = 0;
-    Bar = -2;
-    Baz = -1;
-    Alias = 0;
+    Foo_Default = 0;
+    Foo_Bar = -2;
+    Foo_Baz = -1;
+    Foo_Alias = 0;
 }
