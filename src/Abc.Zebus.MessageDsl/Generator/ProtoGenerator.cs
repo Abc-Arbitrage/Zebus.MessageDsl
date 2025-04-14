@@ -77,7 +77,7 @@ public sealed class ProtoGenerator : GeneratorBase
                 Writer.WriteLine("option allow_alias = true;");
 
             foreach (var member in enumDef.Members)
-                Writer.WriteLine("{0} = {1};",$"{enumDef.Name}_{member.Name}", member.InferredValueAsNumber ?? "TODO");
+                Writer.WriteLine($"{enumDef.Name}_{member.Name} = {member.InferredValueAsNumber ?? "TODO"};");
         }
     }
 
