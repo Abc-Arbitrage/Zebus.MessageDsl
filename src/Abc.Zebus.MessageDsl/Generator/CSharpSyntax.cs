@@ -7,8 +7,8 @@ namespace Abc.Zebus.MessageDsl.Generator;
 
 public static class CSharpSyntax
 {
-    private static readonly HashSet<string> _csharpKeywords = new()
-    {
+    private static readonly HashSet<string> _csharpKeywords =
+    [
         "abstract", "as", "base", "bool", "break",
         "byte", "case", "catch", "char", "checked",
         "class", "const", "continue", "decimal", "default",
@@ -25,7 +25,7 @@ public static class CSharpSyntax
         "try", "typeof", "uint", "ulong", "unchecked",
         "unsafe", "ushort", "using", "virtual", "void",
         "volatile", "while"
-    };
+    ];
 
     public static IEnumerable<string> EnumerateCSharpKeywords()
         => _csharpKeywords.Select(i => i);

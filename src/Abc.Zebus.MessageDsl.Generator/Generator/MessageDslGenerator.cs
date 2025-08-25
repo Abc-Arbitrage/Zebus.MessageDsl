@@ -1,11 +1,11 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Abc.Zebus.MessageDsl.Ast;
 using Microsoft.CodeAnalysis;
-
-#nullable enable
 
 namespace Abc.Zebus.MessageDsl.Generator;
 
@@ -83,7 +83,7 @@ public class MessageDslGenerator : IIncrementalGenerator
 
     private class SourceGenerationResult(SourceGenerationInput input)
     {
-        private readonly List<Diagnostic> _diagnostics = new();
+        private readonly List<Diagnostic> _diagnostics = [];
 
         public AdditionalText InputFile { get; } = input.InputFile;
         public IReadOnlyList<Diagnostic> Diagnostics => _diagnostics;

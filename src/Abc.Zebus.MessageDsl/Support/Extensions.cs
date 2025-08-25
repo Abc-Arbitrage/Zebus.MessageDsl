@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
 
@@ -28,6 +29,7 @@ internal static class Extensions
         return startToken.InputStream.GetText(Interval.Of(startToken.StartIndex, endToken.StopIndex));
     }
 
+    [SuppressMessage("ReSharper", "UseCollectionExpression")]
     public static HashSet<T> ToHashSet<T>(this IEnumerable<T> sequence)
         => new(sequence);
 

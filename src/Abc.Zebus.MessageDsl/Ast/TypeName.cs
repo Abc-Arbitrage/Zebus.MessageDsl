@@ -36,13 +36,13 @@ public sealed class TypeName : IEquatable<TypeName>
 
     private static readonly Dictionary<string, string> _clrTypeToAlias;
 
-    private static readonly HashSet<string> _knownBclTypes = new()
-    {
+    private static readonly HashSet<string> _knownBclTypes =
+    [
         "TimeSpan",
         "DateTime",
         "Guid",
         "Decimal"
-    };
+    ];
 
     private static readonly Dictionary<string, string> _protoTypeNameMap = new()
     {
@@ -56,16 +56,15 @@ public sealed class TypeName : IEquatable<TypeName>
         { "String", "string" },
     };
 
-    private static readonly HashSet<string> _packableProtoBufTypes = new()
-    {
+    private static readonly HashSet<string> _packableProtoBufTypes = [
         "double", "float", "int32", "int64", "uint32", "uint64", "sint32", "sint64", "fixed32", "fixed64", "sfixed32", "sfixed64", "bool"
-    };
+    ];
 
-    private static readonly HashSet<string> _knownValueTypes = new()
-    {
+    private static readonly HashSet<string> _knownValueTypes =
+    [
         "bool", "byte", "sbyte", "char", "decimal", "double", "float", "int", "uint", "long", "ulong", "short", "ushort",
         "TimeSpan", "DateTime", "Guid"
-    };
+    ];
 
     private static readonly HashSet<string> _csharpNonTypeKeywords = CSharpSyntax.EnumerateCSharpKeywords().Except(_aliasTypeMap.Keys).ToHashSet();
 

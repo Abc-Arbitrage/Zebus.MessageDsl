@@ -12,7 +12,7 @@ public class EnumDefinition : AstNode, IMemberNode
     public string Name { get; set; } = string.Empty;
     public TypeName UnderlyingType { get; set; } = "int";
     public AccessModifier AccessModifier { get; set; }
-    public AttributeSet Attributes { get; } = new();
+    public AttributeSet Attributes { get; } = [];
     public IList<EnumMemberDefinition> Members { get; } = new List<EnumMemberDefinition>();
 
     internal bool UseInferredValues { get; set; }

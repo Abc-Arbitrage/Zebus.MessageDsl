@@ -16,7 +16,7 @@ public class MessageDefinition : AstNode, IClassNode
 
     public IList<ParameterDefinition> Parameters { get; } = new List<ParameterDefinition>();
     public IList<TypeName> BaseTypes { get; } = new List<TypeName>();
-    public AttributeSet Attributes { get; } = new();
+    public AttributeSet Attributes { get; } = [];
 
     public MemberOptions Options
     {
@@ -48,7 +48,7 @@ public class MessageDefinition : AstNode, IClassNode
         }
     }
 
-    internal List<ReservationRange> ReservedRanges { get; } = new();
+    internal List<ReservationRange> ReservedRanges { get; } = [];
 
     public override string ToString()
         => Name;

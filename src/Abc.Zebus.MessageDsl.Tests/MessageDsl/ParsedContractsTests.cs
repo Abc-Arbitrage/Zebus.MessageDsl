@@ -770,7 +770,7 @@ public class ParsedContractsTests
         var contracts = ParseValid("Foo.Bar.Baz();");
         var message = contracts.Messages.ExpectedSingle();
         message.Name.ShouldEqual("Baz");
-        message.ContainingClasses.ShouldEqual(new TypeName[] { "Foo", "Bar" });
+        message.ContainingClasses.ShouldEqual(["Foo", "Bar"]);
     }
 
     [Test]

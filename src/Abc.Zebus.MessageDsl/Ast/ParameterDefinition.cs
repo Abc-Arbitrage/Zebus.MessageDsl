@@ -8,7 +8,7 @@ public class ParameterDefinition : AstNode, INamedNode
     public bool IsMarkedOptional { get; set; }
     public string? DefaultValue { get; set; }
     public bool IsWritableProperty { get; set; }
-    public AttributeSet Attributes { get; private set; } = new();
+    public AttributeSet Attributes { get; private set; } = [];
 
     internal bool IsDiscarded { get; set; }
 

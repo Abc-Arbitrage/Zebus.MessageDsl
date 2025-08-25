@@ -1,12 +1,11 @@
-using System.Collections.Immutable;
+using System.Linq;
+using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 using Moq;
 using NUnit.Framework;
-using System.Linq;
-using System.Threading;
 
 namespace Abc.Zebus.MessageDsl.Generator.Tests;
 
@@ -22,7 +21,7 @@ public class MessageDslGeneratorTests
 
         // Act
         var runResults = CSharpGeneratorDriver.Create(new MessageDslGenerator())
-                                              .AddAdditionalTexts(ImmutableArray.Create(additionalTextMock.Object))
+                                              .AddAdditionalTexts([additionalTextMock.Object])
                                               .WithUpdatedAnalyzerConfigOptions(optionsProviderMock.Object)
                                               .RunGenerators(CSharpCompilation.Create("Tests"))
                                               .GetRunResult();
@@ -46,7 +45,7 @@ public class MessageDslGeneratorTests
 
         // Act
         var runResults = CSharpGeneratorDriver.Create(new MessageDslGenerator())
-                                              .AddAdditionalTexts(ImmutableArray.Create(additionalTextMock1.Object, additionalTextMock2.Object))
+                                              .AddAdditionalTexts([additionalTextMock1.Object, additionalTextMock2.Object])
                                               .WithUpdatedAnalyzerConfigOptions(CombineOptionProviderMocks(optionsProviderMock1.Object, optionsProviderMock2.Object).Object)
                                               .RunGenerators(CSharpCompilation.Create("Tests"))
                                               .GetRunResult();
@@ -67,7 +66,7 @@ public class MessageDslGeneratorTests
 
         // Act
         var runResults = CSharpGeneratorDriver.Create(new MessageDslGenerator())
-                                              .AddAdditionalTexts(ImmutableArray.Create(additionalTextMock.Object))
+                                              .AddAdditionalTexts([additionalTextMock.Object])
                                               .WithUpdatedAnalyzerConfigOptions(optionsProviderMock.Object)
                                               .RunGenerators(CSharpCompilation.Create("Tests"))
                                               .GetRunResult();
@@ -84,7 +83,7 @@ public class MessageDslGeneratorTests
 
         // Act
         var runResults = CSharpGeneratorDriver.Create(new MessageDslGenerator())
-                                              .AddAdditionalTexts(ImmutableArray.Create(additionalTextMock.Object))
+                                              .AddAdditionalTexts([additionalTextMock.Object])
                                               .RunGenerators(CSharpCompilation.Create("Tests"))
                                               .GetRunResult();
 
