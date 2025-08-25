@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Abc.Zebus.MessageDsl.Ast;
 using Abc.Zebus.MessageDsl.Generator;
 using Abc.Zebus.MessageDsl.Tests.TestTools;
-using JetBrains.Annotations;
 using VerifyNUnit;
 
 namespace Abc.Zebus.MessageDsl.Tests.MessageDsl;
@@ -19,7 +18,6 @@ public abstract class GeneratorTests
     protected abstract string SnapshotExtension { get; }
     protected abstract string GenerateRaw(ParsedContracts contracts);
 
-    [MustUseReturnValue]
     protected string Generate(MessageDefinition message)
     {
         var contracts = new ParsedContracts();
@@ -27,7 +25,6 @@ public abstract class GeneratorTests
         return Generate(contracts);
     }
 
-    [MustUseReturnValue]
     protected string Generate(ParsedContracts contracts)
     {
         PreProcess(contracts);

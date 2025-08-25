@@ -1,19 +1,17 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using System.IO;
 using Abc.Zebus.MessageDsl.Ast;
 using Abc.Zebus.MessageDsl.Generator;
-using JetBrains.Annotations;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
-#nullable enable
-
 namespace Abc.Zebus.MessageDsl.Build;
 
-[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 public class GenerateZebusMessagesTask : Task
 {
-    private const string _logSubcategory = "Zebus.MessageDsl";
+    private const string LogSubcategory = "Zebus.MessageDsl";
 
     [Required]
     public ITaskItem[] InputFiles { get; set; } = default!;
@@ -84,8 +82,8 @@ public class GenerateZebusMessagesTask : Task
     }
 
     private void LogDebug(string message)
-        => Log.LogMessage(_logSubcategory, null, null, null, 0, 0, 0, 0, MessageImportance.Low, message, null);
+        => Log.LogMessage(LogSubcategory, null, null, null, 0, 0, 0, 0, MessageImportance.Low, message, null);
 
     private void LogError(ITaskItem? inputFile, string message, int lineNumber = 0, int columnNumber = 0)
-        => Log.LogError(_logSubcategory, null, null, inputFile?.ItemSpec, lineNumber, columnNumber, 0, 0, message, null);
+        => Log.LogError(LogSubcategory, null, null, inputFile?.ItemSpec, lineNumber, columnNumber, 0, 0, message, null);
 }

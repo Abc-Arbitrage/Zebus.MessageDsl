@@ -4,7 +4,6 @@ using System.Linq;
 using Abc.Zebus.MessageDsl.Analysis;
 using Abc.Zebus.MessageDsl.Ast;
 using Abc.Zebus.MessageDsl.Tests.TestTools;
-using JetBrains.Annotations;
 using NUnit.Framework;
 
 namespace Abc.Zebus.MessageDsl.Tests.MessageDsl;
@@ -956,7 +955,7 @@ public class ParsedContractsTests
     public void should_handle_errors(string definitionText)
         => Parse(definitionText);
 
-    private static ParsedContracts ParseValid([LanguageInjection("csharp")] string definitionText)
+    private static ParsedContracts ParseValid([StringSyntax("csharp")] string definitionText)
     {
         var contracts = Parse(definitionText);
 
@@ -966,7 +965,7 @@ public class ParsedContractsTests
         return contracts;
     }
 
-    private static ParsedContracts ParseInvalid([LanguageInjection("csharp")] string definitionText)
+    private static ParsedContracts ParseInvalid([StringSyntax("csharp")] string definitionText)
     {
         var contracts = Parse(definitionText);
 
@@ -976,7 +975,7 @@ public class ParsedContractsTests
         return contracts;
     }
 
-    private static ParsedContracts Parse([LanguageInjection("csharp")] string definitionText)
+    private static ParsedContracts Parse([StringSyntax("csharp")] string definitionText)
     {
         Console.WriteLine();
         Console.WriteLine("PARSE: {0}", definitionText);

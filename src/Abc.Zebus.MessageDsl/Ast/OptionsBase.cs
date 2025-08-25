@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-using JetBrains.Annotations;
 
 namespace Abc.Zebus.MessageDsl.Ast;
 
-[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 public abstract class OptionsBase
 {
     public OptionDescriptor? GetOptionDescriptor(string? optionName)
@@ -13,8 +11,9 @@ public abstract class OptionsBase
         if (string.IsNullOrEmpty(optionName))
             return null;
 
-        var property = GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                                .FirstOrDefault(prop => prop.Name.Equals(optionName, StringComparison.OrdinalIgnoreCase));
+        var property = GetType()
+            .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            .FirstOrDefault(prop => prop.Name.Equals(optionName, StringComparison.OrdinalIgnoreCase));
 
         if (property == null)
             return null;
