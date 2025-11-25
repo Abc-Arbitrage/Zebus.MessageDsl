@@ -352,7 +352,7 @@ public class CSharpGeneratorTests : GeneratorTests
             }
         });
 
-        code.ShouldNotContain("#pragma warning disable 612");
+        code.ShouldNotContain("#pragma warning disable CS0612, CS0618");
     }
 
     [Test]
@@ -370,7 +370,7 @@ public class CSharpGeneratorTests : GeneratorTests
             }
         });
 
-        code.ShouldContain("#pragma warning disable 612");
+        code.ShouldContain("#pragma warning disable CS0612, CS0618");
     }
 
     [Test]
@@ -382,7 +382,19 @@ public class CSharpGeneratorTests : GeneratorTests
             Attributes = { new AttributeDefinition("Obsolete") }
         });
 
-        code.ShouldContain("#pragma warning disable 612");
+        code.ShouldContain("#pragma warning disable CS0612, CS0618");
+    }
+
+    [Test]
+    public async Task should_handle_obsolete_attribute_4()
+    {
+        var code = await Verify(new MessageDefinition
+        {
+            Name = "FooExecuted",
+            Attributes = { new AttributeDefinition("Obsolete", "\"Custom message\"") }
+        });
+
+        code.ShouldContain("#pragma warning disable CS0612, CS0618");
     }
 
     [Test]

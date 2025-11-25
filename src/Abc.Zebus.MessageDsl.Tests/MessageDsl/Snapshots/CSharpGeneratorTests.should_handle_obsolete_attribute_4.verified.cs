@@ -13,7 +13,7 @@ using ProtoBuf;
 [ProtoContract]
 [System.Diagnostics.DebuggerNonUserCode]
 [System.CodeDom.Compiler.GeneratedCode("Abc.Zebus.MessageDsl", "1.2.3.4")]
-[Obsolete]
+[Obsolete("Custom message")]
 public sealed partial class FooExecuted : IEvent
 {
 }

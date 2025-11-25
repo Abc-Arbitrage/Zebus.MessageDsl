@@ -108,7 +108,7 @@ public sealed class CSharpGenerator : GeneratorBase
 
         if (hasObsolete)
         {
-            Writer.WriteLine("#pragma warning disable 612");
+            Writer.WriteLine("#pragma warning disable CS0612, CS0618");
             Writer.WriteLine("");
         }
     }

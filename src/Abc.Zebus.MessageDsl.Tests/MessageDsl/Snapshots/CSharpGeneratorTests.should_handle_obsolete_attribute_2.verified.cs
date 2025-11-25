@@ -8,7 +8,7 @@ using System;
 using Abc.Zebus;
 using ProtoBuf;
 
-#pragma warning disable 612
+#pragma warning disable CS0612, CS0618
 
 [ProtoContract]
 [System.Diagnostics.DebuggerNonUserCode]

@@ -139,6 +139,19 @@ public class ParsedContractsTests
     }
 
     [Test]
+    public void should_handle_attributes_2()
+    {
+        var contracts = ParseValid("""[Transient(), Obsolete] FooExecuted(int id);""");
+
+        var msg = contracts.Messages.ExpectedSingle();
+        msg.Attributes.Count.ShouldEqual(2);
+        msg.Attributes[0].TypeName.ShouldEqual(new TypeName("Transient"));
+        msg.Attributes[0].Parameters.ShouldNotBeNull().ShouldBeEmpty();
+        msg.Attributes[1].TypeName.ShouldEqual(new TypeName("Obsolete"));
+        msg.Attributes[1].Parameters.ShouldBeNull();
+    }
+
+    [Test]
     public void should_set_message_as_transient()
     {
         var contracts = ParseValid("[Transient] FooExecuted(int id);");
