@@ -1,6 +1,6 @@
 # Zebus Message DSL
 
-[![Build](https://github.com/Abc-Arbitrage/Zebus.MessageDsl/workflows/Build/badge.svg)](https://github.com/Abc-Arbitrage/Zebus.MessageDsl/actions?query=workflow%3ABuild)
+[![Build](https://github.com/Abc-Arbitrage/Zebus.MessageDsl/actions/workflows/build.yml/badge.svg?branch=master&event=push)](https://github.com/Abc-Arbitrage/Zebus.MessageDsl/actions/workflows/build.yml)
 [![Zebus.MessageDsl NuGet](https://img.shields.io/nuget/v/Zebus.MessageDsl.svg?label=Zebus.MessageDsl&logo=NuGet)](https://www.nuget.org/packages/Zebus.MessageDsl)
 [![Zebus.MessageDsl.Build NuGet](https://img.shields.io/nuget/v/Zebus.MessageDsl.Build.svg?label=Zebus.MessageDsl.Build&logo=NuGet)](https://www.nuget.org/packages/Zebus.MessageDsl.Build)
 [![Zebus.MessageDsl.Generator NuGet](https://img.shields.io/nuget/v/Zebus.MessageDsl.Generator.svg?label=Zebus.MessageDsl.Generator&logo=NuGet)](https://www.nuget.org/packages/Zebus.MessageDsl.Generator)
