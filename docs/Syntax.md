@@ -268,3 +268,15 @@ enum Color {
 
 ChangeColorCommand(int id, Color color);
 ```
+
+They also support `_` discards, like in message definitions:
+
+```C#
+enum Color {
+    Red,
+    _,
+    Blue
+};
+```
+
+In this example `Color.Blue` will have the value `2`.
