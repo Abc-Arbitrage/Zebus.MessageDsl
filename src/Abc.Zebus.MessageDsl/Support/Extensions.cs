@@ -38,4 +38,9 @@ internal static class Extensions
         foreach (var item in toAdd)
             collection.Add(item);
     }
+
+    [SuppressMessage("ReSharper", "ReturnTypeCanBeNotNullable")]
+    public static T? AsNullable<T>(this T item)
+        where T : class
+        => item;
 }

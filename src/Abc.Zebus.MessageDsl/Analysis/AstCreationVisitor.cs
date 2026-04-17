@@ -34,7 +34,7 @@ internal class AstCreationVisitor : MessageContractsBaseVisitor<AstNode?>
     {
         var pragmaName = context.name?.token?.Text;
 
-        if (string.IsNullOrEmpty(pragmaName))
+        if (pragmaName is null or "")
         {
             _contracts.AddError(context, "Missing pragma name");
             return null;
@@ -96,7 +96,7 @@ internal class AstCreationVisitor : MessageContractsBaseVisitor<AstNode?>
 
         var ns = context.@namespace()?.GetText();
 
-        if (!string.IsNullOrEmpty(ns))
+        if (ns is not (null or ""))
             _contracts.ImportedNamespaces.Add(ns);
 
         return null;

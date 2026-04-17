@@ -1,5 +1,6 @@
 ﻿using Abc.Zebus.MessageDsl.Ast;
 using Abc.Zebus.MessageDsl.Generator;
+using Abc.Zebus.MessageDsl.Support;
 using Antlr4.Runtime;
 
 namespace Abc.Zebus.MessageDsl.Dsl;
@@ -8,9 +9,9 @@ partial class MessageContractsParser
 {
     private bool IsAtStartOfPragma()
     {
-        var prevToken = _input.Lt(-1);
-        var sharpToken = _input.Lt(1);
-        var pragmaToken = _input.Lt(2);
+        var prevToken = _input.Lt(-1).AsNullable();
+        var sharpToken = _input.Lt(1).AsNullable();
+        var pragmaToken = _input.Lt(2).AsNullable();
 
         if (sharpToken == null || pragmaToken == null)
             return false;
@@ -29,8 +30,8 @@ partial class MessageContractsParser
 
     internal bool IsAtImplicitSeparator()
     {
-        var prevToken = _input.Lt(-1);
-        var nextToken = _input.Lt(1);
+        var prevToken = _input.Lt(-1).AsNullable();
+        var nextToken = _input.Lt(1).AsNullable();
 
         return prevToken == null
                || nextToken == null
@@ -42,8 +43,8 @@ partial class MessageContractsParser
 
     private bool IsAtEndOfLine()
     {
-        var prevToken = _input.Lt(-1);
-        var nextToken = _input.Lt(1);
+        var prevToken = _input.Lt(-1).AsNullable();
+        var nextToken = _input.Lt(1).AsNullable();
 
         return prevToken == null
                || nextToken == null
@@ -76,7 +77,7 @@ partial class MessageContractsParser
         {
             var id = nameId?.Text ?? nameCtxKw?.GetText() ?? nameKw?.GetText();
 
-            if (string.IsNullOrEmpty(id))
+            if (id is null or "")
                 return string.Empty;
 
             if (CSharpSyntax.IsCSharpKeyword(id) && escape == null)

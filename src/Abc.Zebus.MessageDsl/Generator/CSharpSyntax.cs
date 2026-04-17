@@ -57,7 +57,7 @@ public static class CSharpSyntax
 
     public static bool IsValidNamespace(string? ns)
     {
-        if (string.IsNullOrEmpty(ns))
+        if (ns is null or "")
             return false;
 
         return ns.Split(['.'], StringSplitOptions.None)
@@ -66,7 +66,7 @@ public static class CSharpSyntax
 
     public static bool IsValidIdentifier(string? id)
     {
-        if (string.IsNullOrEmpty(id))
+        if (id is null or "")
             return false;
 
         id = ProcessUnicodeEscapeSequences(id);

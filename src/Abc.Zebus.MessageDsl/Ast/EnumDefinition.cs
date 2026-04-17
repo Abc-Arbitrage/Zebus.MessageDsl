@@ -48,7 +48,7 @@ public class EnumDefinition : AstNode, IMemberNode
     [SuppressMessage("ReSharper", "HeapView.BoxingAllocation")]
     internal object? GetValidUnderlyingValue(string? value)
     {
-        if (string.IsNullOrEmpty(value))
+        if (value is null or "")
             return null;
 
         value = value.Trim();
