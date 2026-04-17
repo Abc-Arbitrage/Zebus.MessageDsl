@@ -1,9 +1,0 @@
-﻿<SolutionConfiguration>
-  <Settings>
-    <AdditionalFilesToIncludeForSolution>
-      <Value>Abc.Zebus.MessageDsl\Dsl\MessageContracts.g4</Value>
-    </AdditionalFilesToIncludeForSolution>
-    <AllowParallelTestExecution>True</AllowParallelTestExecution>
-    <SolutionConfigured>True</SolutionConfigured>
-  </Settings>
-</SolutionConfiguration>

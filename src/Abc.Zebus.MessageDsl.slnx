@@ -1,0 +1,24 @@
+<Solution>
+  <Folder Name="/Build/">
+    <File Path="../.editorconfig" />
+    <File Path="../.github/workflows/build.yml" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
+  </Folder>
+  <Folder Name="/Docs/">
+    <File Path="../docs/BuildTimeCodeGen.md" />
+    <File Path="../docs/Syntax.md" />
+    <File Path="../docs/Tool.md" />
+    <File Path="../README.md" />
+    <File Path="NuGetReadme.md" />
+  </Folder>
+  <Project Path="Abc.Zebus.MessageDsl.Build.Integration/Abc.Zebus.MessageDsl.Build.Integration.csproj" />
+  <Project Path="Abc.Zebus.MessageDsl.Build/Abc.Zebus.MessageDsl.Build.csproj" />
+  <Project Path="Abc.Zebus.MessageDsl.Generator.Integration/Abc.Zebus.MessageDsl.Generator.Integration.csproj" />
+  <Project Path="Abc.Zebus.MessageDsl.Generator.Tests/Abc.Zebus.MessageDsl.Generator.Tests.csproj" />
+  <Project Path="Abc.Zebus.MessageDsl.Generator/Abc.Zebus.MessageDsl.Generator.csproj" />
+  <Project Path="Abc.Zebus.MessageDsl.Tests/Abc.Zebus.MessageDsl.Tests.csproj" />
+  <Project Path="Abc.Zebus.MessageDsl.Tool.Tests/Abc.Zebus.MessageDsl.Tool.Tests.csproj" />
+  <Project Path="Abc.Zebus.MessageDsl.Tool/Abc.Zebus.MessageDsl.Tool.csproj" />
+  <Project Path="Abc.Zebus.MessageDsl/Abc.Zebus.MessageDsl.csproj" />
+</Solution>
